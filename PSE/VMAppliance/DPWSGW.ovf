@@ -1,0 +1,261 @@
+<?xml version="1.0"?>
+<Envelope ovf:version="1.0" xml:lang="en-US" xmlns="http://schemas.dmtf.org/ovf/envelope/1" xmlns:ovf="http://schemas.dmtf.org/ovf/envelope/1" xmlns:rasd="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData" xmlns:vssd="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_VirtualSystemSettingData" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:vbox="http://www.virtualbox.org/ovf/machine">
+  <References>
+    <File ovf:href="dpwsgw.vmdk" ovf:id="file1" ovf:size="344762880"/>
+  </References>
+  <DiskSection>
+    <Info>List of the virtual disks used in the package</Info>
+    <Disk ovf:capacity="5368709120" ovf:diskId="vmdisk1" ovf:fileRef="file1" ovf:format="http://www.vmware.com/interfaces/specifications/vmdk.html#streamOptimized" vbox:uuid="77f10dd3-00ba-46ad-bd9c-7d819175d948"/>
+  </DiskSection>
+  <NetworkSection>
+    <Info>Logical networks used in the package</Info>
+    <Network ovf:name="Bridged">
+      <Description>Logical network used by this appliance.</Description>
+    </Network>
+  </NetworkSection>
+  <VirtualSystem ovf:id="DPWSGW">
+    <Info>A virtual machine</Info>
+    <ProductSection>
+      <Info>Meta-information about the installed software</Info>
+      <Product>DPWS Gateway for WSNs</Product>
+      <Vendor>TecO</Vendor>
+      <Version>r9049</Version>
+      <ProductUrl>https://svn.teco.edu/projects/DPWSGW</ProductUrl>
+      <VendorUrl>http://www.teco.edu</VendorUrl>
+    </ProductSection>
+    <OperatingSystemSection ovf:id="99">
+      <Info>The kind of installed guest operating system</Info>
+      <Description>Linux26</Description>
+    </OperatingSystemSection>
+    <VirtualHardwareSection>
+      <Info>Virtual hardware requirements for a virtual machine</Info>
+      <System>
+        <vssd:ElementName>Virtual Hardware Family</vssd:ElementName>
+        <vssd:InstanceID>0</vssd:InstanceID>
+        <vssd:VirtualSystemIdentifier>DPWSGW</vssd:VirtualSystemIdentifier>
+        <vssd:VirtualSystemType>virtualbox-2.2</vssd:VirtualSystemType>
+      </System>
+      <Item>
+        <rasd:Caption>1 virtual CPU</rasd:Caption>
+        <rasd:Description>Number of virtual CPUs</rasd:Description>
+        <rasd:ElementName>1 virtual CPU</rasd:ElementName>
+        <rasd:InstanceID>1</rasd:InstanceID>
+        <rasd:ResourceType>3</rasd:ResourceType>
+        <rasd:VirtualQuantity>1</rasd:VirtualQuantity>
+      </Item>
+      <Item>
+        <rasd:AllocationUnits>MegaBytes</rasd:AllocationUnits>
+        <rasd:Caption>256 MB of memory</rasd:Caption>
+        <rasd:Description>Memory Size</rasd:Description>
+        <rasd:ElementName>256 MB of memory</rasd:ElementName>
+        <rasd:InstanceID>2</rasd:InstanceID>
+        <rasd:ResourceType>4</rasd:ResourceType>
+        <rasd:VirtualQuantity>256</rasd:VirtualQuantity>
+      </Item>
+      <Item>
+        <rasd:Address>0</rasd:Address>
+        <rasd:Caption>ideController0</rasd:Caption>
+        <rasd:Description>IDE Controller</rasd:Description>
+        <rasd:ElementName>ideController0</rasd:ElementName>
+        <rasd:InstanceID>3</rasd:InstanceID>
+        <rasd:ResourceSubType>PIIX4</rasd:ResourceSubType>
+        <rasd:ResourceType>5</rasd:ResourceType>
+      </Item>
+      <Item>
+        <rasd:Address>1</rasd:Address>
+        <rasd:Caption>ideController1</rasd:Caption>
+        <rasd:Description>IDE Controller</rasd:Description>
+        <rasd:ElementName>ideController1</rasd:ElementName>
+        <rasd:InstanceID>4</rasd:InstanceID>
+        <rasd:ResourceSubType>PIIX4</rasd:ResourceSubType>
+        <rasd:ResourceType>5</rasd:ResourceType>
+      </Item>
+      <Item>
+        <rasd:Address>0</rasd:Address>
+        <rasd:Caption>sataController0</rasd:Caption>
+        <rasd:Description>SATA Controller</rasd:Description>
+        <rasd:ElementName>sataController0</rasd:ElementName>
+        <rasd:InstanceID>5</rasd:InstanceID>
+        <rasd:ResourceSubType>AHCI</rasd:ResourceSubType>
+        <rasd:ResourceType>20</rasd:ResourceType>
+      </Item>
+      <Item>
+        <rasd:AutomaticAllocation>true</rasd:AutomaticAllocation>
+        <rasd:Caption>Ethernet adapter on 'Bridged'</rasd:Caption>
+        <rasd:Connection>Bridged</rasd:Connection>
+        <rasd:ElementName>Ethernet adapter on 'Bridged'</rasd:ElementName>
+        <rasd:InstanceID>6</rasd:InstanceID>
+        <rasd:ResourceSubType>E1000</rasd:ResourceSubType>
+        <rasd:ResourceType>10</rasd:ResourceType>
+      </Item>
+      <Item>
+        <rasd:Address>0</rasd:Address>
+        <rasd:Caption>usb</rasd:Caption>
+        <rasd:Description>USB Controller</rasd:Description>
+        <rasd:ElementName>usb</rasd:ElementName>
+        <rasd:InstanceID>7</rasd:InstanceID>
+        <rasd:ResourceType>23</rasd:ResourceType>
+      </Item>
+      <Item>
+        <rasd:AddressOnParent>0</rasd:AddressOnParent>
+        <rasd:AutomaticAllocation>true</rasd:AutomaticAllocation>
+        <rasd:Caption>cdrom1</rasd:Caption>
+        <rasd:Description>CD-ROM Drive</rasd:Description>
+        <rasd:ElementName>cdrom1</rasd:ElementName>
+        <rasd:InstanceID>8</rasd:InstanceID>
+        <rasd:Parent>4</rasd:Parent>
+        <rasd:ResourceType>15</rasd:ResourceType>
+      </Item>
+      <Item>
+        <rasd:AddressOnParent>1</rasd:AddressOnParent>
+        <rasd:Caption>disk1</rasd:Caption>
+        <rasd:Description>Disk Image</rasd:Description>
+        <rasd:ElementName>disk1</rasd:ElementName>
+        <rasd:HostResource>/disk/vmdisk1</rasd:HostResource>
+        <rasd:InstanceID>9</rasd:InstanceID>
+        <rasd:Parent>3</rasd:Parent>
+        <rasd:ResourceType>17</rasd:ResourceType>
+      </Item>
+    </VirtualHardwareSection>
+    <vbox:Machine ovf:required="false" version="1.10-windows" uuid="{4936ec9b-6a4e-4cbf-b13f-5f39ccbd1bdc}" name="DPWSGW" OSType="Linux26" snapshotFolder="Snapshots" lastStateChange="2010-11-15T10:34:35Z">
+      <ovf:Info>Complete VirtualBox machine configuration in VirtualBox format</ovf:Info>
+      <ExtraData>
+        <ExtraDataItem name="GUI/LastCloseAction" value="powerOff"/>
+        <ExtraDataItem name="GUI/LastGuestSizeHint" value="640,480"/>
+        <ExtraDataItem name="GUI/LastWindowPostion" value="255,58,761,683"/>
+        <ExtraDataItem name="GUI/MiniToolBarAlignment" value="bottom"/>
+        <ExtraDataItem name="GUI/SaveMountedAtRuntime" value="yes"/>
+        <ExtraDataItem name="GUI/ShowMiniToolBar" value="yes"/>
+      </ExtraData>
+      <Hardware version="2">
+        <CPU count="1" hotplug="false">
+          <HardwareVirtEx enabled="false" exclusive="false"/>
+          <HardwareVirtExNestedPaging enabled="true"/>
+          <HardwareVirtExVPID enabled="true"/>
+          <PAE enabled="true"/>
+          <HardwareVirtForce enabled="false"/>
+        </CPU>
+        <Memory RAMSize="256" PageFusion="false"/>
+        <HID Pointing="USBTablet" Keyboard="PS2Keyboard"/>
+        <HPET enabled="false"/>
+        <Boot>
+          <Order position="1" device="HardDisk"/>
+          <Order position="2" device="None"/>
+          <Order position="3" device="None"/>
+          <Order position="4" device="None"/>
+        </Boot>
+        <Display VRAMSize="6" monitorCount="1" accelerate3D="false" accelerate2DVideo="false"/>
+        <RemoteDisplay enabled="false" port="3389" authType="Null" authTimeout="5000">
+          <VideoChannel enabled="false" quality="75"/>
+        </RemoteDisplay>
+        <BIOS>
+          <ACPI enabled="true"/>
+          <IOAPIC enabled="false"/>
+          <Logo fadeIn="true" fadeOut="true" displayTime="0"/>
+          <BootMenu mode="MessageAndMenu"/>
+          <TimeOffset value="0"/>
+          <PXEDebug enabled="false"/>
+        </BIOS>
+        <USBController enabled="true" enabledEhci="true">
+          <DeviceFilter name="TecO particle USB Bridge [0400]" active="true" vendorId="0403" productId="cc40" revision="0400" manufacturer="TecO" product="TecO particle USB Bridge" serialNumber="FTPP2SSK" remote="no"/>
+        </USBController>
+        <Network>
+          <Adapter slot="0" enabled="true" MACAddress="0800271E099E" cable="true" speed="0" type="82540EM">
+            <DisabledModes>
+              <NAT>
+                <DNS pass-domain="true" use-proxy="false" use-host-resolver="false"/>
+                <Alias logging="false" proxy-only="false" use-same-ports="false"/>
+              </NAT>
+            </DisabledModes>
+            <BridgedInterface name="Intel(R) PRO/1000 PL Network Connection"/>
+          </Adapter>
+          <Adapter slot="1" enabled="false" MACAddress="080027FD08C1" cable="true" speed="0" type="82540EM">
+            <DisabledModes>
+              <NAT>
+                <DNS pass-domain="true" use-proxy="false" use-host-resolver="false"/>
+                <Alias logging="false" proxy-only="false" use-same-ports="false"/>
+              </NAT>
+            </DisabledModes>
+          </Adapter>
+          <Adapter slot="2" enabled="false" MACAddress="080027F5CB8B" cable="true" speed="0" type="82540EM">
+            <DisabledModes>
+              <NAT>
+                <DNS pass-domain="true" use-proxy="false" use-host-resolver="false"/>
+                <Alias logging="false" proxy-only="false" use-same-ports="false"/>
+              </NAT>
+            </DisabledModes>
+          </Adapter>
+          <Adapter slot="3" enabled="false" MACAddress="08002763AB0B" cable="true" speed="0" type="82540EM">
+            <DisabledModes>
+              <NAT>
+                <DNS pass-domain="true" use-proxy="false" use-host-resolver="false"/>
+                <Alias logging="false" proxy-only="false" use-same-ports="false"/>
+              </NAT>
+            </DisabledModes>
+          </Adapter>
+          <Adapter slot="4" enabled="false" MACAddress="080027DE9973" cable="true" speed="0" type="82540EM">
+            <DisabledModes>
+              <NAT>
+                <DNS pass-domain="true" use-proxy="false" use-host-resolver="false"/>
+                <Alias logging="false" proxy-only="false" use-same-ports="false"/>
+              </NAT>
+            </DisabledModes>
+          </Adapter>
+          <Adapter slot="5" enabled="false" MACAddress="0800272B5BF6" cable="true" speed="0" type="82540EM">
+            <DisabledModes>
+              <NAT>
+                <DNS pass-domain="true" use-proxy="false" use-host-resolver="false"/>
+                <Alias logging="false" proxy-only="false" use-same-ports="false"/>
+              </NAT>
+            </DisabledModes>
+          </Adapter>
+          <Adapter slot="6" enabled="false" MACAddress="080027E702CC" cable="true" speed="0" type="82540EM">
+            <DisabledModes>
+              <NAT>
+                <DNS pass-domain="true" use-proxy="false" use-host-resolver="false"/>
+                <Alias logging="false" proxy-only="false" use-same-ports="false"/>
+              </NAT>
+            </DisabledModes>
+          </Adapter>
+          <Adapter slot="7" enabled="false" MACAddress="0800271F4725" cable="true" speed="0" type="82540EM">
+            <DisabledModes>
+              <NAT>
+                <DNS pass-domain="true" use-proxy="false" use-host-resolver="false"/>
+                <Alias logging="false" proxy-only="false" use-same-ports="false"/>
+              </NAT>
+            </DisabledModes>
+          </Adapter>
+        </Network>
+        <UART>
+          <Port slot="0" enabled="false" IOBase="0x3f8" IRQ="4" hostMode="Disconnected"/>
+          <Port slot="1" enabled="false" IOBase="0x3f8" IRQ="4" hostMode="Disconnected"/>
+        </UART>
+        <LPT>
+          <Port slot="0" enabled="false" IOBase="0x378" IRQ="4"/>
+          <Port slot="1" enabled="false" IOBase="0x378" IRQ="4"/>
+        </LPT>
+        <AudioAdapter controller="AC97" driver="DirectSound" enabled="false"/>
+        <RTC localOrUTC="UTC"/>
+        <SharedFolders/>
+        <Clipboard mode="Bidirectional"/>
+        <IO>
+          <IoCache enabled="true" size="5"/>
+          <IoBandwidth max="0"/>
+        </IO>
+        <Guest memoryBalloonSize="0"/>
+        <GuestProperties>
+          <GuestProperty name="/VirtualBox/HostInfo/GUI/LanguageID" value="de_DE" timestamp="1289817301505379300" flags=""/>
+        </GuestProperties>
+      </Hardware>
+      <StorageControllers>
+        <StorageController name="IDE Controller" type="PIIX4" PortCount="2" useHostIOCache="true">
+          <AttachedDevice passthrough="false" type="DVD" port="0" device="0"/>
+          <AttachedDevice type="HardDisk" port="0" device="1">
+            <Image uuid="{77f10dd3-00ba-46ad-bd9c-7d819175d948}"/>
+          </AttachedDevice>
+        </StorageController>
+        <StorageController name="SATA Controller" type="AHCI" PortCount="1" useHostIOCache="false" IDE0MasterEmulationPort="0" IDE0SlaveEmulationPort="1" IDE1MasterEmulationPort="2" IDE1SlaveEmulationPort="3"/>
+      </StorageControllers>
+    </vbox:Machine>
+  </VirtualSystem>
+</Envelope>
