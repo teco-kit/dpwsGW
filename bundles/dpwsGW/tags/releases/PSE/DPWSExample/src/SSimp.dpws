@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<wsm:Metadata
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xmlns:sens="http://www.teco.edu/SensorValues" 
+    xmlns:wdp="http://schemas.xmlsoap.org/ws/2006/02/devprof"
+    xmlns:wsm="http://schemas.xmlsoap.org/ws/2004/09/mex" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xsi:schemaLocation="http://schemas.xmlsoap.org/ws/2006/02/devprof ../../edu.teco.dpws.generator/model/wsdp.xsd http://schemas.xmlsoap.org/ws/2004/09/mex ../../edu.teco.dpws.generator/model/mex.xsd"
+>
+  
+  <wsm:MetadataSection Dialect="http://schemas.xmlsoap.org/ws/2006/02/devprof/Relationship">
+    <wdp:Relationship Type="http://schemas.xmlsoap.org/ws/2006/02/devprof/host">
+      <wdp:Host>
+        <wdp:Types>sens:SSimpDeviceType</wdp:Types>
+        <wdp:ServiceId>SSimpDevice</wdp:ServiceId>
+      </wdp:Host>
+      <wdp:Hosted>
+        <wdp:Types>sens:SensorValues</wdp:Types>
+        <wdp:ServiceId>SensorValues</wdp:ServiceId>
+      </wdp:Hosted>
+    </wdp:Relationship>
+  </wsm:MetadataSection>
+  
+  <wsm:MetadataSection Dialect="http://schemas.xmlsoap.org/ws/2006/02/devprof/ThisModel">
+    <wdp:ThisModel>
+      <wdp:Manufacturer xml:lang="de">TECO (Universität Karlsruhe)</wdp:Manufacturer>
+      <wdp:Manufacturer xml:lang="en">TECO (University of Karlsruhe)</wdp:Manufacturer>
+      <wdp:ManufacturerUrl>http://www.teco.edu</wdp:ManufacturerUrl>
+      <wdp:ModelName xml:lang="de">SSimp Sensorknoten</wdp:ModelName>
+      <wdp:ModelName xml:lang="en">SSimp Sensorknoten</wdp:ModelName>
+      <wdp:ModelNumber>1.0</wdp:ModelNumber>
+      <wdp:ModelUrl>http://www.teco.edu</wdp:ModelUrl>
+    </wdp:ThisModel>
+  </wsm:MetadataSection>
+  
+  <wsm:MetadataSection Dialect="http://schemas.xmlsoap.org/ws/2006/02/devprof/ThisDevice">
+    <wdp:ThisDevice>
+      <wdp:FriendlyName xml:lang="de">Sensorüberwachungsdienst</wdp:FriendlyName>
+      <wdp:FriendlyName xml:lang="en">Sensor Monitoring Service</wdp:FriendlyName>
+      <wdp:FirmwareVersion>Version 0.1</wdp:FirmwareVersion>
+      <wdp:SerialNumber>1234567f-c23f-4d91-84ba-555555555555</wdp:SerialNumber>
+    </wdp:ThisDevice>
+  </wsm:MetadataSection>
+</wsm:Metadata>
