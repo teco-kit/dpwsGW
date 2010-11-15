@@ -1,0 +1,35 @@
+/* WS4D-gSOAP - Implementation of the Devices Profile for Web Services
+ * (DPWS) on top of gSOAP
+ * Copyright (C) 2007 University of Rostock
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public License
+ * as published by the Free Software Foundation; either version 2.1 of
+ * the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+ * 02110-1301 USA
+ */
+
+
+#include "dpwsH.h"
+SOAP_NMAC struct Namespace dpws_namespaces[] =
+{
+  {"SOAP-ENV", "http://www.w3.org/2003/05/soap-envelope", "http://www.w3.org/*/soap-envelope", NULL},
+  {"SOAP-ENC", "http://www.w3.org/2003/05/soap-encoding", "http://www.w3.org/*/soap-encoding", NULL},
+  {"xsi", "http://www.w3.org/2001/XMLSchema-instance", "http://www.w3.org/*/XMLSchema-instance", NULL},
+  {"xsd", "http://www.w3.org/2001/XMLSchema", "http://www.w3.org/*/XMLSchema", NULL},
+  {"wsm", "http://schemas.xmlsoap.org/ws/2004/09/mex", NULL, NULL},
+  {"wsa", "http://www.w3.org/2005/08/addressing", NULL, NULL},
+  {"wsdp", "http://docs.oasis-open.org/ws-dd/ns/dpws/2009/01", NULL, NULL},
+  {"wst", "http://schemas.xmlsoap.org/ws/2004/09/transfer", NULL, NULL},
+  {"wsd", "http://docs.oasis-open.org/ws-dd/ns/discovery/2009/01", NULL, NULL},
+  {NULL, NULL, NULL, NULL}
+};
