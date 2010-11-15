@@ -1,0 +1,284 @@
+<wsdl:definitions 
+      targetNamespace="http://www.ws4d.org/services/life-cycle-manager"
+      xmlns:tns="http://www.ws4d.org/services/life-cycle-manager"
+      xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing" 
+      xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" 
+      xmlns:wsdp="http://schemas.xmlsoap.org/ws/2006/02/devprof" 
+      xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" 
+      xmlns:wsoap12="http://schemas.xmlsoap.org/wsdl/soap12/"
+      xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"
+      xmlns:wsx="http://schemas.xmlsoap.org/ws/2004/09/mex">
+<wsp:Policy wsu:Id="LifeCycleManager">
+      	<wsdp:Profile />
+      	<wsdp:OptimizedMimeSerialization />
+</wsp:Policy> 
+<wsdl:import namespace="http://schemas.xmlsoap.org/ws/2004/09/mex" 
+      	location="http://schemas.xmlsoap.org/ws/2004/09/mex/MetadataExchange.wsdl"/>
+      <wsdl:types>
+      	<xs:schema 
+      	  targetNamespace="http://www.ws4d.org/services/life-cycle-manager"
+      	  xmlns:tns="http://www.ws4d.org/services/life-cycle-manager" 
+      	  xmlns:xs="http://www.w3.org/2001/XMLSchema"
+      	  elementFormDefault="qualified" 
+      	  blockDefault="#all">
+    <xs:element name="install">
+      <xs:complexType>
+        <xs:sequence><xs:element name="CRC" type="xs:int" />
+      		     <xs:element name="Param" type="xs:base64Binary" />
+      		     <xs:any minOccurs="0" maxOccurs="unbounded" namespace="##other" processContents="lax" /></xs:sequence>
+      	 <xs:anyAttribute namespace="##other" processContents="lax" />
+      	</xs:complexType>
+    </xs:element>
+    <xs:element name="installResponse">
+      <xs:complexType>
+        <xs:sequence><xs:element name="status" type="xs:int" />
+        	     <xs:element name="serviceID" type="xs:string"></xs:element></xs:sequence>          
+      </xs:complexType>
+    </xs:element>
+    <xs:element name="uninstall">
+    	<xs:complexType>
+    	 <xs:sequence><xs:element name="serviceID" type="xs:string"></xs:element></xs:sequence>
+    	</xs:complexType>
+    </xs:element>
+    <xs:element name="uninstallResponse">
+    	<xs:complexType>
+    	 <xs:sequence><xs:element name="status" type="xs:int"></xs:element></xs:sequence>
+    	</xs:complexType>
+    </xs:element>
+    <xs:element name="start">
+    	<xs:complexType>
+    	 <xs:sequence><xs:element name="serviceID" type="xs:string"></xs:element></xs:sequence>
+    	</xs:complexType>
+    </xs:element>
+    <xs:element name="startResponse">
+    	<xs:complexType>
+    	 <xs:sequence><xs:element name="status" type="xs:int"></xs:element></xs:sequence>
+    	</xs:complexType>
+    </xs:element>
+    <xs:element name="stop">
+    	<xs:complexType>
+    	 <xs:sequence><xs:element name="serviceID" type="xs:string"></xs:element></xs:sequence>
+    	</xs:complexType>
+    </xs:element>
+    <xs:element name="stopResponse">
+    	<xs:complexType>
+    	 <xs:sequence><xs:element name="status" type="xs:int"></xs:element></xs:sequence>
+    	</xs:complexType>
+    </xs:element>
+    <xs:element name="getState">
+    	<xs:complexType>
+    	 <xs:sequence><xs:element name="serviceID" type="xs:string"></xs:element></xs:sequence>
+    	</xs:complexType>
+    </xs:element>
+    <xs:element name="getStateResponse">
+    	<xs:complexType>
+    	 <xs:sequence><xs:element name="status" type="xs:int"></xs:element>
+    		      <xs:element name="serviceState" type="xs:int"></xs:element>
+		      <xs:element name="uuid" type="xs:string"></xs:element>
+		      <xs:element name="valid" type="xs:int"></xs:element>
+		      <xs:element name="soFile" type="xs:string"></xs:element>
+		      <xs:element name="name" type="xs:string"></xs:element>
+		      <xs:element name="type" type="xs:string"></xs:element>
+		      <xs:element name="host" type="xs:string"></xs:element>
+		      <xs:element name="version" type="xs:string"></xs:element>
+		      <xs:element name="author" type="xs:string"></xs:element>
+		      <xs:element name="vendor" type="xs:string"></xs:element>
+		      <xs:element name="serialNumber" type="xs:string"></xs:element></xs:sequence>
+    	</xs:complexType>
+    </xs:element>
+    <xs:element name="resolve">
+    	<xs:complexType>
+    	 <xs:sequence><xs:element name="serviceID" type="xs:string"></xs:element></xs:sequence>
+    	</xs:complexType>
+    </xs:element>
+    <xs:element name="resolveResponse">
+    	<xs:complexType>
+    	 <xs:sequence><xs:element name="status" type="xs:int"></xs:element></xs:sequence>
+    	</xs:complexType>
+    </xs:element>
+    <xs:element name="update">
+    	<xs:complexType>
+    	 <xs:sequence><xs:element name="serviceID" type="xs:string"></xs:element>
+    		      <xs:element name="CRC" type="xs:int"></xs:element>
+    		      <xs:element name="Param" type="xs:hexBinary"></xs:element></xs:sequence>
+    	</xs:complexType>
+    </xs:element>
+    <xs:element name="updateResponse">
+    	<xs:complexType>
+    	 <xs:sequence><xs:element name="status" type="xs:int"></xs:element></xs:sequence>
+    	</xs:complexType>
+    </xs:element>
+    <xs:element name="">
+    	<xs:complexType>
+    	 <xs:sequence><xs:element name="in" type="xs:string"></xs:element></xs:sequence>
+    	</xs:complexType>
+    </xs:element>
+    <xs:element name="Response">
+    	<xs:complexType>
+    	 <xs:sequence><xs:element name="out" type="xs:string"></xs:element></xs:sequence>
+    	</xs:complexType>
+    </xs:element>
+    <xs:element name="ListAll">
+    	<xs:complexType>
+    	 <xs:sequence><xs:element name="in" type="xs:string"></xs:element></xs:sequence>
+    	</xs:complexType>
+    </xs:element>
+    <xs:element name="ListAllResponse">
+    	<xs:complexType>
+    	 <xs:sequence><xs:element name="services" type="xs:string" minOccurs="0" maxOccurs="unbounded"></xs:element>
+    		      <xs:element name="status" type="xs:int"></xs:element></xs:sequence>
+    	</xs:complexType>
+    </xs:element>
+      	</xs:schema>        
+</wsdl:types>
+<wsdl:message name="installRequest">
+  <wsdl:part element="tns:install" name="parameters"/>
+</wsdl:message>
+<wsdl:message name="installResponse">
+  <wsdl:part element="tns:installResponse" name="status"/>
+</wsdl:message>
+<wsdl:message name="uninstallRequest">
+	<wsdl:part name="parameters" element="tns:uninstall"></wsdl:part>
+</wsdl:message>
+<wsdl:message name="uninstallResponse">
+	<wsdl:part name="status" element="tns:uninstallResponse"></wsdl:part>
+</wsdl:message>
+<wsdl:message name="startRequest">
+	<wsdl:part name="parameters" element="tns:start"></wsdl:part>
+</wsdl:message>
+<wsdl:message name="startResponse">
+	<wsdl:part name="status" element="tns:startResponse"></wsdl:part>
+</wsdl:message>
+<wsdl:message name="stopRequest">
+	<wsdl:part name="parameters" element="tns:stop"></wsdl:part>
+</wsdl:message>
+<wsdl:message name="stopResponse">
+	<wsdl:part name="status" element="tns:stopResponse"></wsdl:part>
+</wsdl:message>
+<wsdl:message name="getStateRequest">
+	<wsdl:part name="parameters" element="tns:getState"></wsdl:part>
+</wsdl:message>
+<wsdl:message name="getStateResponse">
+	<wsdl:part name="status" element="tns:getStateResponse"></wsdl:part>
+</wsdl:message>
+<wsdl:message name="resolveRequest">
+	<wsdl:part name="parameters" element="tns:resolve"></wsdl:part>
+</wsdl:message>
+<wsdl:message name="resolveResponse">
+	<wsdl:part name="status" element="tns:resolveResponse"></wsdl:part>
+</wsdl:message>
+<wsdl:message name="updateRequest">
+	<wsdl:part name="parameters" element="tns:update"></wsdl:part>
+</wsdl:message>
+<wsdl:message name="updateResponse">
+	<wsdl:part name="status" element="tns:updateResponse"></wsdl:part>
+</wsdl:message>
+<wsdl:message name="Response">
+	<wsdl:part name="parameters" element="tns:Response"></wsdl:part>
+</wsdl:message>
+<wsdl:message name="ListAllRequest">
+	<wsdl:part name="parameters" element="tns:ListAll"></wsdl:part>
+</wsdl:message>
+<wsdl:message name="ListAllResponse">
+	<wsdl:part name="parameters" element="tns:ListAllResponse"></wsdl:part>
+</wsdl:message>
+<wsdl:portType name="life-cycle-manager">
+  <wsdl:operation name="install">
+    <wsdl:input message="tns:installRequest"
+    			  wsa:Action="http://www.ws4d.org/services/life-cycle-manager/installRequest"/>
+    <wsdl:output message="tns:installResponse"
+    				wsa:Action="http://www.ws4d.org/services/life-cycle-manager/installRequestResponse"/>
+  </wsdl:operation>
+  <wsdl:operation name="uninstall">
+  	<wsdl:input message="tns:uninstallRequest"
+  				wsa:Action="http://www.ws4d.org/services/life-cycle-manager/uninstallRequest"></wsdl:input>
+  	<wsdl:output message="tns:uninstallResponse"
+  				wsa:Action="http://www.ws4d.org/services/life-cycle-manager/uninstallRequestResponse"></wsdl:output>
+  </wsdl:operation>
+  <wsdl:operation name="start">
+  	<wsdl:input message="tns:startRequest"
+  				wsa:Action="http://www.ws4d.org/services/life-cycle-manager/startRequest"></wsdl:input>
+  	<wsdl:output message="tns:startResponse"
+  				wsa:Action="http://www.ws4d.org/services/life-cycle-manager/startRequestResponse"></wsdl:output>
+  </wsdl:operation>
+  <wsdl:operation name="stop">
+  	<wsdl:input message="tns:stopRequest"
+  				wsa:Action="http://www.ws4d.org/services/life-cycle-manager/stopRequest"></wsdl:input>
+  	<wsdl:output message="tns:stopResponse"
+  					wsa:Action="http://www.ws4d.org/services/life-cycle-manager/stopRequestResponse"></wsdl:output>
+  </wsdl:operation>
+  <wsdl:operation name="getState">
+  	<wsdl:input message="tns:getStateRequest"
+  				wsa:Action="http://www.ws4d.org/services/life-cycle-manager/getStateRequest"></wsdl:input>
+  	<wsdl:output message="tns:getStateResponse"
+  				 wsa:Action="http://www.ws4d.org/services/life-cycle-manager/getStateRequestResponse"></wsdl:output>
+  </wsdl:operation>
+  <wsdl:operation name="resolve">
+  	<wsdl:input message="tns:resolveRequest"
+  				wsa:Action="http://www.ws4d.org/services/life-cycle-manager/resolveRequest"></wsdl:input>
+  	<wsdl:output message="tns:resolveResponse"
+  				wsa:Action="http://www.ws4d.org/services/life-cycle-manager/resolveRequestResponse"></wsdl:output>
+  </wsdl:operation>
+  <wsdl:operation name="update">
+  	<wsdl:input message="tns:updateRequest"
+  				wsa:Action="http://www.ws4d.org/services/life-cycle-manager/updateRequest"></wsdl:input>
+  	<wsdl:output message="tns:updateResponse"
+  				wsa:Action="http://www.ws4d.org/services/life-cycle-manager/updateRequestResponse"></wsdl:output>
+  </wsdl:operation>
+  <wsdl:operation name="ListAll">
+  	<wsdl:input message="tns:ListAllRequest"
+  				wsa:Action="http://www.ws4d.org/services/life-cycle-manager/ListAllRequest"></wsdl:input>
+  	<wsdl:output message="tns:ListAllResponse"
+  				wsa:Action="http://www.ws4d.org/services/life-cycle-manager/ListAllRequestResponse"></wsdl:output>
+  </wsdl:operation>
+</wsdl:portType>
+<wsdl:binding name="life-cycle-manager" type="tns:life-cycle-manager">
+ <wsoap12:binding style="document" transport="http://schemas.xmlsoap.org/soap/http" />
+ <wsp:PolicyReference URI="#LifeCycleManager" wsdl:required="true" />
+      <wsdl:operation name="install">
+      		<wsoap12:operation soapAction="http://www.ws4d.org/services/life-cycle-manager/installRequest"/>
+      		<wsdl:input><wsoap12:body use="literal" /></wsdl:input>
+      		<wsdl:output><wsoap12:body use="literal" /></wsdl:output>
+      </wsdl:operation>
+	<wsdl:operation name="uninstall">
+		<wsoap12:operation	soapAction="http://www.ws4d.org/services/life-cycle-manager/uninstallRequest"/>
+		<wsdl:input><wsoap12:body use="literal" /></wsdl:input>
+		<wsdl:output><wsoap12:body use="literal" /></wsdl:output>
+	</wsdl:operation>
+	<wsdl:operation name="start">
+		<wsoap12:operation	soapAction="http://www.ws4d.org/services/life-cycle-manager/startRequest"/>
+		<wsdl:input><wsoap12:body use="literal" /></wsdl:input>
+		<wsdl:output><wsoap12:body use="literal" /></wsdl:output>
+	</wsdl:operation>
+	<wsdl:operation name="stop">
+		<wsoap12:operation	soapAction="http://www.ws4d.org/services/life-cycle-manager/stopRequest"/>
+		<wsdl:input><wsoap12:body use="literal" /></wsdl:input>
+		<wsdl:output><wsoap12:body use="literal" /></wsdl:output>
+	</wsdl:operation>
+	<wsdl:operation name="getState">
+		<wsoap12:operation	soapAction="http://www.ws4d.org/services/life-cycle-manager/getStateRequest"/>
+		<wsdl:input><wsoap12:body use="literal" /></wsdl:input>
+		<wsdl:output><wsoap12:body use="literal" /></wsdl:output>
+	</wsdl:operation>
+	<wsdl:operation name="resolve">
+		<wsoap12:operation	soapAction="http://www.ws4d.org/services/life-cycle-manager/resolveRequest"/>
+		<wsdl:input><wsoap12:body use="literal" /></wsdl:input>
+		<wsdl:output><wsoap12:body use="literal" /></wsdl:output>
+	</wsdl:operation>
+	<wsdl:operation name="update">
+		<wsoap12:operation	soapAction="http://www.ws4d.org/services/life-cycle-manager/updateRequest"/>
+		<wsdl:input><wsoap12:body use="literal" /></wsdl:input>
+		<wsdl:output><wsoap12:body use="literal" /></wsdl:output>
+	</wsdl:operation>
+	<wsdl:operation name="ListAll">
+		<wsoap12:operation	soapAction="http://www.ws4d.org/services/life-cycle-manager/ListAllRequest"/>
+		<wsdl:input><wsoap12:body use="literal" /></wsdl:input>
+		<wsdl:output><wsoap12:body use="literal" /></wsdl:output>
+	</wsdl:operation>
+</wsdl:binding>
+<wsdl:service name="life-cycle-manager">
+  <wsdl:port name="life-cycle-manager" binding="tns:life-cycle-manager">
+    <wsoap12:address location=""/>
+  </wsdl:port>
+</wsdl:service>
+</wsdl:definitions>

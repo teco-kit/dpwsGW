@@ -1,0 +1,98 @@
+# Copyright (C) 2007  University of Rostock
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License as
+# published by the Free Software Foundation; either version 2 of the
+# License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+# 02110-1301 USA.
+
+# DPWS CMake file - 20.08.2007
+#
+# Top level cmake file of the dpws example project.
+#
+# Author: S.Feldhorst <sascha.feldhorst@udo.edu>
+
+CMAKE_MINIMUM_REQUIRED(VERSION 2.4.0 FATAL_ERROR)
+
+IF(COMMAND CMAKE_POLICY)
+	CMAKE_POLICY(SET CMP0003 NEW)
+ENDIF(COMMAND CMAKE_POLICY)
+
+################################################################################
+# Edit the parts below to use this cmake bild environment for your own projects
+################################################################################
+
+# Name of the project, language
+PROJECT(AC C)
+
+# Path to gsoap installation
+SET(GSOAP_PATH "@GSOAP_PATH@" CACHE PATH "Path where gSOAP is installed")
+
+# Path to dpws installation
+SET(DPWS_PATH "@CMAKE_INSTALL_PREFIX@" CACHE PATH "Path where WS4D-gSOAP is installed")
+
+################################################################################
+# edit the parts below only if you know what you do !
+################################################################################
+
+# Some cmake specific settings.
+SET(CMAKE_COLOR_MAKEFILE ON) # For a colorful makefile output.
+SET(CMAKE_INCLUDE_CURRENT_DIR ON) # ...
+SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake-modules/) # Include own modules.
+
+# Find the gSOAP specific programs and source files.
+FIND_PACKAGE(GSOAP REQUIRED)
+SET(GSOAP_PATH ${GSOAP_PATH_FOUND} CACHE PATH "Path where gSOAP is installed" FORCE)
+
+FIND_PACKAGE(DPWS REQUIRED client device)
+SET(DPWS_PATH ${DPWS_PATH_FOUND} CACHE PATH "Path where WS4D-gSOAP is installed" FORCE)
+
+# Search threading library.
+FIND_PACKAGE(Threads REQUIRED)
+
+# Set the output paths.
+SET(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
+
+SET(DPWS_GENERATED_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/src/gen)
+
+SET(DPWS_INCLUDES ${DPWS_INCLUDE_DIR} ${DPWS_GENERATED_INCLUDE_DIR})
+
+# Read the current build version.
+FILE(READ ${CMAKE_SOURCE_DIR}/buildversion BUILDVERSION)
+MESSAGE(STATUS "Buildversion: ${BUILDVERSION}")
+
+# Set a default build type for single-configuration
+# CMake generators if no build type is set.
+IF(NOT MSVC)
+  IF(NOT CMAKE_CONFIGURATION_TYPES AND NOT CMAKE_BUILD_TYPE)
+    MESSAGE(STATUS "Build type not set, defaulting to DEBUG!")
+    SET(CMAKE_BUILD_TYPE Debug)
+  ENDIF(NOT CMAKE_CONFIGURATION_TYPES AND NOT CMAKE_BUILD_TYPE)
+ENDIF(NOT MSVC)
+
+SET (CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -DDEBUG")
+
+IF (CMAKE_COMPILER_IS_GNUCC)
+    SET(CMAKE_C_FLAGS_MINSIZEREL "${CMAKE_C_FLAGS_MINSIZEREL} -ffunction-sections -fdata-sections -Wl,--gc-sections -Wl,--print-gc-sections")
+ENDIF (CMAKE_COMPILER_IS_GNUCC)
+
+SET (CUSTOM_DATABINDING OFF CACHE BOOL "Toggle if a custom databinding should be used")
+
+# Activate IPV6 support (default: off)
+OPTION (WITH_IPV6 "Toggle IPv6 support" OFF)
+
+IF(WITH_IPV6)
+	ADD_DEFINITIONS ( "-DWITH_IPV6")
+ENDIF(WITH_IPV6)
+
+# tell cmake to process CMakeLists.txt in that subdirectory
+ADD_SUBDIRECTORY(src)

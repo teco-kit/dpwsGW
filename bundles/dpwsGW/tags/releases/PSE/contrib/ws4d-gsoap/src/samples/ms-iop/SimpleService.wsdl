@@ -1,0 +1,102 @@
+<wsdl:definitions
+    targetNamespace="http://schemas.example.org/SimpleService"
+    xmlns:tns="http://schemas.example.org/SimpleService"
+    xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdp="http://docs.oasis-open.org/ws-dd/dpws/2008/09"
+    xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy"
+    xmlns:wsoap="http://schemas.xmlsoap.org/wsdl/soap12/"
+    xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"
+    xmlns:wsx="http://schemas.xmlsoap.org/ws/2004/09/mex">
+    
+    <wsp:Policy wsu:Id="Simple">
+        <wsdp:Profile />
+    </wsp:Policy>
+    
+    <wsdl:types>
+        <xs:schema
+            targetNamespace="http://schemas.example.org/SimpleService"
+            xmlns:tns="http://schemas.example.org/SimpleService"
+            xmlns:xs="http://www.w3.org/2001/XMLSchema"
+            elementFormDefault="qualified"
+            blockDefault="#all">
+            <xs:element name="OneWay" type="tns:OneWayType" />
+            <xs:complexType name="OneWayType">
+                <xs:sequence>
+                    <xs:element name="Param" type="xs:int" />
+                    <xs:any minOccurs="0" maxOccurs="unbounded"
+                        namespace="##other" processContents="lax" />
+                </xs:sequence>
+                <xs:anyAttribute namespace="##other" processContents="lax" />
+            </xs:complexType>
+            <xs:element name="TwoWayRequest" type="tns:TwoWayType" />
+            <xs:complexType name="TwoWayType">
+                <xs:sequence>
+                    <xs:element name="X" type="xs:int" />
+                    <xs:element name="Y" type="xs:int" />
+                    <xs:any minOccurs="0" maxOccurs="unbounded"
+                        namespace="##other" processContents="lax" />
+                    </xs:sequence>
+                <xs:anyAttribute namespace="##other" processContents="lax" />
+            </xs:complexType>
+            <xs:element name="TwoWayResponse" type="tns:TwoWayResponseType" />
+            <xs:complexType name="TwoWayResponseType">
+                <xs:sequence>
+                    <xs:element name="Sum" type="xs:int" />
+                    <xs:any minOccurs="0" maxOccurs="unbounded"
+                        namespace="##other" processContents="lax" />
+                </xs:sequence>
+                <xs:anyAttribute namespace="##other" processContents="lax" />
+            </xs:complexType>
+        </xs:schema>
+    </wsdl:types>
+
+    <wsdl:message name="OneWayMessageIn">
+        <wsdl:part name="body" element="tns:OneWay" />
+    </wsdl:message>
+    <wsdl:message name="TwoWayMessageIn">
+        <wsdl:part name="body" element="tns:TwoWayRequest" />
+    </wsdl:message>
+    <wsdl:message name="TwoWayMessageOut">
+        <wsdl:part name="body" element="tns:TwoWayResponse" />
+    </wsdl:message>
+    
+    <wsdl:portType name="SimpleService">
+        <wsdl:operation name="OneWay">
+            <wsdl:input
+                message="tns:OneWayMessageIn"
+                wsa:Action="http://schemas.example.org/SimpleService/OneWay"/>
+        </wsdl:operation>
+        <wsdl:operation name="TwoWay">
+            <wsdl:input
+                message="tns:TwoWayMessageIn"
+                wsa:Action="http://schemas.example.org/SimpleService/TwoWayRequest"/>
+            <wsdl:output
+                message="tns:TwoWayMessageOut"
+                wsa:Action="http://schemas.example.org/SimpleService/TwoWayResponse"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    
+    <wsdl:binding name="SimpleServiceSoap12Binding" type="tns:SimpleService">
+        <wsoap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http" />
+        <wsp:PolicyReference URI="#Simple" wsdl:required="true" />
+        <wsdl:operation name="OneWay">
+            <wsoap:operation
+                soapAction="http://schemas.example.org/SimpleService/OneWay" />
+                <wsdl:input>
+                    <wsoap:body use="literal" />
+                </wsdl:input>
+            </wsdl:operation>
+        <wsdl:operation name="TwoWay">
+            <wsoap:operation
+                soapAction="http://schemas.example.org/SimpleService/TwoWayRequest" />
+            <wsdl:input>
+                <wsoap:body use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <wsoap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+        
+</wsdl:definitions>

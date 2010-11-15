@@ -1,0 +1,14 @@
+* Maintainers:
+	Elmar Zeeb 			<elmar.zeeb@uni-rostock.de>
+	Steffen Prüter 			<steffen.prueter@uni-rostock.de>
+
+* CMake based build system:
+	Sascha Feldhorst 		<sascha.feldhorst@uni-dortmund.de>
+		
+* Tools in src/tools:
+	Guido Moritz			<guido.moritz@uni-rostock.de>
+	Christian Fabian		<christian.fabian@uni-rostock.de>
+	Christian Hess			<christian.hess@uni-rostock.de>
+
+* WS-Security support:
+	Stephan 			<poehlsen@itm.uni-luebeck.de>

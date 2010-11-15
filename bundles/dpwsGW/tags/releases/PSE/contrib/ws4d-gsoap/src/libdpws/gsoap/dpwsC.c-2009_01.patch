@@ -1,0 +1,29 @@
+--- gen/dpwsC.c.orig	2009-02-23 06:49:21.000000000 +0100
++++ gen/dpwsC.c	2009-02-23 06:59:43.000000000 +0100
+@@ -6174,9 +6174,9 @@
+ 		soap_set_attr(soap, "-anyAttribute", a->__anyAttribute);
+ 	if (soap_element_begin_out(soap, tag, soap_embedded_id(soap, id, a, SOAP_TYPE_wse__NotifyTo), type))
+ 		return soap->error;
+-	if (soap_out_string(soap, "wse:Address", -1, &a->Address, ""))
++	if (soap_out_string(soap, "wsa:Address", -1, &a->Address, ""))
+ 		return soap->error;
+-	if (soap_out_PointerTowsa__ReferenceParametersType(soap, "wse:ReferenceParameters", -1, &a->ReferenceParameters, ""))
++	if (soap_out_PointerTowsa__ReferenceParametersType(soap, "wsa:ReferenceParameters", -1, &a->ReferenceParameters, ""))
+ 		return soap->error;
+ 	if (soap_out_PointerTowsa__MetadataType(soap, "wsa:Metadata", -1, &a->wsa__Metadata, ""))
+ 		return soap->error;
+@@ -6215,12 +6215,12 @@
+ 		for (;;)
+ 		{	soap->error = SOAP_TAG_MISMATCH;
+ 			if (soap_flag_Address && (soap->error == SOAP_TAG_MISMATCH || soap->error == SOAP_NO_TAG))
+-				if (soap_in_string(soap, "wse:Address", &a->Address, "xsd:string"))
++				if (soap_in_string(soap, "wsa:Address", &a->Address, "xsd:string"))
+ 				{	soap_flag_Address--;
+ 					continue;
+ 				}
+ 			if (soap_flag_ReferenceParameters && soap->error == SOAP_TAG_MISMATCH)
+-				if (soap_in_PointerTowsa__ReferenceParametersType(soap, "wse:ReferenceParameters", &a->ReferenceParameters, "wsa:ReferenceParametersType"))
++				if (soap_in_PointerTowsa__ReferenceParametersType(soap, "wsa:ReferenceParameters", &a->ReferenceParameters, "wsa:ReferenceParametersType"))
+ 				{	soap_flag_ReferenceParameters--;
+ 					continue;
+ 				}

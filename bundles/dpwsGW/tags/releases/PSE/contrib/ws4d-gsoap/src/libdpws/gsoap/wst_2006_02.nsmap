@@ -1,0 +1,44 @@
+#include "dpwsH.h"
+SOAP_NMAC struct Namespace wst_namespaces[] =
+{
+        {"SOAP-ENV", "http://www.w3.org/2003/05/soap-envelope", "http://www.w3.org/*/soap-envelope", NULL},
+        {"SOAP-ENC", "http://www.w3.org/2003/05/soap-encoding", "http://www.w3.org/*/soap-encoding", NULL},
+        {"xsi", "http://www.w3.org/2001/XMLSchema-instance", "http://www.w3.org/*/XMLSchema-instance", NULL},
+        {"xsd", "http://www.w3.org/2001/XMLSchema", "http://www.w3.org/*/XMLSchema", NULL},
+        {"wsm", "http://schemas.xmlsoap.org/ws/2004/09/mex", NULL, NULL},
+        {"wsdp", "http://schemas.xmlsoap.org/ws/2006/02/devprof", NULL, NULL},
+        {"wsa", "http://schemas.xmlsoap.org/ws/2004/08/addressing", NULL, NULL},
+        {"wsd", "http://schemas.xmlsoap.org/ws/2005/04/discovery", NULL, NULL},
+        {"wst", "http://schemas.xmlsoap.org/ws/2004/09/transfer", NULL, NULL},
+        {NULL, NULL, NULL, NULL}
+};
+
+/******************************************************************************\
+ *                                                                            *
+ * Service Operations                                                         *
+ *                                                                            *
+\******************************************************************************/
+
+
+SOAP_FMAC5 int SOAP_FMAC6 __wst__Get(struct soap*, struct _wst__EmptyMessage *wst__Get, struct _wsm__Metadata *__GetResponseMsg);
+
+/******************************************************************************\
+ *                                                                            *
+ * Stubs                                                                      *
+ *                                                                            *
+\******************************************************************************/
+
+
+SOAP_FMAC5 int SOAP_FMAC6 soap_call___wst__Get(struct soap *soap, const char *soap_endpoint, const char *soap_action, struct _wst__EmptyMessage *wst__Get, struct _wsm__Metadata *__GetResponseMsg);
+
+/******************************************************************************\
+ *                                                                            *
+ * Skeletons                                                                  *
+ *                                                                            *
+\******************************************************************************/
+
+SOAP_FMAC5 int SOAP_FMAC6 hosting_serve(struct soap*);
+
+SOAP_FMAC5 int SOAP_FMAC6 hosting_serve_request(struct soap*);
+
+SOAP_FMAC5 int SOAP_FMAC6 soap_serve___wst__Get(struct soap*);

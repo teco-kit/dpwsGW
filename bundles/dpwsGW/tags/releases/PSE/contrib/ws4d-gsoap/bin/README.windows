@@ -1,0 +1,3 @@
+If you don't want to install cygwin, you can put the binaries of the
+build dependencies into this folder. The build system will look for
+the binaries here first.
