@@ -1,0 +1,67 @@
+«IMPORT wsdl11»
+
+
+«EXTENSION edu::teco::dpws::generator::templates::wsdl»
+
+«DEFINE debug FOR TService»
+«FILE "debug_"+name+".c"»
+
+#include "«name»_operations.h"
+#ifndef asm
+#define asm __asm__
+#endif
+#include <GDB.h>
+#include "«getNSPrefix()»_types.h"
+
+#include <sendrcv.h>
+«FOREACH port.getPortType().operation AS op»
+«EXPAND include FOREACH op.input.getMessage().part.element»
+«EXPAND include FOREACH op.output.getMessage().part.element»
+«ENDFOREACH»
+
+
+void debug_print_«name»_input(int op_id, char *buf)
+{
+struct READER_STRUCT* reader=read_bits_bufreader_stack_new((u_char *)buf);
+switch(op_id)
+{
+«FOREACH port.getPortType().operation AS op»
+	case OP_«name»_«op.name»:
+	{
+	  «EXPAND parse FOREACH op.input.getMessage().part.element»
+	  break;
+	}
+«ENDFOREACH»
+}
+
+}
+
+void debug_print_«name»_output(enum «name»_operations op_id, char *buf)
+{
+struct READER_STRUCT* reader=read_bits_bufreader_stack_new((u_char *)buf);
+switch(op_id)
+{
+«FOREACH port.getPortType().operation AS op»
+	case OP_«name»_«op.name»:
+	{
+	  «EXPAND parse FOREACH op.output.getMessage().part.element»
+	  break;
+	}
+«ENDFOREACH»
+}
+
+}
+«ENDFILE»
+«ENDDEFINE»
+
+«DEFINE parse FOR type::QName»
+	  {
+	     «localPart»_t dom;
+         «localPart»_bin2dom_run(reader,&dom);
+	     GDBCALL(print dom);
+	  }
+«ENDDEFINE»
+
+«DEFINE include FOR type::QName»
+     #include   "«localPart»_bin2dom.h"
+«ENDDEFINE»

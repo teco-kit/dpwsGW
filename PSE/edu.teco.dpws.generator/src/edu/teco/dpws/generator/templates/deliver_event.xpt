@@ -1,0 +1,130 @@
+«IMPORT wsdl11»
+«EXTENSION edu::teco::dpws::generator::templates::wsdl»
+
+«DEFINE deliverEvent FOR TService»
+«FILE name+"_deliver_event.c"»
+/* Generated file */   
+//#include "«name».nsmap"
+#include <ws4d-gSOAP/dpws_device.h>
+#include <bitsio/read_bits_buf.h>
+#include <ws4d-gSOAP/dpwsH.h>
+#include "«name»_operations.h"
+#include <sendrcv.h>
+#include <assert.h>
+extern char * DPWS_SUBS_END_FAILURE; //TODO missing decleration in ws4d header
+
+
+«EXPAND include FOREACH port.getPortType().operation.select(e|e.input==null)-»
+struct dpws_s *_device;
+
+enum «name»_operations «name»_get_opid(char *soap_action_uri)
+{
+  «EXPAND return_op(name,"soap_action_uri") FOREACH port.getPortType().operation-»
+  else
+  return -1;
+}
+
+char * «name»_get_opuri(enum «name»_operations op)
+{
+  switch(op)
+  {
+  «EXPAND return_action_case(name,"soap_action_uri") FOREACH port.getPortType().operation-»
+  default:
+  return NULL;
+  }
+}
+ 
+
+void
+«name»_event (enum «name»_operations op , void *_device, char * buf, size_t buf_len)
+{
+  struct soap soap;
+  struct ws4d_subscription *subs, *next;
+
+
+  struct dpws_s *device = (struct dpws_s *)_device; 
+
+  soap_init (&soap);
+  soap_set_namespaces(&soap, device->hosting_handle->namespaces); //TODO:Check if correct
+  //soap_set_namespaces (&soap, namespaces);
+  {
+  char *soap_action_uri=«name»_get_opuri(op);
+  if(!soap_action_uri) return;
+
+  {
+ 
+  dpws_for_each_subs (subs, next, _device,
+                      soap_action_uri)
+  {
+    
+    if(WS4D_OK!=
+    dpws_header_gen_event(&soap,device,soap_action_uri,subs,sizeof(struct SOAP_ENV__Header)))
+    	continue;
+
+       
+    soap.omode|=SOAP_IO_CHUNK;
+    if (   soap_connect(&soap, dpws_subsm_get_deliveryPush_address (device, subs), soap_action_uri)
+        || soap_envelope_begin_out(&soap)
+        || soap_putheader(&soap)
+        || soap_body_begin_out(&soap) )
+    {
+       soap_closesock(&soap);
+       soap_print_fault (&soap, stderr);
+       dpws_end_subscription(_device,subs,DPWS_SUBS_END_FAILURE,NULL);
+    }
+    
+   {
+      struct READER_STRUCT* reader=read_bits_bufreader_stack_new(buf,buf_len);
+     switch(op)
+     {
+     «FOREACH port.getPortType().operation.select(e|e.input!=null) AS op-» «REM» put in front as  optimization for single event source«ENDREM»
+      case OP_«name»_«op.name»:
+      «ENDFOREACH»
+      assert(0&&"unreachable"); //optimized for compiler if NDEBUG
+      «EXPAND event(name) FOREACH port.getPortType().operation.select(e|e.input==null)-»
+     }
+   }
+    if (   soap_body_end_out(&soap)
+        || soap_envelope_end_out(&soap)
+        || soap_end_send(&soap) )
+    {
+       soap_closesock(&soap);
+       soap_print_fault (&soap, stderr);
+    }
+    soap_end (&soap);
+  }
+}
+  soap_done (&soap);
+  return;
+}   
+  }
+
+
+«ENDFILE»
+«ENDDEFINE»
+
+«DEFINE return_op(String service,String in) FOR TOperation»
+ if(0==strcmp(«in»,"«output.anyAttribute.toList().select(e|e.feature.name=="Action").first().value»"))
+ 	return OP_«service»_«name»;
+«ENDDEFINE»»
+
+«DEFINE return_action_case(String service,String out) FOR TOperation»
+ case OP_«service»_«name»:
+	return "«output.anyAttribute.toList().select(e|e.feature.name=="Action").first().value»";
+«ENDDEFINE»»
+
+«DEFINE include FOR TOperation»
+  «FOREACH this.output.getMessage().part.element AS arg»
+  #include "«arg.localPart»_bin2sax.h"
+  «ENDFOREACH»
+«ENDDEFINE»
+
+«DEFINE event(String service) FOR TOperation»
+ case OP_«service»_«name»:
+      «FOREACH this.output.getMessage().part.element AS arg»
+      {
+       «arg.localPart»_bin2sax_run(reader,&soap);
+      }
+      «ENDFOREACH»
+ break;
+«ENDDEFINE»
