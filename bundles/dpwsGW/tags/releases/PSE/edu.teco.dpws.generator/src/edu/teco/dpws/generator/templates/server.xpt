@@ -1,0 +1,199 @@
+«IMPORT wsdl11»
+
+
+«EXTENSION edu::teco::dpws::generator::templates::wsdl»
+«EXTENSION org::eclipse::xtend::util::stdlib::globalvar»
+
+«DEFINE Root FOR TDefinitions»
+«EXPAND service FOREACH service »
+«REM» «EXPAND edu::teco::dpws::generator::templates::domdebug::debug FOREACH service»«ENDREM»
+«EXPAND deliver_event::deliverEvent FOREACH service»
+«ENDDEFINE»
+
+«DEFINE service FOR TService»
+«storeGlobalVar("WSDLInMessageTypes",port.getPortType().operation.select(e|e.input!=null).input.getMessage().part.element.localPart.toSet())»
+«storeGlobalVar("WSDLOutMessageTypes",port.getPortType().operation.select(e|e.output!=null).output.getMessage().part.element.localPart.toSet())»
+
+«FILE name+"_operations.h"»
+
+#ifndef «name.toUpperCase()»_OPERATIONS_H
+#define «name.toUpperCase()»_OPERATIONS_H
+enum «name»_operations
+ {
+ «FOREACH port.getPortType().operation AS op SEPARATOR ","»OP_«name»_«op.name»«ENDFOREACH»
+ };
+#endif //«name.toUpperCase()»_OPERATIONS_H
+«ENDFILE»
+
+«FILE name+"Server.c"»
+
+enum operations
+{
+ «FOREACH port.getPortType().operation AS op SEPARATOR ","»
+   OP_«op.name»
+ «ENDFOREACH»
+};
+ 
+#include <ws4d-gSOAP/dpwsH.h>
+#include <ws4d-gSOAP/ws-addressing.h>
+#include <stdsoap2.h>
+
+#include <sendrcv.h>
+
+	«EXPAND call FOREACH port.getPortType().operation.select(e|e.input!=null)-»
+	«EXPAND server-»
+«ENDFILE»
+«ENDDEFINE»
+
+«DEFINE server FOR TService»
+int  «name»_serve_request(struct soap *soap) //TODO: pass device context
+{
+	soap_peek_element(soap);
+	«FOREACH port AS p»
+	/* Port «p.name» */
+	«EXPAND dispatch(p) FOREACH port.getPortType().operation.select(e|e.input!=null)-»
+	«ENDFOREACH»
+	return soap->error = SOAP_NO_METHOD;
+}
+«ENDDEFINE»
+
+«DEFINE dispatch(TPort port) FOR TOperation»
+	if (
+	(soap->action && !strcmp(soap->action, 
+	«IF !input.anyAttribute.toList().select(e|e.feature.name=="Action").isEmpty-»
+	"«input.anyAttribute.toList().select(e|e.feature.name=="Action").first().value»"
+	«ELSE-»
+	"«input.message.namespaceURI»/«port.name»Port/«input.message.localPart»"
+	«ENDIF-»
+	))
+
+	«IF !input.getMessage().part.isEmpty»
+	 ||
+	 (! soap->action && !soap_match_tag(soap, soap->tag, 
+	 "«getNSPrefix()»:«input.getMessage().part.first().element.localPart»")
+	 )
+	«ENDIF»
+	«REM» TODO:Add SOAP:action vs. wsa:action ??«ENDREM»
+	)
+		return soap_serve_«name»(soap);
+«ENDDEFINE»
+
+«DEFINE call FOR TOperation»
+  «FOREACH this.input.getMessage().part.element AS arg»
+  #include "«arg.localPart»_sax2bin.h"
+  «ENDFOREACH»
+  «FOREACH this.output.getMessage().part.element AS arg»
+  #include "«arg.localPart»_bin2sax.h"
+  «ENDFOREACH»
+  
+static int soap_serve_«name»(struct soap *soap)  //TODO: pass device context
+{
+	int op_id=OP_«name»;
+	int service_id=0; //TODO
+	struct dpws_s *device=NULL;
+	
+«IF  !this.input.getMessage().part.element.isEmpty»
+    {  	  
+   	  char sendbuf[256];
+   	  memset(sendbuf,0xff,sizeof(sendbuf));
+      struct WRITER_STRUCT* writer=write_bits_bufwriter_stack_new(sendbuf,sizeof(sendbuf));
+  «FOREACH this.input.getMessage().part.element AS arg»
+  	  {
+       if («arg.localPart»_sax2bin_run(soap,writer)<0) return soap->error;
+  	  }
+  «ENDFOREACH»
+      send_buf(device,service_id,op_id,soap,sendbuf,write_buf_finish(writer));
+    }
+«ELSE»
+    send_buf(device,service_id,op_id,soap,NULL,0);
+«ENDIF»
+
+«REM»TODO: Error Handling«ENDREM»
+
+  /* prepare response */
+	{
+		const char* To = wsa_header_get_ReplyTo(soap);
+		char * MessageId = wsa_header_get_MessageId(soap);
+		char * Action = «IF !output.anyAttribute.toList().select(e|e.feature.name=="Action").isEmpty-»
+	     					"«output.anyAttribute.toList().select(e|e.feature.name=="Action").first().value»"
+						«ELSE-»
+							NULL /*TODO: Corrent value */
+						«ENDIF-»;
+		
+
+		soap->omode |= SOAP_IO_CHUNK;
+
+		if (!To || (0 == strcmp(To, wsa_anonymousURI))) {
+			To = wsa_anonymousURI;
+		} else {
+
+		}
+
+		if (To!=wsa_anonymousURI)  // no strcmp needed -> s.a.
+		{
+			 struct soap *reply_soap = soap_copy(soap);
+			      if (reply_soap)
+			      { soap_copy_stream(reply_soap, soap);
+			        soap_clr_omode(reply_soap, SOAP_ENC_MIME | SOAP_ENC_DIME | SOAP_ENC_MTOM);
+			        soap->socket = SOAP_INVALID_SOCKET; /* prevents close */
+			        if (soap_connect(soap, To, Action)) /*Todo: can this be delayed ??*/
+			        	return soap->error;
+			        soap_send_empty_response(reply_soap, SOAP_OK);  /* HTTP ACCEPTED */
+			        soap_closesock(reply_soap);
+			        soap_end(reply_soap);
+			        soap_free(reply_soap);
+			        /*
+			        data->fresponse = soap->fresponse;
+			        soap->fresponse = soap_wsa_response;
+			        response will be a POST */
+			      }
+			      else return soap->error;
+		}
+		else
+		{
+			if(soap_response(soap, SOAP_OK)!=SOAP_OK)
+			   return soap->error;
+		}
+
+		wsa_header_gen_response(soap, NULL, To, Action, MessageId,
+				sizeof(struct SOAP_ENV__Header));
+	}
+
+   
+   
+   if ( soap_envelope_begin_out(soap)
+       || soap_putheader(soap)
+       || soap_body_begin_out(soap) )
+   {
+    	return soap->error;
+   }
+   «IF  !this.output.getMessage().part.element.isEmpty»
+   {
+      char * buf;
+      ssize_t len=rcv_buf(device,service_id,op_id,soap,&buf);
+      
+      if(len<0)
+      {
+        soap->error=soap_receiver_fault(soap,"No reply from Node",NULL);
+        return soap->error;
+      }
+      struct READER_STRUCT* reader=read_bits_bufreader_stack_new(buf,len);
+      «FOREACH this.output.getMessage().part.element AS arg»
+      {
+       «arg.localPart»_bin2sax_run(reader,soap);
+      }
+      
+      «ENDFOREACH»
+   }
+   «ENDIF»
+
+   if ( soap_body_end_out(soap)
+       || soap_envelope_end_out(soap)
+       || soap_end_send(soap) )
+   {
+    	return soap->error;
+   }
+	
+   return    soap_closesock(soap);
+}
+«ENDDEFINE»

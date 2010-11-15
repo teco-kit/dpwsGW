@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+
+   <extension point="org.eclipse.core.contenttype.contentTypes">
+		<content-type
+        base-type="org.eclipse.core.runtime.xml"
+        default-charset="UTF-8"
+        file-extensions="dpws"
+        id="metadataSource"
+        name="DPWS MetaData"
+        priority="high"> 
+		</content-type>
+    </extension>
+    
+   <extension
+         point="org.eclipse.ui.menus">
+         
+         <menuContribution
+          locationURI="popup:generateMenuId?after=additions">
+          <command
+                commandId="edu.teco.generator.ui.generate.service"
+                id="GenerateCCode"
+                label="C Code"
+                style="push">
+             <visibleWhen
+                   checkEnabled="false">
+                <or>
+                   <iterate
+                         ifEmpty="false">
+                      <adapt
+                            type="org.eclipse.core.resources.IFile">
+                         <test
+                               property="org.eclipse.wst.sse.core.resources.contentTypeId"
+                               value="edu.teco.dpws.generator.metadataSource">
+                         </test>
+                      </adapt>
+                   </iterate>
+                   <iterate
+                         ifEmpty="false">
+                      <adapt
+                            type="org.eclipse.core.resources.IFile">
+                         <test
+                               property="org.eclipse.wst.sse.core.resources.contentTypeId"
+                               value="org.eclipse.wst.wsdl.wsdlsource">
+                         </test>
+                      </adapt>
+                   </iterate>
+                </or>
+             </visibleWhen>
+          </command>
+    </menuContribution>
+    
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            id="edu.teco.generator.ui.generate.service"
+            name="Service Code">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            class="edu.teco.dpws.generator.ui.WRunner"
+            commandId="edu.teco.generator.ui.generate.service">
+      </handler>
+   </extension>
+
+</plugin>

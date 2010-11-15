@@ -1,0 +1,8 @@
+import wsdl11;
+extension org::eclipse::xtend::util::stdlib::globalvar;
+
+TPortType getPortType(TPort p): ((Wsdl11DocumentRoot)p.eRootContainer).definitions.portType.select(e|e.name==p.name).first();
+TMessage getMessage(TParam p): ((Wsdl11DocumentRoot)p.eRootContainer).definitions.message.select(e|e.name==p.message.localPart).first();
+String getNSPrefix(): GLOBALVAR NSPrefix;
+
+
