@@ -6,7 +6,6 @@
 		<project>edu.teco.dpws.generator</project>
 		<project>SensorValuesService</project>
 		<project>SSimpDevice</project>
-		<project>AccelerationModel_static</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

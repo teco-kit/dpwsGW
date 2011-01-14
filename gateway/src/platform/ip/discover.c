@@ -21,13 +21,7 @@
 #include "../../proxy_structures.h"
 #include "../../service_cache.h"
 
-#include "SensorValues_operations.h"
-//TODO use dynamic loading!!
-#define get_event_func(FUNC_PTR,MODEL)\
-		do{\
-			extern void MODEL##_event;\
-			*((void **)FUNC_PTR)=&MODEL##_event;\
-		}while(0)
+
 
 #ifndef WIN32
 #include <pthread.h>
@@ -317,7 +311,8 @@ static int handle_node_message(int sockfd) {
 
 	{
 		void (*deliver_event)(int, int, void *, char *, size_t);
-		get_event_func(&deliver_event,SSimpDevice);
+
+		*(void **)(&deliver_event) = device_event_func(rem_device);
 
 		deliver_event(evt.msg.svc, evt.msg.op, device, buf, evt.msg.len);
 	}

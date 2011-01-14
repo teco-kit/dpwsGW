@@ -38,10 +38,9 @@
 	#endif
 
 	#define PARTICLE_CONNECTION_TIMEOUT 10000
-	//#define PARTICLE_CONNECTION_RESEND 1000
-
-	#define PARTICLE_RETRY_TIMEOUT 200
-	#define PARTICLE_RETRIES 10
+	#define PARTICLE_CONNECTION_RESEND 1000
+    #define PARTICLE_RETRY_TIMEOUT 1000
+	#define PARTICLE_RETRIES 3
 
 	typedef struct
 	{
@@ -341,61 +340,44 @@
 
 	   pthread_mutex_lock(&pkt_received_mutex);
 	   {
-		   uint8_t retries = PARTICLE_RETRIES;
+		   uint8_t retries = 0;
 		   struct timeval tv;
 		   struct timespec ts;
 		   gettimeofday(&tv, NULL);
 
-		   ts.tv_sec = tv.tv_sec + ((PARTICLE_RETRY_TIMEOUT/1000));
-		   ts.tv_nsec = tv.tv_usec*1000 + ((PARTICLE_RETRY_TIMEOUT%1000)*1000000) ;
+		   ts.tv_sec = tv.tv_sec + (PARTICLE_RETRIES*(PARTICLE_RETRY_TIMEOUT/1000));
+		   ts.tv_nsec = tv.tv_usec*1000 + (PARTICLE_RETRIES*(PARTICLE_RETRY_TIMEOUT%1000)*1000000) ;
 		   {
 		   cc_tuple *c;
 
 		   do{
-			   int ret;
-
-			   switch(ret=pthread_cond_timedwait(&pkt_received_cond,&pkt_received_mutex,&ts))
+			   if(ETIMEDOUT==pthread_cond_timedwait(&pkt_received_cond,&pkt_received_mutex,&ts))
 			   {
-			    case ETIMEDOUT:
-			    case EINVAL:
-				   if(!retries)
+
+				   if(retries==PARTICLE_RETRIES)
 				   {
 					   buf_len = -1;
 					   break;
-				   } else
-				   {
+				   } else {
 					   // Resend
 					   resendLastPkt();
-
 					   printf("Retrying last packet\n");
-
-					   retries--;
+					   retries++;
 					   gettimeofday(&tv, NULL);
 
-					   ts.tv_sec = tv.tv_sec + ((PARTICLE_RETRY_TIMEOUT/1000));
-					   ts.tv_nsec = tv.tv_usec*1000 + ((PARTICLE_RETRY_TIMEOUT%1000)*1000000) ;
+					   ts.tv_sec = tv.tv_sec + (PARTICLE_RETRIES*(PARTICLE_RETRY_TIMEOUT/1000));
+					   ts.tv_nsec = tv.tv_usec*1000 + (PARTICLE_RETRIES*(PARTICLE_RETRY_TIMEOUT%1000)*1000000) ;
 				   }
-				   break;
-			    case 0:
-			    	break;
-			    default:
-			    	   buf_len = -1;
-			    	   fputs(strerror(ret),stderr);
-			    	   break;
 			   }
 
-
-		   } while(!buf_len && (!pkt_received || !(c=packet_getmatching((cc_pkt*)pkt_received,p_id,service_id,op_id))));
+		   } while(!pkt_received || !(c=packet_getmatching((cc_pkt*)pkt_received,p_id,service_id,op_id)));
 
 		   if(!buf_len)
 		   {
-			   printf("Received %d bytes\n",c->len);
 			   buf_len=c->len;
 			   *buf=malloc(buf_len);
 			   memcpy(*buf,c->buf,buf_len);
 		   }
-		   else
-			   printf("Giving up\n");
 		   }
 
 	    pkt_received=NULL;

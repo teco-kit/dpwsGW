@@ -12,25 +12,11 @@
 #include "proxy_handler.h"
 #include "discover.h"
 
-#include <ws4d-gSOAP/dpws_device.h>
-
 #include "proxy_structures.h"
 #include "mutex_handling.h"
 #include "service_cache.h"
 
-#ifdef UPART
-#define MODEL(X) uPartDevice##X
-#elif MICROSTRAIN
-#define MODEL(X) AccelModel##X
-#else
-#define MODEL(X) SSimpDevice##X
-#endif
-//TODO use dynamic loading!!
-#define get_device_func(FUNC_PTR,_MODEL,CALL)\
-		do{\
-			extern void MODEL(_##CALL);\
-			*((void **)FUNC_PTR)=&MODEL(_##CALL);\
-		}while(0)
+#define MODEL(X) DPWSModel##X
 
 static int dpws_device_proxy_done(struct dpws_s *dpws);
 
@@ -45,9 +31,28 @@ static char *generate_uuid() {
 	return id_buf;
 }
 
+static struct remote_device * get_device(struct soap* msg) {
+		char *wsa_header = NULL;
+		char *last_slash = NULL;
+		char dev_uid[46] = { 0 };
+
+		if (msg != NULL && ((wsa_header = wsa_header_get_To(msg)) != NULL)) {
+			last_slash = strrchr(wsa_header, (int) '/');
+		}
+
+		if (last_slash != NULL) {
+			strncpy(dev_uid, last_slash + 1, 45);
+		}
+
+		return device_proxy_list_get_device_by_dpws_device(dev_uid);
+	}
+
 void dpws_device_check_handles() {
 	struct soap *handle = NULL;
 	struct remote_device *rem_device = NULL;
+
+	serve_requests_ptr * serve_requests = NULL;
+	int count = 0;
 
 	/* waiting for new messages */
 	gateway_mutex_lock();
@@ -56,21 +61,52 @@ void dpws_device_check_handles() {
 		gateway_wait();
 
 	handle = device_proxy_list_check_handles(&rem_device);
+	rem_device = get_device(handle);
 
 	if (handle) {
 #ifdef DEBUG
 		printf("\nGateway: processing request from %s:%d\n", inet_ntoa(
 				handle->peer.sin_addr), ntohs(handle->peer.sin_port));
 #endif
+		printf("Type: %s\n",handle->type);
+		printf("Host: %s\n",handle->host);
+		printf("Endpoint: %s\n",handle->endpoint);
+		printf("ID: %s\n",handle->id);
+		printf("Path: %s\n",handle->path);
+
 
 		/* dispatch messages */
+
 		{
-			typedef int (*serve_requests_ptr)(struct soap *);
-			serve_requests_ptr *(* get_serve_requests)(void);
+			//typedef int (*serve_requests_ptr)(struct soap *);
 
-			get_device_func(&get_serve_requests,uPartDevice,get_serve_requests);
 
-			if (dpws_mserve(handle, 1, get_serve_requests())) {
+			// = dlsym(device_get_lib(rem_device),"DPWSModel_get_serve_requests");
+
+			if(rem_device!=NULL)
+			{
+				serve_requests_ptr *(* get_serve_requests)(void) = NULL;
+				int (* get_service_count)(void) = NULL;
+				*(void **)(&get_serve_requests) = device_get_func(rem_device,"DPWSModel_get_serve_requests");
+				*(void **)(&get_service_count) = device_get_func(rem_device,"DPWSModel_get_service_count");
+				serve_requests = get_serve_requests();
+				count = get_service_count();
+
+				printf("Device found!\n");
+
+			} else {
+
+
+				// Go over every device and get number of services
+				count = device_proxy_list_count_services();
+				// Allocate memory for all services + 3 from SOAP_SERVE_SET macro
+				serve_requests = calloc(sizeof(serve_requests_ptr),count+3);
+				// Get all services
+				device_proxy_get_all_services(serve_requests);
+
+				printf("No device found!\n");
+			}
+			if (dpws_mserve(handle, count, serve_requests)) {
 				soap_print_fault(handle, stderr);
 			}
 
@@ -78,6 +114,11 @@ void dpws_device_check_handles() {
 
 		/* clean up soap's internally allocated memory */
 		soap_end(handle);
+
+		if(rem_device==NULL)
+		{
+			free(serve_requests);
+		}
 	}
 
 
@@ -85,7 +126,7 @@ void dpws_device_check_handles() {
 	gateway_mutex_unlock();
 }
 
-static struct soap *init_service_structure(char * model) {
+static struct soap *init_service_structure(struct dpws_model * model) {
 
 	//TODO: check for existing service (by id... where to get that from?), use this one if exists, build otherwise */
 	//struct soap *node_service = calloc(1, sizeof(struct soap));
@@ -93,30 +134,31 @@ static struct soap *init_service_structure(char * model) {
 
 	void (*device_init_service)(struct soap *);
 
-	printf("model is %s\n", model);
+	//printf("model is %d\n", );
 
-	get_device_func(&device_init_service,uPartDevice/*Todo:model*/,init_service);
+	*(void **)(&device_init_service) = model_get_func(model,"DPWSModel_init_service");
 
 	node_service = service_cache_register_node_on_service(0, device_init_service);
 
 	return node_service;
 }
 
-static struct dpws_s *init_device_structure(char *model, char *interface, char *uuid,
+static struct dpws_s *init_device_structure(struct dpws_model *model, char *interface, char *uuid,
 		char *version, char *serial_num,
 		char *friendly_name, struct soap *node_service)
 {
 	struct dpws_s *node_dev = calloc(1, sizeof(struct dpws_s));
 
 	/* initialize device and services */
-	if (dpws_init(node_dev, interface)) {
+	if (dpws_init(node_dev, interface)!=SOAP_OK) {
 		fprintf(stderr, "\nGateway: Can't init device\n");
 		free(node_dev);
 		return NULL;
 	}
 	{
 		int (*setup_hosting_service)(struct dpws_s *device, struct soap *service, char *uuid);
-		get_device_func(&setup_hosting_service,uPartDevice,setup_hosting_service);
+		*(void **)(&setup_hosting_service) = model_get_func(model,"DPWSModel_setup_hosting_service");
+
 
 		if (setup_hosting_service(node_dev, node_service, uuid) != 0) {
 			goto failure;
@@ -124,18 +166,16 @@ static struct dpws_s *init_device_structure(char *model, char *interface, char *
 	}
 
 	{
-		int (*setup_device)(struct dpws_s *device, struct soap *service);
-		get_device_func(&setup_device,uPartDevice,setup_device);
-
-		if (setup_device(node_dev, node_service) != 0) {
+		int (*setup_device)(struct dpws_s *device, struct soap *service,void *,void *);
+		*(void **)(&setup_device) = model_get_func(model,"DPWSModel_setup_device");
+		if (setup_device(node_dev, node_service,send_buf,rcv_buf) != 0) {
 			goto failure;
 		}
 	}
 	{
 
 		int (*set_metadata_device)(struct dpws_s *device);
-		get_device_func(&set_metadata_device,uPartDevice,set_metadata_device);
-
+		*(void **)(&set_metadata_device) = model_get_func(model,"DPWSModel_set_metadata_device");
 		if (set_metadata_device(node_dev) != 0) {
 			goto failure;
 		}
@@ -143,7 +183,7 @@ static struct dpws_s *init_device_structure(char *model, char *interface, char *
 
 	{
 		int (*set_metadata_model)(struct dpws_s *device);
-		get_device_func(&set_metadata_model,uPartDevice,set_metadata_model);
+		*(void **)(&set_metadata_model) = model_get_func(model,"DPWSModel_set_metadata_model");
 		if (set_metadata_model(node_dev) != 0) {
 			goto failure;
 		}
@@ -151,7 +191,7 @@ static struct dpws_s *init_device_structure(char *model, char *interface, char *
 
 	{
 		int (*set_wsdl)(struct dpws_s *device);
-		get_device_func(&set_wsdl,uPartDevice,set_wsdl);
+		*(void **)(&set_wsdl) = model_get_func(model,"DPWSModel_set_wsdl");
 		if (set_wsdl(node_dev) != 0) {
 			goto failure;
 		}
@@ -207,6 +247,17 @@ int dpws_device_unregister(struct remote_device *rem_device) {
 	return 0;
 }
 
+int dpws_model_unregister(struct dpws_model *model) {
+
+	device_proxy_list_del_model(model);
+
+	device_proxy_model_free(model);
+
+	printf("\nproxyhandler: successfully unregistered one model\n");
+
+	return 0;
+}
+
 int dpws_device_unregister_by_addr(int (*comparefunc)(void *address,void *key), void* key) {
 	struct remote_device *rem_device = NULL;
 
@@ -240,23 +291,35 @@ int dpws_device_set_node_meta_data(struct dpws_s *device,
 	return 0;
 }
 
-int dpws_device_build_and_register(char *model, void *addr,
+int dpws_device_build_and_register(char *model_id, void *addr,
 		size_t addr_len, char *interface_name, char *version, char *serial_num,
 		char *friendly_name) {
 	//TODO: see task 16: uuid by hashing the node info
 	char *uuid = generate_uuid();
 
 	struct dpws_s *node_device = NULL;
+	struct soap *service = NULL;
+	struct dpws_model * model = NULL;
+	model = device_proxy_get_model(model_id);
+	printf("Model ID: %s\n",model_id);
+	if(model==NULL)
+	{
+		printf("Creating new model\n");
+		model = init_model(model_id);
+	}
 
-	struct soap *service = init_service_structure(model);
+	if(model!=NULL)
+	{
+
+	service = init_service_structure(model);
 
 	node_device = init_device_structure(model,interface_name, uuid, version, serial_num, friendly_name, service);
-
+	}
 
 	free(uuid);
 
 	if (node_device != NULL) {
-		device_proxy_list_add_device((struct dpws_s *) node_device,
+		device_proxy_list_add_device((struct dpws_s *) node_device,model,
 				(struct soap *) service, addr,
 				addr_len);
 		return 0; //SUCCESS

@@ -12,6 +12,8 @@
 #include <net/if.h>
 #include <netinet/in.h>
 
+const char * modeldir = "models";
+
 void service_exit()
 {
 #ifdef DEBUG
@@ -29,7 +31,6 @@ int main(int argc, char **argv)
 #endif
 	char *interface = NULL;
 	char *uuid = NULL;
-	char * device = NULL;
 
 	/* parsing command line options */
 	while (argc > 1) {
@@ -63,22 +64,22 @@ int main(int argc, char **argv)
 				printf ("\nGateway: Set uuid to \"%s\"\n", uuid);
 #endif
 				break;
-			case 'd': /* set id with option -u */
+			case 'd': /* set models dir */
 							if (strlen(option) > 2) {
 								++option;
-								device = option;
+								modeldir = option;
 							} else {
 								--argc;
 								++argv;
-								device = argv[1];
+								modeldir = argv[1];
 							}
 			#ifdef DEBUG
-							printf ("\nGateway: Set device to \"%s\"\n", device);
+							printf ("\nGateway: Set models dir to \"%s\"\n", modeldir);
 			#endif
 							break;
 			default:
 				fprintf(stderr, "\nGateway: Bad option %s\n", argv[1]);
-				printf("\n%s -i [interface address] -u urn:uuid[uuid] -d [discovery device]\n",
+				printf("\n%s -i [interface address] -u urn:uuid[uuid] -d [models dir]\n",
 					argv[0]);
 				exit(1);
 			}
@@ -115,11 +116,10 @@ int main(int argc, char **argv)
 	}
 	printf("\nGateway: set interface to %s\n",interface);
 	gateway_set_interface(interface);
+	//free(interface);
 
 	/* initialize the mutex used for synchronising the two threads using the proxy datastructures */
 	gateway_mutex_init();
-
-	discovery_set_device(device);
 
 	/* start thread for udp discovery (is there a hello?) */
 	if (!discovery_worker_init()) {
