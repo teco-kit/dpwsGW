@@ -579,6 +579,26 @@ void updateNodeInfo(msdevice * node)
 		node->channelmask = 8;
 	}
 
+	// Get LDC rate
+	requestEEPROM(node->id,72);
+	readMessage(0);
+
+	while(!inMessageQueue(MS_READVALUE)&&!inMessageQueue(MS_FAILURE))
+	{
+		readMessage(0);
+	}
+
+	if(inMessageQueue(MS_READVALUE))
+	{
+		getMessageFromQueue(MS_READVALUE,&msg);
+		node->ldcrate = getLDCRate((msg.buffer[0] << 8) + msg.buffer[1]);
+		printf("Received LDC frequency: Index %d, Frequency %f\n",(msg.buffer[0] << 8) + msg.buffer[1],getLDCRate((msg.buffer[0] << 8) + msg.buffer[1]));
+	} else if(inMessageQueue(MS_FAILURE))
+	{
+		getMessageFromQueue(MS_FAILURE,&msg);
+		node->ldcrate = 0.2f;
+	}
+
 	// Get channel actions
 	int i = 0;
 	for(i=0;i<8;i++)
@@ -759,6 +779,21 @@ void processLDC(msmessage * msg)
 	msdevice * msdev = ((msdevice*) remote_device_get_addr(rem_device));
 	gettimeofday(&msdev->updated,NULL);
 
+	printf("Timertick: %d\n",((msg->buffer[7] << 8) + msg->buffer[8]));
+	// Delta is timertick * LDC rate (EEPROM 72)
+	unsigned short tick = ((msg->buffer[7] << 8) + msg->buffer[8]);
+	float delta = 0;
+	if(msdev->lasttick >= delta)
+	{
+		delta = (tick - msdev->lasttick);
+	} else {
+		// Wrap around
+		delta = (USHRT_MAX + tick - msdev->lasttick);
+	}
+	msdev->lasttick = tick;
+	delta*=msdev->ldcrate;
+	printf("Delta: %f Rate: %f\n",delta,msdev->ldcrate);
+
 	for (i = 0; i < 8; i++)
 	{
 		if ((msg->buffer[4] >> i) & 1) {
@@ -794,7 +829,10 @@ void processLDC(msmessage * msg)
 		}
 	}
 	printf("Delivering LDC event\n");
-	AccelModel_event(0,0,device,(char*)msdev->lastvalue,8*sizeof(float));
+	float buffer[9];
+	memcpy(buffer,msdev->lastvalue,sizeof(float)*8);
+	memcpy(&buffer[8],&delta,sizeof(float));
+	AccelModel_event(0,0,device,(char*)msdev->lastvalue,9*sizeof(float));
 
 }
 
@@ -971,7 +1009,7 @@ int initLDCDevice(void *in,void *dummy)
 }
 
 char * msmessagestr(int type)
-										{
+		{
 	switch(type)
 	{
 	case MS_STREAM:
@@ -1039,7 +1077,65 @@ char * msmessagestr(int type)
 	default:
 		return "MS_NONE";
 	}
-										}
+		}
+
+float getLDCRate(unsigned short index)
+{
+	switch(index)
+	{
+	case 251:
+		return 1.0f/500.0f;
+
+	case 250:
+		return 1.0f/250.0f;
+
+	case 100:
+		return 1.0f/100.0f;
+
+	case 50:
+		return 1.0f/50.0f;
+
+	case 25:
+		return 1.0f/25.0f;
+
+	case 10:
+		return 1.0f/10.0f;
+
+	case 5:
+		return 1.0f/5.0f;
+
+	case 2:
+		return 1.0f/2.0f;
+
+	case 1:
+		return 1.0f/1.0f;
+
+	case 11:
+		return 2.0f;
+	case 12:
+		return 5.0f;
+	case 13:
+		return 10.0f;
+	case 14:
+		return 30.0f;
+
+	case 15:
+		return 60.0f;
+	case 16:
+		return 120.0f;
+	case 17:
+		return 300.0f;
+	case 18:
+		return 600.0f;
+	case 19:
+		return 1800.0f;
+	case 20:
+		return 3600.0f;
+
+
+	}
+	return 0.2;
+}
 
 void send_buf(struct dpws_s *device, uint16_t service_id, uint8_t op_id,
 		struct soap* msg, u_char* buf, ssize_t len) {
