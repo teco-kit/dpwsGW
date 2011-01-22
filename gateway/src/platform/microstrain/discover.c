@@ -36,7 +36,7 @@ static int has_NodeId(void *c,void *id) {return (0==memcmp(&((msdevice *)c)->id,
  * Serial handle
  */
 int handle = -1;
-char * device = "/dev/ttyUSB0";
+char * device = "/dev/com3";
 
 /**
  * Message queue
@@ -745,9 +745,20 @@ void processLDC(msmessage * msg)
 		printf("device for event not found");
 		return;
 	}
+	int checksum = 0x07 + 0x04;
+	int i = 0;
+	for(i = 0;i< msg->length-4;i++)
+	{
+		checksum+=msg->buffer[i];
+	}
+	if(checksum!=((msg->buffer[msg->length-2] << 8) + msg->buffer[msg->length-1]))
+	{
+		printf("LDC Checksum failed. Should be %d, is %d\n",checksum,(msg->buffer[msg->length-2] << 8) + msg->buffer[msg->length-1]);
+		return;
+	}
 	msdevice * msdev = ((msdevice*) remote_device_get_addr(rem_device));
 	gettimeofday(&msdev->updated,NULL);
-	int i = 0;
+
 	for (i = 0; i < 8; i++)
 	{
 		if ((msg->buffer[4] >> i) & 1) {
