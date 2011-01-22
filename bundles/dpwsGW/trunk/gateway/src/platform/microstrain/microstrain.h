@@ -18,6 +18,10 @@ typedef struct {
 	unsigned char channelmask;
 	// Last updated
 	struct timeval updated;
+	// LDC Sampling period (1/frequency) in s
+	float ldcrate;
+	// Last timer tick
+	unsigned short lasttick;
 } msdevice;
 
 enum MS_MSGRESPONSETYPE {
@@ -120,5 +124,10 @@ int stopNode(unsigned short node);
  * Convert a MS_MSGRESPONSETYPE to a string
  */
 char * msmessagestr(int type);
+
+/**
+ * Translate LDC rate number into frequency
+ */
+float getLDCRate(unsigned short index);
 
 #endif /* MICROSTRAIN */
