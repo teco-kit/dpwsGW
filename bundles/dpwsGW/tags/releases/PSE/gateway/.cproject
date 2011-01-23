@@ -65,7 +65,6 @@
 								<option id="gnu.c.link.option.paths.410505612" name="Library search path (-L)" superClass="gnu.c.link.option.paths" valueType="libPaths">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/SensorValuesService/Debug}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/ws4d-gsoap-build/lib}&quot;"/>
-									<listOptionValue builtIn="false" value="/usr/local/lib/ws4d-gSOAP"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/SSimpDevice/Debug}&quot;"/>
 									<listOptionValue builtIn="false" value="/usr/local/lib"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/edu.teco.dpws.generator/shared/build}&quot;"/>
@@ -79,7 +78,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="src/platform/uPart|src/platform/pPart/|src/pPart_discover.c|src/x_discover.c|home/genaid/workspace/gateway" flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name=""/>
+						<entry excluding="Build|src/platform/uPart|src/platform/pPart/|src/pPart_discover.c|src/x_discover.c|home/genaid/workspace/gateway" flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -634,7 +633,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="src/platform/uPart|src/platform/pPart|src/pPart_discover.c|src/x_discover.c|home/genaid/workspace/gateway" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="Build|src/platform/uPart|src/platform/pPart|src/pPart_discover.c|src/x_discover.c|home/genaid/workspace/gateway" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -1215,7 +1214,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="src/platform/uPart|src/platform/ip|src/udp_discover.c|src/x_discover.c|home/genaid/workspace/gateway" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="Build|src/platform/uPart|src/platform/ip|src/udp_discover.c|src/x_discover.c|home/genaid/workspace/gateway" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -1802,7 +1801,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="src/platform/pPart|src/platform/ip|src/udp_discover.c|src/x_discover.c|home/genaid/workspace/gateway" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="Build|src/platform/pPart|src/platform/ip|src/udp_discover.c|src/x_discover.c|home/genaid/workspace/gateway" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
