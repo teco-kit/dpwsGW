@@ -628,7 +628,7 @@ void updateNodeInfo(msdevice * node)
 		// Get gain
 
 
-		node->gain[i] = 0;
+		node->gain[i] = 1;
 		unsigned char * memlocation = (unsigned char *)&node->gain[i];
 
 		requestEEPROM(node->id,152+10*i);
@@ -829,10 +829,12 @@ void processLDC(msmessage * msg)
 		}
 	}
 	printf("Delivering LDC event\n");
-	float buffer[9];
+	float buffer[10];
+	memset(buffer,0,sizeof(float)*0);
 	memcpy(buffer,msdev->lastvalue,sizeof(float)*8);
-	memcpy(&buffer[8],&delta,sizeof(float));
-	AccelModel_event(0,0,device,(char*)msdev->lastvalue,9*sizeof(float));
+	buffer[8] = tick;
+	buffer[9] = delta;
+	AccelModel_event(0,0,device,(char*)buffer,10*sizeof(float));
 
 }
 
