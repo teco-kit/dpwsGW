@@ -1,9 +1,10 @@
-PLATFORM:=pPart
+PLATFORM:=ip
 SRCPATH=../src/
 VPATH=$(SRCPATH)
 
 SRC_FILES=$(wildcard ../src/*.c) $(wildcard ../src/platform/$(PLATFORM)/*.c)
-OBJ_FILES=$(subst $(SRCPATH),,$(SRC_FILES:.c=.o))
+
+OBJ_FILES=$(filter-out main.o,$(subst $(SRCPATH),,$(SRC_FILES:.c=.o)))
 
 
 SERVICES=SensorValuesService
@@ -18,10 +19,13 @@ LDLIBS=$(addprefix -l,$(LIBS))
 
 include  platform/$(PLATFORM)/pre
 
-$(PLATFORM)_gateway: main
-	cp $< $@
+#$(PLATFORM)_gateway: LDFLAGS:=$(OBJ_FILES) 
 
-main: $(OBJ_FILES)
+$(PLATFORM)_gateway:  $(OBJ_FILES) $(PLATFORM)_gateway.c  
+
+$(PLATFORM)_gateway.c:
+	echo "#include \"$(SRCPATH)main.c\"" >$@
+
 
 clean:
 	rm $(OBJ_FILES) main
