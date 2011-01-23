@@ -86,8 +86,8 @@ void dpws_device_check_handles() {
 static struct soap *init_service_structure(char * model) {
 
 	//TODO: check for existing service (by id... where to get that from?), use this one if exists, build otherwise */
-	//struct soap *node_service = calloc(1, sizeof(struct soap));
-	struct soap *node_service = NULL;
+	struct soap *node_service = calloc(1, sizeof(struct soap));
+	//struct soap *node_service = NULL;
 
 	void (*device_init_service)(struct soap *);
 
@@ -95,7 +95,8 @@ static struct soap *init_service_structure(char * model) {
 
 	get_device_func(&device_init_service,uPartDevice/*Todo:model*/,init_service);
 
-	node_service = service_cache_register_node_on_service(0, device_init_service);
+	//node_service = service_cache_register_node_on_service(0, device_init_service);
+	device_init_service(node_service);
 
 	return node_service;
 }
@@ -165,9 +166,14 @@ static struct dpws_s *init_device_structure(char *model, char *interface, char *
 		return NULL;
 	}
 
+	{
+
+
 	/* activate eventing. */
 	if (dpws_activate_eventsource(node_dev, node_service)) {
 		printf("\nGateway: Eventing already activated, will ignore this.\n");
+	}
+
 	}
 
 	if (dpws_activate_hosting_service(node_dev)) {
@@ -175,6 +181,7 @@ static struct dpws_s *init_device_structure(char *model, char *interface, char *
 		dpws_device_proxy_done(node_dev);
 		return NULL;
 	}
+
 
 	return node_dev;
 
@@ -194,7 +201,8 @@ int dpws_device_unregister(struct remote_device *rem_device) {
 
 	dpws_deactivate_hosting_service(dpws_dev);
 
-	service_cache_unregister_node_on_service(0);
+	//service_cache_unregister_node_on_service(0);
+	soap_free(dpws_dev->hosting_handle);
 
 	dpws_device_proxy_done(dpws_dev);
 
