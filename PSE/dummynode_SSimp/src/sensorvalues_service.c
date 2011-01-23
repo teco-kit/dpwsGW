@@ -44,6 +44,7 @@ void init_sensors()
 	sens_SensorConfigurationType_add_temperature(&sensorConfig)->rate=7;
 	sens_SensorConfigurationType_add_temperature(&allSensorConfig)->rate=4;
 	sens_SensorConfigurationType_add_force(&allSensorConfig)->rate=1;
+	sens_SensorConfigurationType_add_force(&sensorConfig)->rate=7;
 	sens_SensorConfigurationType_add_ambientLight(&allSensorConfig)->rate=1;
 }
 
@@ -68,7 +69,7 @@ int get_sensor_values(sens_SSimpSample *s, int16_t eventCount) /* gets called fo
 
 	if( (eventCount<0 && allSensorConfig.force.len)	||(sensorConfig.force.len && 0==(eventCount%(1<<sensorConfig.force.element[0].rate))))
 	{
-	  sens_SSimpSample_add_force(s)->value = rand()*100;
+	  sens_SSimpSample_add_force(s)->value = getpid();
 	  has_data=1;
 	}
 
