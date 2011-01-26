@@ -779,7 +779,7 @@ void processLDC(msmessage * msg)
 	msdevice * msdev = ((msdevice*) remote_device_get_addr(rem_device));
 	gettimeofday(&msdev->updated,NULL);
 
-	printf("Timertick: %d\n",((msg->buffer[7] << 8) + msg->buffer[8]));
+	//printf("Timertick: %d\n",((msg->buffer[7] << 8) + msg->buffer[8]));
 	// Delta is timertick * LDC rate (EEPROM 72)
 	unsigned short tick = ((msg->buffer[7] << 8) + msg->buffer[8]);
 	float delta = 0;
@@ -792,13 +792,13 @@ void processLDC(msmessage * msg)
 	}
 	msdev->lasttick = tick;
 	delta*=msdev->ldcrate;
-	printf("Delta: %f Rate: %f\n",delta,msdev->ldcrate);
+	//printf("Delta: %f Rate: %f\n",delta,msdev->ldcrate);
 
 	for (i = 0; i < 8; i++)
 	{
 		if ((msg->buffer[4] >> i) & 1) {
 			msdev->lastvalue[i] = ((msg->buffer[9+2*i] << 8) + msg->buffer[10+2*i])>>1;
-			printf("Read raw value: %f\n",msdev->lastvalue[i]);
+			//printf("Read raw value: %f\n",msdev->lastvalue[i]);
 			// Apply channel action
 			switch(msdev->channelaction[i])
 			{
@@ -814,7 +814,7 @@ void processLDC(msmessage * msg)
 				if(msdev->gain[i]!=0)
 				{
 					msdev->lastvalue[i] =  (msdev->lastvalue[i] - msdev->offset[i]) / msdev->gain[i];
-					printf("Read G-Link value: %f\n",msdev->lastvalue[i]);
+					//printf("Read G-Link value: %f\n",msdev->lastvalue[i]);
 				}
 			} break;
 
