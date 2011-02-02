@@ -786,10 +786,10 @@ void processLDC(msmessage * msg)
 	float delta = 0;
 	if(msdev->lasttick >= delta)
 	{
-		delta = (tick - msdev->lasttick);
+		delta = tick;
 	} else {
 		// Wrap around
-		delta = (USHRT_MAX + tick - msdev->lasttick);
+		delta = USHRT_MAX + tick;
 	}
 	msdev->lasttick = tick;
 	delta*=msdev->ldcrate;
