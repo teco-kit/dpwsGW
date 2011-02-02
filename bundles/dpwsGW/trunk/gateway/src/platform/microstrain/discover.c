@@ -18,6 +18,7 @@
 #include <termios.h>
 #include <unistd.h>
 
+#include "Acceleration_operations.h"
 #include "microstrain.h"
 
 #ifdef WIN32
@@ -829,12 +830,12 @@ void processLDC(msmessage * msg)
 		}
 	}
 	printf("Delivering LDC event\n");
-	float buffer[10];
-	memset(buffer,0,sizeof(float)*0);
-	memcpy(buffer,msdev->lastvalue,sizeof(float)*8);
-	buffer[8] = tick;
-	buffer[9] = delta;
-	AccelModel_event(0,0,device,(char*)buffer,10*sizeof(float));
+	ldcmessage ldcmsg;
+
+	memcpy(ldcmsg.values,msdev->lastvalue,sizeof(float)*8);
+	ldcmsg.timertick = tick;
+	ldcmsg.delta = delta;
+	AccelModel_event(0,OP_GetAccelerationValuesEvent,device,(char*)&ldcmsg,sizeof(ldcmessage));
 
 }
 
