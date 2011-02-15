@@ -204,7 +204,7 @@ static struct remote_device * get_device(struct soap* msg) {
 
 struct remote_device *last_rem_dev;
 
-void send_buf(struct dpws_s *device, uint16_t service_id, uint8_t op_id,
+int send_buf(struct dpws_s *device, uint16_t service_id, uint8_t op_id,
 		struct soap* msg, u_char* buf, ssize_t len) {
 
 	int op_sock;
@@ -220,7 +220,7 @@ void send_buf(struct dpws_s *device, uint16_t service_id, uint8_t op_id,
 
 	if (rem_dev == NULL) {
 		printf("No device matching %s found.", wsa_header_get_To(msg));
-		return;
+		return 0;
 	}
 
 	{
@@ -232,20 +232,20 @@ void send_buf(struct dpws_s *device, uint16_t service_id, uint8_t op_id,
 	//build the message from buf, put it on the socket
 	if ((sent_len = send(op_sock, in.buf, sizeof(in), 0)) != sizeof(in)) {
 		perror("send");
-		return;
+		return 0;
 	}
 	sent_len = 0;
 
 	if (in.msg.len)
 		if ((sent_len = send(op_sock, buf, len, 0)) != in.msg.len) {
 			perror("send");
-			return;
+			return 0;
 		}
 
 	printf("send op[%d,%d] to %s with length %lu\n", in.msg.svc, in.msg.op,
 			wsa_header_get_To(msg), (long int) sent_len);
 
-	return;
+	return 1;
 }
 
 ssize_t rcv_buf(struct dpws_s *device, uint16_t service_id, uint8_t op_id,
