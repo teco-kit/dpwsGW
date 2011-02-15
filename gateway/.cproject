@@ -2675,6 +2675,8 @@
 									<listOptionValue builtIn="false" value="&quot;../C:/Dokumente und Einstellungen/riedel/Personal/Code/DPWS/gsoap-2.7/gsoap&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/AccelerationModel_static}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/AccelerationService/src}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/DataLoggingService/src}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/DeviceInfoService/src}&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.1173588793" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
 							</tool>
@@ -2697,6 +2699,8 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/edu.teco.dpws.generator/shared/include/bitsio}&quot;"/>
 									<listOptionValue builtIn="false" value="/usr/local/include"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/AccelerationService/src}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/DataLoggingService/src}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/DeviceInfoService/src}&quot;"/>
 								</option>
 								<option id="gnu.c.compiler.option.preprocessor.def.symbols.114388226" name="Defined symbols (-D)" superClass="gnu.c.compiler.option.preprocessor.def.symbols" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="WITH_MUTEXES"/>
@@ -2715,6 +2719,8 @@
 								<option id="gnu.c.link.option.libs.1669099877" name="Libraries (-l)" superClass="gnu.c.link.option.libs" valueType="libs">
 									<listOptionValue builtIn="false" value="AccelerationModel"/>
 									<listOptionValue builtIn="false" value="AccelerationService"/>
+									<listOptionValue builtIn="false" value="DeviceInfoService"/>
+									<listOptionValue builtIn="false" value="DataLoggingService"/>
 									<listOptionValue builtIn="false" value="dpwsS"/>
 									<listOptionValue builtIn="false" value="dpwsDmt"/>
 									<listOptionValue builtIn="false" value="ws4d_listLmt"/>
@@ -2729,6 +2735,8 @@
 									<listOptionValue builtIn="false" value="/usr/local/lib/ws4d-gSOAP"/>
 									<listOptionValue builtIn="false" value="/usr/local/lib"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/edu.teco.dpws.generator/shared/build}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/DataLoggingService/Debug}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/DeviceInfoService/Debug}&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.c.linker.input.824214493" superClass="cdt.managedbuild.tool.gnu.c.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
