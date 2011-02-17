@@ -132,7 +132,8 @@ remote_device *device_proxy_list_get_device_by_dpws_device(const char *uuid)
 {
 	remote_device *rem_device = NULL, *next = NULL;
 	ws4d_list_foreach(rem_device, next, &head, remote_device, list) {
-		if (!strcmp(rem_device->dpws_device->hosting_addr, uuid)) {
+		printf("Comparing %s and %s\n",rem_device->dpws_device->hosting_addr,uuid);
+		if (strstr(rem_device->dpws_device->hosting_addr, uuid)!=NULL) {
 			return rem_device;
 		}
 	}
