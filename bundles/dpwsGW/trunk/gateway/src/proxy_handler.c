@@ -70,7 +70,7 @@ void dpws_device_check_handles() {
 
 			get_device_func(&get_serve_requests,uPartDevice,get_serve_requests);
 
-			if (dpws_mserve(handle, 1, get_serve_requests())) {
+			if (dpws_mserve(handle, 3, get_serve_requests())) {
 				soap_print_fault(handle, stderr);
 			}
 

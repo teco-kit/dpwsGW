@@ -16,6 +16,7 @@ enum MS_MSGRESPONSETYPE {
 	MS_TRIGGERLOGGING,
 	MS_DISCOVERY,
 	MS_BS,
+	MS_BSPING,
 	MS_FAILURE
 };
 
@@ -55,7 +56,7 @@ typedef struct {
 	// Data rate
 	float rate;
 	// Last page
-	msmessage * lastmsg;
+	msmessage lastmsg;
 	// Last values wrap, contains number of bytes on last page
 	int wrap;
 	// First part of wrapped value
@@ -166,9 +167,9 @@ int stopNode(unsigned short node);
 char * msmessagestr(int type);
 
 /**
- * Translate LDC rate number into frequency
+ * Translate LDC rate number into a period
  */
-float getLDCRate(unsigned short index);
+float getLDCPeriod(unsigned short index);
 
 /**
  * Get the rate number belonging to the LDC rate
@@ -188,7 +189,7 @@ int getSavedSessions(unsigned short node);
 /**
  * Init logging on a node
  */
-void initLogging(unsigned short node,unsigned short rateindex);
+void initLogging(unsigned short node,unsigned short rateindex, unsigned short samplecount);
 
 /**
  * Init download from node
@@ -212,13 +213,18 @@ void requestPage(unsigned short node, unsigned short page);
 int processLogging(msmessage * msg);
 
 /**
- * Translate logging rate into frequency
+ * Translate logging rate into a period
  */
-float getLoggingRate(unsigned short index);
+float getLoggingPeriod(unsigned short index);
 
 /**
  * Return a string describing the device state
  */
 const char * getDeviceInfoString(int state);
+
+/**
+ * Returns the samples * 100 in the given period for the sampling rate
+ */
+unsigned short getLoggingSampleCount(unsigned short rateindex,char * duration);
 
 #endif /* MICROSTRAIN */

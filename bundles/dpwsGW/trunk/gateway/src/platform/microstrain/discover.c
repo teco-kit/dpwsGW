@@ -40,7 +40,7 @@ static int has_NodeId(void *c,void *id) {return (0==memcmp(&((msdevice *)c)->id,
  * Serial handle
  */
 int handle = -1;
-char * device = "/dev/com3";
+char * serialdevice = "/dev/com3";
 
 /**
  * Message queue
@@ -67,10 +67,10 @@ int openSerial()
 	signal(SIGIO, SIG_IGN);
 
 
-	handle = open(device,O_RDWR|O_NOCTTY| O_SYNC);
+	handle = open(serialdevice,O_RDWR|O_NOCTTY| O_SYNC);
 	if(handle==-1)
 	{
-		printf("Unable to open connection to %s\n",device);
+		printf("Unable to open connection to %s\n",serialdevice);
 		perror(NULL);
 		return 0;
 	}
@@ -216,7 +216,11 @@ int readMessage(int expectmultiple)
 
 	switch(msgqueue[msgslot].buffer[0])
 	{
-
+	case 0x01:
+	{
+		msgqueue[msgslot].type = MS_BSPING;
+		msgqueue[msgslot].length = 0;
+	} break;
 	case 0x02:
 	{
 		msgqueue[msgslot].type = MS_SHORTPING;
@@ -261,7 +265,7 @@ int readMessage(int expectmultiple)
 
 		if(bytes_read!=266)
 		{
-			printf("Failed to read rest of MS_DATAPAGE message\n");
+			printf("Failed to read rest of MS_DATAPAGE message, read only %d\n",bytes_read);
 			return -1;
 		}
 		msgqueue[msgslot].length = 266;
@@ -420,7 +424,7 @@ int readMessage(int expectmultiple)
 
 	default:
 	{
-		printf("Unknown message type\n");
+		printf("Unknown message type %d\n",msgqueue[msgslot].buffer[0]);
 		return -1;
 	}
 
@@ -579,8 +583,8 @@ void updateNodeInfo(msdevice * node)
 	if(inMessageQueue(MS_READVALUE))
 	{
 		getMessageFromQueue(MS_READVALUE,&msg);
-		node->ldcrate = getLDCRate((msg.buffer[0] << 8) + msg.buffer[1]);
-		printf("Received LDC frequency: Index %d, Frequency %f\n",(msg.buffer[0] << 8) + msg.buffer[1],getLDCRate((msg.buffer[0] << 8) + msg.buffer[1]));
+		node->ldcrate = getLDCPeriod((msg.buffer[0] << 8) + msg.buffer[1]);
+		printf("Received LDC Period: Index %d, Period %f Hz\n",(msg.buffer[0] << 8) + msg.buffer[1],getLDCPeriod((msg.buffer[0] << 8) + msg.buffer[1]));
 	} else if(inMessageQueue(MS_FAILURE))
 	{
 		getMessageFromQueue(MS_FAILURE,&msg);
@@ -828,7 +832,18 @@ void processLDC(msmessage * msg)
 
 int processLogging(msmessage * msg)
 {
-	int checksum = 0x05;
+	if(gw_cur_device==NULL)
+	{
+		printf("gw_cur_device is NULL\n");
+		return 0;
+	}
+	struct remote_device *rem_device = device_proxy_list_get_device_by_id(&gw_cur_device->id);
+	struct dpws_s *device = rem_device ? remote_device_get_dpws_device(	rem_device) : NULL;
+	if (!device) {
+		printf("device for event not found");
+		return;
+	}
+	int checksum = 0;
 	int i =0;
 	int next = 1;
 	for(i=0;i<264;i++)
@@ -837,7 +852,7 @@ int processLogging(msmessage * msg)
 	}
 	if(checksum!=(msg->buffer[264]<<8)+msg->buffer[265])
 	{
-		printf("Error downloading data page: Invalid checksum\n");
+		printf("Error downloading data page: Invalid checksum. Is %d, should be %d\n",checksum,(msg->buffer[264]<<8)+msg->buffer[265]);
 		return 0;
 	}
 	int start = 0;
@@ -847,16 +862,21 @@ int processLogging(msmessage * msg)
 	{
 		if(msg->buffer[i]==255&&msg->buffer[i+1]==255)
 		{
+			printf("Found session header at %d\n",i);
 			if(gw_cur_device->session.page==2 && start == 0)
 			{
+				printf("Skipping first header\n");
 				start = i+11;
+				i+=11;
 			} else {
+				printf("Found end\n");
 				end = i;
 				next = 0;
 				break;
 			}
 		}
 	}
+
 	// Get channels
 	loggingpage page;
 	page.channelmask = gw_cur_device->session.channelmask;
@@ -892,7 +912,6 @@ int processLogging(msmessage * msg)
 	unsigned char msb;
 	unsigned char lsb;
 	int nexttype = 0;
-
 	if(gw_cur_device->session.wrap!=0)
 	{
 		for(i=0;i<gw_cur_device->session.wrap;i++)
@@ -935,6 +954,7 @@ int processLogging(msmessage * msg)
 				{
 					if ((page.channelmask >> (nextchannel%8)) & 1)
 					{
+						nextchannel = nextchannel %8;
 						break;
 					}
 				}
@@ -999,6 +1019,7 @@ int processLogging(msmessage * msg)
 			{
 				if ((page.channelmask >> (nextchannel%8)) & 1)
 				{
+					nextchannel = nextchannel %8;
 					break;
 				}
 			}
@@ -1014,7 +1035,8 @@ int processLogging(msmessage * msg)
 			channel = nextchannel;
 		}
 	}
-	gw_cur_device->session.lastmsg = msg;
+
+	gw_cur_device->session.lastmsg = (*msg);
 	//Deliver events
 	AccelModel_event(SRV_DataLogging,OP_DataLogging_DataEvent,device,(char*)&page,sizeof(loggingpage));
 
@@ -1203,18 +1225,19 @@ void initLDC(unsigned short node,unsigned short rateindex)
 	gw_state = GATEWAY_LDC;
 }
 
-void initLogging(unsigned short node,unsigned short rateindex)
+void initLogging(unsigned short node,unsigned short rateindex, unsigned short samples)
 {
+	printf("Called initLogging with node %d RateIndex %d and samplecount: %d\n",node,rateindex,samples);
 	struct remote_device *rem_device = device_proxy_list_get_device_by_id(&node);
 	msdevice *msdev=(msdevice *)remote_device_get_addr(rem_device);
 
-	// Set streaming duration to infinite
+	// Set streaming duration to finite
 	unsigned char	eepromcmd[8] =	{	0x04,			//	eeprom write command byte
 			node >> 8,	//	MSB of the node address
 			node & 0xFF,	//	LSB of the node address
 			102,		//	location to write
-			1 >> 8,	//	MSB of value to write
-			1 & 0xFF,	//	LSB of value to write
+			0 >> 8,	//	MSB of value to write
+			0 & 0xFF,	//	LSB of value to write
 			0x00,			//	MSB of the checksum
 			0x00			//	LSB of the checksum
 	};
@@ -1288,21 +1311,59 @@ void initLogging(unsigned short node,unsigned short rateindex)
 		printf("Failed to write node EEPROM\n");
 	}
 
+	// Set sample count
+	eepromcmd[3] = 16;
+	eepromcmd[4] = samples >>8;
+	eepromcmd[5] = samples & 0xFF;
+
+	/*	calculate the checksum	*/
+	checksum = (eepromcmd[1] + eepromcmd[2] + eepromcmd[3] + eepromcmd[4] + eepromcmd[5]) & 0xFFFF;
+	eepromcmd[6] = checksum >> 8;		//	set the MSB of the checksum
+	eepromcmd[7] = checksum & 0xFF;	//	set the LSB of the checksum
+
+	bytes = write(handle,eepromcmd,8);
+
+	if(bytes==-1)
+	{
+		printf("Error writing node EEPROM\n");
+		perror(NULL);
+	} else if(bytes!=8)
+	{
+		printf("Unable to write node EEPROM, wrote only %d\n",bytes);
+	}
+
+	readMessage(0);
+	while(!inMessageQueue(MS_WRITEEEPROM)&&!inMessageQueue(MS_FAILURE))
+	{
+		readMessage(0);
+	}
+
+	if(inMessageQueue(MS_WRITEEEPROM))
+	{
+		getMessageFromQueue(MS_WRITEEEPROM,&msg);
+		printf("Wrote node EEPROM\n");
+	} else if(inMessageQueue(MS_FAILURE))
+	{
+		getMessageFromQueue(MS_FAILURE,&msg);
+		printf("Failed to write node EEPROM\n");
+	}
+
 	printf("Starting Logging\n");
 	// Start LDC
-	unsigned char loggingcmd[3] = {
+	unsigned char loggingcmd[4] = {
+			0x0C,
 			node >> 8,	//	MSB of Node Address
 			node & 0xFF,	//	LSB of Node Address
-			1
+			0x01
 	};
-	bytes = write(handle,loggingcmd,3);
+	bytes = write(handle,loggingcmd,4);
 	if(bytes==-1)
 	{
 		printf("Error starting Logging\n");
 		perror(NULL);
-	} else if(bytes!=10)
+	} else if(bytes!=4)
 	{
-		printf("Unable to start Logging\n");
+		printf("Unable to start Logging, wrote only %d bytes\n",bytes);
 	}
 
 	readMessage(0);
@@ -1327,6 +1388,7 @@ void initDownload(unsigned short node)
 	// Get first page
 	requestPage(node,2);
 
+	sleep(1);
 	msmessage msg;
 
 	readMessage(0);
@@ -1345,7 +1407,7 @@ void initDownload(unsigned short node)
 		return;
 	}
 	// Check checksum
-	int checksum = 0x05;
+	int checksum = 0;
 	int i =0;
 	for(i=0;i<264;i++)
 	{
@@ -1353,9 +1415,10 @@ void initDownload(unsigned short node)
 	}
 	if(checksum!=(msg.buffer[264]<<8)+msg.buffer[265])
 	{
-		printf("Error downloading data page: Invalid checksum\n");
+		printf("Error downloading data page: Invalid checksum. Is %d , should be %d\n",checksum,(msg.buffer[264]<<8)+msg.buffer[265]);
 		return;
 	}
+	printf("Checksum: %d\n",checksum);
 	// Search for session header (does not deal with wrapped header because only first session is returned)
 	msdev->session.page = 0;
 
@@ -1363,13 +1426,15 @@ void initDownload(unsigned short node)
 	{
 		if(msg.buffer[i]==255 && msg.buffer[i+1]==255)
 		{
+			printf("Found session header\n");
+			printf("Rate Index: %d\n",(msg.buffer[i+10] <<8) + msg.buffer[i+11]);
 			// Save session data
 			msdev->session.page = 2;
 			msdev->session.index = (msg.buffer[i+6] <<8) + msg.buffer[i+7];
 			msdev->session.channelmask = (msg.buffer[i+8] <<8) + msg.buffer[i+9];
-			msdev->session.lastmsg = &msg;
+			msdev->session.lastmsg = msg;
 			msdev->session.wrap = 0;
-			msdev->session.rate = getLoggingRate((msg.buffer[i+10] <<8) + msg.buffer[i+11]);
+			msdev->session.rate = getLoggingPeriod((msg.buffer[i+10] <<8) + msg.buffer[i+11]);
 			memset(msdev->session.wrappedval,0,sizeof(char)*16);
 			gw_state = GATEWAY_RECEIVING;
 			msdev->state = DEVICE_SENDING;
@@ -1421,7 +1486,7 @@ void requestPage(unsigned short node, unsigned short page)
 		perror(NULL);
 	} else if(bytes!=5)
 	{
-		printf("Unable to request page %d\n",page);
+		printf("Unable to request page %d, wrote only %d bytes\n",page,bytes);
 	}
 }
 
@@ -1450,7 +1515,7 @@ int stopNode(unsigned short node)
 		printf("Unable to stop node\n");
 		return 0;
 	}
-
+	printf("Waiting for MS_BS\n");
 	msmessage msg;
 	readMessage(0);
 	while(!inMessageQueue(MS_BS))
@@ -1462,9 +1527,9 @@ int stopNode(unsigned short node)
 	{
 		getMessageFromQueue(MS_BS,&msg);
 	}
-
+	printf("Waiting for MS_STOP or MS_FAILURE\n");
 	readMessage(0);
-	while(!inMessageQueue(MS_STOP)&&inMessageQueue(MS_FAILURE))
+	while(!inMessageQueue(MS_STOP)&&!inMessageQueue(MS_FAILURE))
 	{
 		readMessage(0);
 	}
@@ -1495,7 +1560,7 @@ int stopDevice(void *in,void *dummy)
 }
 
 char * msmessagestr(int type)
-																																																				{
+																																																														{
 	switch(type)
 	{
 	case MS_STREAM:
@@ -1563,9 +1628,9 @@ char * msmessagestr(int type)
 	default:
 		return "MS_NONE";
 	}
-																																																				}
+																																																														}
 
-float getLDCRate(unsigned short index)
+float getLDCPeriod(unsigned short index)
 {
 	switch(index)
 	{
@@ -1713,7 +1778,7 @@ unsigned short getLoggingRateIndex(char * rate)
 	return 7;
 }
 
-float getLoggingRate(unsigned short index)
+float getLoggingPeriod(unsigned short index)
 {
 	switch(index)
 	{
@@ -1735,8 +1800,16 @@ float getLoggingRate(unsigned short index)
 	return 1.0f/32.0f;
 }
 
+unsigned short getLoggingSampleCount(unsigned short rateindex,char * duration)
+{
+	float rate = 1.0f/getLoggingPeriod(rateindex);
+	int sec = 0;
+	sscanf(duration,"%d",&sec);
+	return (rate * sec)/100;
+}
+
 const char * getDeviceInfoString(int state)
-																		{
+								{
 	switch(state)
 	{
 	case DEVICE_IDLE:
@@ -1744,12 +1817,12 @@ const char * getDeviceInfoString(int state)
 	case DEVICE_LDC:
 		return "LDC";
 	case DEVICE_LOGGING:
-		return "Logging";
+		return "Logging. This cannot be interrupted.";
 	case DEVICE_SENDING:
 		return "Sending";
 	}
 	return "Idle";
-																		}
+								}
 
 static struct remote_device * get_device(struct soap* msg) {
 	char *wsa_header = NULL;
@@ -1759,11 +1832,12 @@ static struct remote_device * get_device(struct soap* msg) {
 	if (msg != NULL && ((wsa_header = wsa_header_get_To(msg)) != NULL)) {
 		last_slash = strrchr(wsa_header, (int) '/');
 	}
-
+	printf("Full address: %s\n",wsa_header_get_To(msg));
 	if (last_slash != NULL) {
 		strncpy(dev_uid, last_slash + 1, 45);
 	}
 
+	printf("Looking for uid: %s\n",dev_uid);
 	return device_proxy_list_get_device_by_dpws_device(dev_uid);
 
 }
@@ -1773,27 +1847,28 @@ struct remote_device *last_rem_dev;
 int send_buf(struct dpws_s *device, uint16_t service_id, uint8_t op_id,
 		struct soap* msg, u_char* buf, ssize_t len) {
 
-
-
+	printf("Calling send_buf\n");
+	printf("Finding device\n");
 	struct remote_device *rem_dev = get_device(msg);
 	last_rem_dev = rem_dev;
 
 	if (rem_dev == NULL) {
-		printf("No device matching %s found.", wsa_header_get_To(msg));
+		printf("No device matching %s found.\n", wsa_header_get_To(msg));
 		return 1;
 	}
 
 	msdevice *msdev=(msdevice *)remote_device_get_addr(rem_dev);
-
+	printf("Device found\n");
 	switch(service_id)
 	{
 	case SRV_Acceleration:
 	{
+		printf("SRV_Acceleration\n");
 		switch(op_id)
 		{
 		case OP_StartLDC:
 		{
-
+			printf("Invoking StartLDC\n");
 			if(msdev->state!=DEVICE_IDLE)
 			{
 				return ACLERR_NotReady;
@@ -1814,14 +1889,33 @@ int send_buf(struct dpws_s *device, uint16_t service_id, uint8_t op_id,
 
 	case SRV_DeviceInfo:
 	{
+		printf("SRV_DeviceInfo\n");
 		switch(op_id)
 		{
 		case OP_DeviceInfo_GetDeviceInfo:
 		{
+			printf("Invoking GetDeviceInfo\n");
+			if(gw_state==GATEWAY_IDLE&&msdev->state==DEVICE_LOGGING)
+			{
+				// Ping the node
+				printf("Pinging node to determine state\n");
+				pthread_mutex_lock(&gw_mutex);
+				if(pingNode(msdev->id))
+				{
+					msdev->state = DEVICE_IDLE;
+				}
+				pthread_mutex_unlock(&gw_mutex);
+			}
+
 			return 1;
 		}break;
 		case OP_DeviceInfo_StopDevice:
 		{
+			if(msdev->state==DEVICE_IDLE)
+			{
+				return 1;
+			}
+			printf("Invoking StopDevice\n");
 			pthread_mutex_lock(&gw_mutex);
 			stopNode(msdev->id);
 			pthread_mutex_unlock(&gw_mutex);
@@ -1831,11 +1925,12 @@ int send_buf(struct dpws_s *device, uint16_t service_id, uint8_t op_id,
 
 	case SRV_DataLogging:
 	{
+		printf("SRV_DataLogging\n");
 		switch(op_id)
 		{
 		case OP_DataLogging_StartLogging:
 		{
-
+			printf("Invoking StartLogging\n");
 			if(msdev->state!=DEVICE_IDLE)
 			{
 				return DLERR_NotReady;
@@ -1853,12 +1948,12 @@ int send_buf(struct dpws_s *device, uint16_t service_id, uint8_t op_id,
 			}
 			LoggingInfo * loginfo = (LoggingInfo*) buf;
 			pthread_mutex_lock(&gw_mutex);
-			initLogging(msdev->id,getLoggingRateIndex(loginfo->rate));
+			initLogging(msdev->id,getLoggingRateIndex(loginfo->rate),getLoggingSampleCount(getLoggingRateIndex(loginfo->rate),loginfo->duration));
 			pthread_mutex_unlock(&gw_mutex);
 		}break;
 		case OP_DataLogging_StartDownload:
 		{
-
+			printf("Invoking StartDownload\n");
 			if(msdev->state!=DEVICE_IDLE)
 			{
 				return DLERR_NotReady;
@@ -1880,6 +1975,7 @@ int send_buf(struct dpws_s *device, uint16_t service_id, uint8_t op_id,
 		}break;
 		case OP_DataLogging_Erase:
 		{
+			printf("Invoking Erase\n");
 			if(msdev->state!=DEVICE_IDLE)
 			{
 				return DLERR_NotReady;
@@ -1895,6 +1991,7 @@ int send_buf(struct dpws_s *device, uint16_t service_id, uint8_t op_id,
 		}break;
 		case OP_DataLogging_GetSessionCount:
 		{
+			printf("Invoking GetSessionCount\n");
 			if(msdev->state!=DEVICE_IDLE)
 			{
 				return DLERR_NotReady;
@@ -1992,7 +2089,7 @@ void discovery_set_device(char * discdevice)
 {
 	if(discdevice!=NULL)
 	{
-		device = discdevice;
+		serialdevice = discdevice;
 	}
 }
 
@@ -2065,51 +2162,78 @@ void *discovery_worker_loop() {
 		readMessage(1);
 
 		// Process packets
-		while(inMessageQueue(MS_DISCOVERY))
+		if(inMessageQueue(MS_DISCOVERY))
 		{
 			msmessage msg;
 			getMessageFromQueue(MS_DISCOVERY,&msg);
 			processDiscovery(&msg);
 		}
 
-		while(inMessageQueue(MS_LDC))
+		if(inMessageQueue(MS_LDC))
 		{
 			msmessage msg;
 			getMessageFromQueue(MS_LDC,&msg);
 			processLDC(&msg);
 		}
 
-		while(inMessageQueue(MS_DATAPAGE))
+		if(inMessageQueue(MS_DATAPAGE))
 		{
 			msmessage msg;
 			getMessageFromQueue(MS_DATAPAGE,&msg);
+			printf("Processing logging page\n");
+			if(gw_cur_device==NULL)
+			{
+				printf("MS_DATAPAGE received but gw_cur_device is NULL\n");
+				break;
+			}
 			if(processLogging(&msg))
 			{
 				gw_cur_device->session.page++;
-				requestPage(gw_cur_device->id,gw_cur_device->session.page);
+				if(gw_cur_device->session.page<8192)
+				{
+					requestPage(gw_cur_device->id,gw_cur_device->session.page);
+					sleep(1);
+				} else {
+					gw_cur_device->state = DEVICE_IDLE;
+					gw_cur_device = NULL;
+					gw_state = GATEWAY_IDLE;
+				}
+
+
 			} else {
+				gw_cur_device->state = DEVICE_IDLE;
 				gw_cur_device = NULL;
 				gw_state = GATEWAY_IDLE;
+
 			}
 		}
 
 		// Process first logging page
 		if(gw_cur_device!=NULL&&gw_cur_device->session.page==2)
 		{
-			if(processLogging(gw_cur_device->session.lastmsg))
+			printf("Processing first logging page\n");
+			if(processLogging(&gw_cur_device->session.lastmsg))
 			{
 				gw_cur_device->session.page++;
 				if(gw_cur_device->session.page<8192)
 				{
 					requestPage(gw_cur_device->id,gw_cur_device->session.page);
+					sleep(1);
+				} else {
+					gw_cur_device->state = DEVICE_IDLE;
+					gw_cur_device = NULL;
+					gw_state = GATEWAY_IDLE;
 				}
 			} else {
+				gw_cur_device->state = DEVICE_IDLE;
 				gw_cur_device = NULL;
 				gw_state = GATEWAY_IDLE;
+
 			}
 		}
 
 		pthread_mutex_unlock(&gw_mutex);
+		usleep(100);
 
 	}
 
