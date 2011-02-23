@@ -2109,7 +2109,7 @@ int discovery_worker_init() {
 	// Ping to discover existing nodes
 	unsigned short usNode = 0;
 	pthread_mutex_lock(&gw_mutex);
-	for(usNode = 0;usNode < 1000;usNode++)
+	for(usNode = 0;usNode < 10000;usNode++)
 	{
 		if(pingNode(usNode))
 		{
