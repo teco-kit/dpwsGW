@@ -73,6 +73,11 @@ void discovery_set_device(char * discdevice)
 
 }
 
+void discovery_set_address(char * begin, char * end)
+{
+
+}
+
 void *discovery_worker_loop();
 
 int discovery_worker_init() {

@@ -55,6 +55,8 @@ int gw_state = GATEWAY_IDLE;
 
 // Needed for messages without receiver
 msdevice * gw_cur_device = NULL;
+unsigned short begin_address = 0;
+unsigned short end_address = 10000;
 
 int openSerial()
 {
@@ -2093,6 +2095,18 @@ void discovery_set_device(char * discdevice)
 	}
 }
 
+void discovery_set_address(char * begin, char * end)
+{
+	if(begin!=NULL)
+	{
+		sscanf(begin,"%hu",&begin_address);
+	}
+	if(end!=NULL)
+	{
+		sscanf(end,"%hu",&end_address);
+	}
+}
+
 void *discovery_worker_loop();
 
 int discovery_worker_init() {
@@ -2109,7 +2123,7 @@ int discovery_worker_init() {
 	// Ping to discover existing nodes
 	unsigned short usNode = 0;
 	pthread_mutex_lock(&gw_mutex);
-	for(usNode = 0;usNode < 10000;usNode++)
+	for(usNode = begin_address;end_address < 10000;usNode++)
 	{
 		if(pingNode(usNode))
 		{
