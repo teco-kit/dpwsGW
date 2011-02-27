@@ -154,7 +154,7 @@ void requestEEPROM(unsigned short node,unsigned short eepromaddr);
 /**
  * Initiate LDC
  */
-void initLDC(unsigned short node,unsigned short rateindex);
+void initLDC(unsigned short node,unsigned short rateindex, unsigned short samples);
 
 /**
  * Stop a node
@@ -226,5 +226,10 @@ const char * getDeviceInfoString(int state);
  * Returns the samples * 100 in the given period for the sampling rate
  */
 unsigned short getLoggingSampleCount(unsigned short rateindex,char * duration);
+
+/**
+ * Returns the samples * 100 in the given period for the sampling rate
+ */
+unsigned short getLDCSampleCount(unsigned short rateindex,char * duration);
 
 #endif /* MICROSTRAIN */
