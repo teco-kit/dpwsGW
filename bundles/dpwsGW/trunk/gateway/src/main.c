@@ -30,6 +30,8 @@ int main(int argc, char **argv)
 	char *interface = NULL;
 	char *uuid = NULL;
 	char * device = NULL;
+	char * begin = NULL;
+	char * end = NULL;
 
 	/* parsing command line options */
 	while (argc > 1) {
@@ -63,7 +65,7 @@ int main(int argc, char **argv)
 				printf ("\nGateway: Set uuid to \"%s\"\n", uuid);
 #endif
 				break;
-			case 'd': /* set id with option -u */
+			case 'd': /* set device with option -d */
 							if (strlen(option) > 2) {
 								++option;
 								device = option;
@@ -76,9 +78,35 @@ int main(int argc, char **argv)
 							printf ("\nGateway: Set device to \"%s\"\n", device);
 			#endif
 							break;
+			case 'b': /* set begin with option -b */
+										if (strlen(option) > 2) {
+											++option;
+											begin = option;
+										} else {
+											--argc;
+											++argv;
+											begin = argv[1];
+										}
+						#ifdef DEBUG
+										printf ("\nGateway: Set node address begin to \"%s\"\n", begin);
+						#endif
+										break;
+			case 'e': /* set end with option -e */
+													if (strlen(option) > 2) {
+														++option;
+														end = option;
+													} else {
+														--argc;
+														++argv;
+														end = argv[1];
+													}
+									#ifdef DEBUG
+													printf ("\nGateway: Set node address end to \"%s\"\n", end);
+									#endif
+													break;
 			default:
 				fprintf(stderr, "\nGateway: Bad option %s\n", argv[1]);
-				printf("\n%s -i [interface address] -u urn:uuid[uuid] -d [discovery device]\n",
+				printf("\n%s -i [interface address] -u urn:uuid[uuid] -d [discovery device] -b [node address begin] -e [node address end]\n",
 					argv[0]);
 				exit(1);
 			}
@@ -120,6 +148,7 @@ int main(int argc, char **argv)
 	gateway_mutex_init();
 
 	discovery_set_device(device);
+	discovery_set_address(begin,end);
 
 	/* start thread for udp discovery (is there a hello?) */
 	if (!discovery_worker_init()) {

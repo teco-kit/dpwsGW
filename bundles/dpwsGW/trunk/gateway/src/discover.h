@@ -21,4 +21,6 @@ int gateway_running(void);
 
 void discovery_set_device(char * discdevice);
 
+void discovery_set_address(char * begin, char * end);
+
 #endif /* UDP_DISCOVER_H_ */
