@@ -445,7 +445,6 @@ void processDiscovery(msmessage * msg)
 		return;
 	}
 	registerNode(id);
-	initLDC(id,5);
 }
 
 void registerNode(unsigned short id)
@@ -1104,7 +1103,7 @@ void eraseSessions(unsigned short node)
 	}
 }
 
-void initLDC(unsigned short node,unsigned short rateindex)
+void initLDC(unsigned short node,unsigned short rateindex, unsigned short samples)
 {
 	struct remote_device *rem_device = device_proxy_list_get_device_by_id(&node);
 	msdevice *msdev=(msdevice *)remote_device_get_addr(rem_device);
@@ -1114,8 +1113,8 @@ void initLDC(unsigned short node,unsigned short rateindex)
 			node >> 8,	//	MSB of the node address
 			node & 0xFF,	//	LSB of the node address
 			100,		//	location to write
-			1 >> 8,	//	MSB of value to write
-			1 & 0xFF,	//	LSB of value to write
+			0 >> 8,	//	MSB of value to write
+			0 & 0xFF,	//	LSB of value to write
 			0x00,			//	MSB of the checksum
 			0x00			//	LSB of the checksum
 	};
@@ -1156,6 +1155,43 @@ void initLDC(unsigned short node,unsigned short rateindex)
 	eepromcmd[3] = 72;
 	eepromcmd[4] = rateindex >>8;
 	eepromcmd[5] = rateindex & 0xFF;
+
+	/*	calculate the checksum	*/
+	checksum = (eepromcmd[1] + eepromcmd[2] + eepromcmd[3] + eepromcmd[4] + eepromcmd[5]) & 0xFFFF;
+	eepromcmd[6] = checksum >> 8;		//	set the MSB of the checksum
+	eepromcmd[7] = checksum & 0xFF;	//	set the LSB of the checksum
+
+	bytes = write(handle,eepromcmd,8);
+
+	if(bytes==-1)
+	{
+		printf("Error writing node EEPROM\n");
+		perror(NULL);
+	} else if(bytes!=8)
+	{
+		printf("Unable to write node EEPROM, wrote only %d\n",bytes);
+	}
+
+	readMessage(0);
+	while(!inMessageQueue(MS_WRITEEEPROM)&&!inMessageQueue(MS_FAILURE))
+	{
+		readMessage(0);
+	}
+
+	if(inMessageQueue(MS_WRITEEEPROM))
+	{
+		getMessageFromQueue(MS_WRITEEEPROM,&msg);
+		printf("Wrote node EEPROM\n");
+	} else if(inMessageQueue(MS_FAILURE))
+	{
+		getMessageFromQueue(MS_FAILURE,&msg);
+		printf("Failed to write node EEPROM\n");
+	}
+
+	// Set sample count
+	eepromcmd[3] = 16;
+	eepromcmd[4] = samples >>8;
+	eepromcmd[5] = samples & 0xFF;
 
 	/*	calculate the checksum	*/
 	checksum = (eepromcmd[1] + eepromcmd[2] + eepromcmd[3] + eepromcmd[4] + eepromcmd[5]) & 0xFFFF;
@@ -1562,7 +1598,7 @@ int stopDevice(void *in,void *dummy)
 }
 
 char * msmessagestr(int type)
-																																																														{
+																																																																{
 	switch(type)
 	{
 	case MS_STREAM:
@@ -1630,7 +1666,7 @@ char * msmessagestr(int type)
 	default:
 		return "MS_NONE";
 	}
-																																																														}
+																																																																}
 
 float getLDCPeriod(unsigned short index)
 {
@@ -1753,6 +1789,14 @@ unsigned short getLDCRateIndex(char * rate)
 	return 5;
 }
 
+unsigned short getLDCSampleCount(unsigned short rateindex,char * duration)
+{
+	float rate = 1.0f/getLDCPeriod(rateindex);
+	int sec = 0;
+	sscanf(duration,"%d",&sec);
+	return (rate * sec)/100;
+}
+
 unsigned short getLoggingRateIndex(char * rate)
 {
 	if(strcmp(rate,"2048")==0)
@@ -1811,7 +1855,7 @@ unsigned short getLoggingSampleCount(unsigned short rateindex,char * duration)
 }
 
 const char * getDeviceInfoString(int state)
-								{
+										{
 	switch(state)
 	{
 	case DEVICE_IDLE:
@@ -1824,7 +1868,7 @@ const char * getDeviceInfoString(int state)
 		return "Sending";
 	}
 	return "Idle";
-								}
+										}
 
 static struct remote_device * get_device(struct soap* msg) {
 	char *wsa_header = NULL;
@@ -1882,7 +1926,7 @@ int send_buf(struct dpws_s *device, uint16_t service_id, uint8_t op_id,
 
 			LDCInfo * ldcinfo = (LDCInfo *) buf;
 			pthread_mutex_lock(&gw_mutex);
-			initLDC(msdev->id,getLDCRateIndex(ldcinfo->rate));
+			initLDC(msdev->id,getLDCRateIndex(ldcinfo->rate),getLDCSampleCount(getLDCRateIndex(ldcinfo->rate),getLDCSampleCount));
 			pthread_mutex_unlock(&gw_mutex);
 		}break;
 
