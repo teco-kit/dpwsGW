@@ -279,9 +279,9 @@ struct soap *proxy_structures_maccept(ws4d_time timeout) {
 
 	int service_list_size = service_cache_count_services();
 
-	if (service_list_size > 0) {
+	//if (service_list_size > 0) {
 		soap_set = calloc(service_list_size + (device_proxy_list_count_devices() * 2), sizeof(void *));
-	}
+	//}
 
 	for (index = 0; index < service_list_size; index++) {
 		soap_set[index] = service_cache_get_service(index);
@@ -302,7 +302,6 @@ struct soap *proxy_structures_maccept(ws4d_time timeout) {
 			index++;
 		}
 	}
-
 
 	result = proxy_structures_accept(timeout, index, soap_set);
 

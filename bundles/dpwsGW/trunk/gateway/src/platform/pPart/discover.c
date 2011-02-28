@@ -7,7 +7,6 @@
 	#include "../../proxy_structures.h"
 	#include "../../service_cache.h"
 
-	#include <libparticle.h>
 	#include <ifaddrs.h>
 	#include <net/if.h>
 	#include "concom.h"
@@ -541,12 +540,12 @@
 		fd_set read_fds;
 		FD_ZERO(&read_fds);
 		FD_SET(sock,&read_fds);
-		struct timeval timeout={0,13000};
 		updateCurTime();
 
 
 		while(gateway_running())
 		{
+			struct timeval timeout={0,13000};
 			cc_pkt p={};
 			int ret;
 			select(sock,&read_fds,NULL,NULL,&timeout);

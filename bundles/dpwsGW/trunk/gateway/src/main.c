@@ -125,7 +125,7 @@ int main(int argc, char **argv)
 				      {
 				    	  struct sockaddr *a=p->ifa_addr;
 				    	  uint32_t addr  =((a)&&(a->sa_family == AF_INET)) ? ntohl(((struct sockaddr_in *)a)->sin_addr.s_addr) : 0;
-				          if (addr > 0 && p->ifa_flags & IFF_RUNNING)
+				          if (addr > 0 && p->ifa_flags & IFF_RUNNING && !(p->ifa_flags & IFF_LOOPBACK))
 				          {
 				        	interface=calloc(32,sizeof(char));
 				        	sprintf(interface, "%i.%i.%i.%i", (uint16_t)((addr>>24)&0xFF),(uint16_t)((addr>>16)&0xFF), (uint16_t)((addr>>8)&0xFF),(uint16_t)((addr>>0)&0xFF));
