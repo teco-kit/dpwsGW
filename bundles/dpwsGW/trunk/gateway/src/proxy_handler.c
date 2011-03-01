@@ -19,17 +19,19 @@
 #include "service_cache.h"
 
 #ifdef UPART
-#define MODEL(X) uPartDevice##X
+#define MODEL(X) uPartDevice_##X
 #elif MICROSTRAIN
-#define MODEL(X) AccelModel##X
+#define MODEL(X) AccelModel_##X
 #else
-#define MODEL(X) SSimpDevice##X
+#define MODEL(X) SSimpDevice_##X
 #endif
+
+#include <device.h>
+
 //TODO use dynamic loading!!
 #define get_device_func(FUNC_PTR,_MODEL,CALL)\
 		do{\
-			extern void MODEL(_##CALL);\
-			*((void **)FUNC_PTR)=&MODEL(_##CALL);\
+			*(FUNC_PTR)=&MODEL(CALL);\
 		}while(0)
 
 static int dpws_device_proxy_done(struct dpws_s *dpws);
@@ -65,15 +67,17 @@ void dpws_device_check_handles() {
 
 		/* dispatch messages */
 		{
-			typedef int (*serve_requests_ptr)(struct soap *);
-			int i=0;
-			serve_requests_ptr *sr;
-			serve_requests_ptr *(* get_serve_requests)(void);
-			get_device_func(&get_serve_requests,uPartDevice,get_serve_requests);
-			sr=get_serve_requests();
-			while(sr[i])i++;	
 
-			if (dpws_mserve(handle, i, sr)) {
+			ssize_t count=-1;
+			device_serve_requests_ptr *sr;
+
+			device_get_serve_requests_func get_serve_requests;
+
+			get_device_func(&get_serve_requests,MODEL,get_serve_requests);
+
+			count=get_serve_requests(&sr);
+
+			if (dpws_mserve(handle, count, sr)) {
 				soap_print_fault(handle, stderr);
 
 			}
@@ -95,11 +99,11 @@ static struct soap *init_service_structure(char * model) {
 	struct soap *node_service = calloc(1, sizeof(struct soap));
 	//struct soap *node_service = NULL;
 
-	void (*device_init_service)(struct soap *);
+	device_init_service_func device_init_service;
 
 	printf("model is %s\n", model);
 
-	get_device_func(&device_init_service,uPartDevice/*Todo:model*/,init_service);
+	get_device_func(&device_init_service,MODEL,init_service);
 
 	//node_service = service_cache_register_node_on_service(0, device_init_service);
 	device_init_service(node_service);
@@ -120,8 +124,8 @@ static struct dpws_s *init_device_structure(char *model, char *interface, char *
 		return NULL;
 	}
 	{
-		int (*setup_hosting_service)(struct dpws_s *device, struct soap *service, char *uuid);
-		get_device_func(&setup_hosting_service,uPartDevice,setup_hosting_service);
+		device_setup_hosting_service_func setup_hosting_service;
+		get_device_func(&setup_hosting_service,MODEL,setup_hosting_service);
 
 		if (setup_hosting_service(node_dev, node_service, uuid) != 0) {
 			goto failure;
@@ -129,8 +133,8 @@ static struct dpws_s *init_device_structure(char *model, char *interface, char *
 	}
 
 	{
-		int (*setup_device)(struct dpws_s *device, struct soap *service);
-		get_device_func(&setup_device,uPartDevice,setup_device);
+		device_setup_device_func setup_device;
+		get_device_func(&setup_device,MODEL,setup_device);
 
 		if (setup_device(node_dev, node_service) != 0) {
 			goto failure;
@@ -138,8 +142,8 @@ static struct dpws_s *init_device_structure(char *model, char *interface, char *
 	}
 	{
 
-		int (*set_metadata_device)(struct dpws_s *device);
-		get_device_func(&set_metadata_device,uPartDevice,set_metadata_device);
+		device_set_metadata_device_func set_metadata_device;
+		get_device_func(&set_metadata_device,MODEL,set_metadata_device);
 
 		if (set_metadata_device(node_dev) != 0) {
 			goto failure;
@@ -147,16 +151,16 @@ static struct dpws_s *init_device_structure(char *model, char *interface, char *
 	}
 
 	{
-		int (*set_metadata_model)(struct dpws_s *device);
-		get_device_func(&set_metadata_model,uPartDevice,set_metadata_model);
+		device_set_metadata_model_func set_metadata_model;
+		get_device_func(&set_metadata_model,MODEL,set_metadata_model);
 		if (set_metadata_model(node_dev) != 0) {
 			goto failure;
 		}
 	}
 
 	{
-		int (*set_wsdl)(struct dpws_s *device);
-		get_device_func(&set_wsdl,uPartDevice,set_wsdl);
+		device_set_wsdl_func set_wsdl;
+		get_device_func(&set_wsdl,MODEL,set_wsdl);
 		if (set_wsdl(node_dev) != 0) {
 			goto failure;
 		}

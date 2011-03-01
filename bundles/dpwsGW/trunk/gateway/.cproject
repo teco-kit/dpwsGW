@@ -79,7 +79,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="src/platform/uPart|src/platform/pPart/|src/pPart_discover.c|src/x_discover.c|home/genaid/workspace/gateway|src/platform/microstrain/" flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name=""/>
+						<entry excluding="Build|src/platform/uPart|src/platform/pPart/|src/pPart_discover.c|src/x_discover.c|home/genaid/workspace/gateway|src/platform/microstrain/" flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -717,7 +717,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="src/platform/uPart|src/platform/pPart|src/pPart_discover.c|src/x_discover.c|home/genaid/workspace/gateway|src/platform/microstrain/" flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name=""/>
+						<entry excluding="Build|src/platform/uPart|src/platform/pPart|src/pPart_discover.c|src/x_discover.c|home/genaid/workspace/gateway|src/platform/microstrain/" flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -1381,7 +1381,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="src/platform/uPart|src/platform/ip|src/udp_discover.c|src/x_discover.c|home/genaid/workspace/gateway|src/platform/microstrain/" flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name=""/>
+						<entry excluding="Build|src/platform/uPart|src/platform/ip|src/udp_discover.c|src/x_discover.c|home/genaid/workspace/gateway|src/platform/microstrain/" flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -2051,7 +2051,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="src/platform/pPart|src/platform/ip|src/udp_discover.c|src/x_discover.c|home/genaid/workspace/gateway|src/platform/microstrain/" flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name=""/>
+						<entry excluding="Build|src/platform/pPart|src/platform/ip|src/udp_discover.c|src/x_discover.c|home/genaid/workspace/gateway|src/platform/microstrain/" flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -2747,7 +2747,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="src/platform/uPart|src/platform/pPart/|src/pPart_discover.c|src/x_discover.c|home/genaid/workspace/gateway|src/platform/ip/" flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name=""/>
+						<entry excluding="Build|src/platform/uPart|src/platform/pPart/|src/pPart_discover.c|src/x_discover.c|home/genaid/workspace/gateway|src/platform/ip/" flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
