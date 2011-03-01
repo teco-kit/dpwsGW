@@ -1,0 +1,316 @@
+<wsdl:definitions xmlns:wsoap12="http://schemas.xmlsoap.org/wsdl/soap12/"
+	xmlns:tns="http://www.teco.edu/SensorValues"
+	xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+	
+	xmlns:wsa="http://www.w3.org/2006/05/addressing/wsdl"
+	xmlns:wse="http://schemas.xmlsoap.org/ws/2004/08/eventing"
+	
+	xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap12/"
+    
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	
+	name="SensorValues" targetNamespace="http://www.teco.edu/SensorValues"
+	>
+
+  <wsdl:types>
+    <schema xmlns="http://www.w3.org/2001/XMLSchema"
+			elementFormDefault="qualified"
+
+targetNamespace="http://www.teco.edu/SensorValues">
+
+      <complexType name="ADXL210_Sample">
+        <annotation>
+          <documentation>
+            Analog Devices ADXL210
+            Low-Cost ±10 g Dual-Axis Accelerometer with Duty Cycle
+
+            (z-output from optional orthogonally mounted second device)
+
+            http://www.analog.com/static/imported-files/data_sheets_obsolete/OBSOLETE%20WATERMARK/ADXL210.pdf
+          </documentation>
+          </annotation>
+        <sequence>
+          <element name="x" type="short" />
+          <element name="y" type="short" />
+          <element name="z" type="short" />
+          <element maxOccurs="1" minOccurs="0" name="index"
+
+type="byte" />
+        </sequence>
+      </complexType>
+
+      <complexType name="TSL2550_Sample">
+        <annotation>
+          <documentation>
+            Taos TSL2550
+            Ambient Light Sensor
+
+            The TSL2550 is a digital-output light sensor with a two-wire, SMBus serial interface. It combines
+            two photodiodes and a companding analog-to-digital converter (ADC) on a single CMOS
+            integrated circuit to provide light measurements over an effective 12-bit dynamic range with a
+            response similar to that of the human eye.
+            The TSL2550 is designed for use with broad wavelength light sources. One of the photodiodes (channel 0) is
+            sensitive to visible and infrared light, while the second photodiode (channel 1) is sensitive primarily to infrared
+            light.
+
+            http://www.taosinc.com/getfile.aspx?type=press&amp;file=tsl2550-e75.pdf
+            Light Level (lux) =(daylight-infrared)*0.39*e(0.181R^2 )
+
+            Typical outputs:
+
+            Fluorescent (297 lux) : daylight=831 infrared=68
+            Daylight, shade (201 lux): daylight=895 infrared=343
+            Incadescent (42 lux): daylight 42 infrared=959
+          </documentation>
+        </annotation>
+        <sequence>
+          <element name="daylight" type="unsignedShort" >
+            <annotation>
+              <documentation>
+                ADC ouput for channel
+
+                0
+              </documentation>
+            </annotation>
+          </element>
+          <element name="infrared" type="unsignedShort" >
+            <annotation>
+              <documentation>
+                ADC ouput for channel
+
+                1
+              </documentation>
+            </annotation>
+          </element>
+          <element maxOccurs="1" minOccurs="0" name="index"
+
+type="byte" />
+        </sequence>
+      </complexType>
+
+      <complexType name="FSR152_Sample">
+        <sequence>
+          <element name="value" type="unsignedByte" />
+          <element maxOccurs="1" minOccurs="0" name="index"
+
+type="byte" />
+        </sequence>
+      </complexType>
+
+      <complexType name="SP101_Sample">
+        <sequence>
+          <element name="volume" type="unsignedByte" />
+          <element maxOccurs="1" minOccurs="0" name="index"
+
+type="byte" />
+        </sequence>
+      </complexType>
+
+      <complexType name="TC74_Sample">
+        <annotation>
+          <documentation>
+            Microchip TC74
+            Tiny Serial Digital Thermal Sensor
+
+            http://ww1.microchip.com/downloads/en/devicedoc/21462c.pdf
+          </documentation>
+        </annotation>
+        <sequence>
+          <element name="value" type="byte" />
+          <element maxOccurs="1" minOccurs="0" name="index"
+
+type="byte" />
+        </sequence>
+      </complexType>
+
+      <complexType name="SSimpSample">
+        <annotation>
+          <documentation>
+            Single Sample with sensors enabled according to
+
+            configuration
+          </documentation>
+        </annotation>
+
+        <sequence>
+          <element maxOccurs="1" minOccurs="0" name="TimeStamp"
+
+type="dateTime"/>
+          <element maxOccurs="1" minOccurs="0" name="Accelleration"
+
+type="tns:ADXL210_Sample" />
+          <element maxOccurs="1" minOccurs="0" name="Audio"
+
+type="tns:SP101_Sample" />
+          <element maxOccurs="1" minOccurs="0" name="Light"
+
+type="tns:TSL2550_Sample" />
+          <element maxOccurs="1" minOccurs="0" name="Force"
+
+type="tns:FSR152_Sample" />
+          <element maxOccurs="1" minOccurs="0" name="Temperature"
+
+type="tns:TC74_Sample" />
+        </sequence>
+
+      </complexType>
+
+      <element name="Sample" type="tns:SSimpSample" />
+
+      <complexType name="SSimpRateConfig">
+        <annotation>
+          <documentation></documentation>
+        </annotation>
+        <sequence>
+          <element maxOccurs="1" minOccurs="1" name="rate" type="byte" >
+            <annotation>
+              <documentation>
+                sample period= 2^rate * 13
+
+                ms
+              </documentation>
+            </annotation>
+          </element>
+        </sequence>
+      </complexType>
+
+
+      <complexType name="SensorConfigurationType">
+        <annotation>
+          <documentation>
+            If a config element is present the sensor will be enabled, otherwise it will be
+
+            disable.
+          </documentation>
+        </annotation>
+        <sequence>
+          <element maxOccurs="1" minOccurs="0" name="Acceleration"
+
+type="tns:SSimpRateConfig" />
+          <element maxOccurs="1" minOccurs="0" name="Audio"
+
+	type="tns:SSimpRateConfig" />
+          <element maxOccurs="1" minOccurs="0" name="Light"
+
+	type="tns:SSimpRateConfig" />
+          <element maxOccurs="1" minOccurs="0" name="AmbientLight"
+
+type="tns:SSimpRateConfig" />
+          <element maxOccurs="1" minOccurs="0" name="Force"
+
+	type="tns:SSimpRateConfig" />
+          <element maxOccurs="1" minOccurs="0" name="Temperature"
+
+	type="tns:SSimpRateConfig" />
+        </sequence>
+      </complexType>
+
+
+
+
+
+      <complexType name="SSimpStatus">
+        <sequence>
+          <element name="SensorConfig"
+            type="tns:SensorConfigurationType">
+          </element>
+          <element name="AllSensorConfig"
+            type="tns:SensorConfigurationType">
+          </element>
+          <element name="BatteryVoltage" type="unsignedShort">
+            <annotation>
+              <documentation></documentation>
+            </annotation>
+          </element>
+          <element name="CurrentTime" type="dateTime"></element>
+          <element name="UpTime" type="dateTime"></element>
+        </sequence>
+      </complexType>
+
+      <element name="Status" type="tns:SSimpStatus"></element>
+
+      <complexType name="SSimpControl">
+        <sequence>
+          <element name="SensorConfig"
+            type="tns:SensorConfigurationType" minOccurs="0" maxOccurs="1">
+          </element>
+          <element name="NewTime" type="dateTime" minOccurs="0" maxOccurs="1"></element>
+        </sequence>
+      </complexType>
+
+
+      <element name="StatusControl" type="tns:SSimpControl"></element>
+
+    </schema>
+  </wsdl:types>
+
+  <wsdl:message name="GetSensorValuesMessageIn" />
+  <wsdl:message name="GetSensorValuesMessageOut">
+    <wsdl:part name="out" element="tns:Sample" />
+  </wsdl:message>
+  
+  <wsdl:message name="SensorValuesEventMessageOut">
+    <wsdl:part name="event" element="tns:Sample" />
+  </wsdl:message>
+  
+
+  <wsdl:message name="ConfigRequest">
+    <wsdl:part name="in" element="tns:StatusControl"></wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="ConfigResponse">
+    <wsdl:part name="out" element="tns:Status"></wsdl:part>
+  </wsdl:message>
+
+  <wsdl:portType name="SensorValues" wse:EventSource="true">
+    <wsdl:operation name="GetSensorValues">
+      <wsdl:input message="tns:GetSensorValuesMessageIn"
+				wsa:Action="http://www.teco.edu/SensorValues/GetSensorValuesIn" />
+      <wsdl:output message="tns:GetSensorValuesMessageOut"
+				wsa:Action="http://www.teco.edu/SensorValues/GetSensorValuesOut" />
+    </wsdl:operation>
+    <wsdl:operation name="Config">
+      <wsdl:input message="tns:ConfigRequest" wsa:Action="http://www.teco.edu/SensorValues/ConfigRequest"></wsdl:input>
+      <wsdl:output message="tns:ConfigResponse" wsa:Action="http://www.teco.edu/SensorValues/ConfigResponse"></wsdl:output>
+    </wsdl:operation>
+
+    <wsdl:operation name="SensorValuesEvent">
+      <wsdl:output message="tns:SensorValuesEventMessageOut"
+				wsa:Action="http://www.teco.edu/SensorValues/SensorValuesEventOut"/>
+    </wsdl:operation>
+
+  </wsdl:portType>
+
+  <wsdl:binding name="SensorValuesSOAP" type="tns:SensorValues">
+    <soap:binding style="document" 	transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="GetSensorValues">
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+
+    <wsdl:operation name="SensorValuesEvent">
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+   
+
+    <wsdl:operation name="Config">
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+
+  <wsdl:service name="SensorValues">
+    <wsdl:port name="SensorValues" binding="tns:SensorValuesSOAP">
+      <wsoap12:address location="http://localhost:8080" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>
