@@ -30,8 +30,8 @@ int main(int argc, char **argv)
 	char *interface = NULL;
 	char *uuid = NULL;
 	char * device = NULL;
-	char * begin = NULL;
-	char * end = NULL;
+	int begin = 0;
+	int end = 1000;
 
 	/* parsing command line options */
 	while (argc > 1) {
@@ -81,27 +81,27 @@ int main(int argc, char **argv)
 			case 'b': /* set begin with option -b */
 										if (strlen(option) > 2) {
 											++option;
-											begin = option;
+											begin = atoi(option+2);
 										} else {
 											--argc;
 											++argv;
-											begin = argv[1];
+											begin = atoi(argv[1]);
 										}
 						#ifdef DEBUG
-										printf ("\nGateway: Set node address begin to \"%s\"\n", begin);
+										printf ("\nGateway: Set node address begin to \"%i\"\n", begin);
 						#endif
 										break;
 			case 'e': /* set end with option -e */
 													if (strlen(option) > 2) {
 														++option;
-														end = option;
+														end = atoi(option+2);
 													} else {
 														--argc;
 														++argv;
-														end = argv[1];
+														end = atoi(argv[1]);
 													}
 									#ifdef DEBUG
-													printf ("\nGateway: Set node address end to \"%s\"\n", end);
+													printf ("\nGateway: Set node address end to \"%i\"\n", end);
 									#endif
 													break;
 			default:

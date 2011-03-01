@@ -73,7 +73,7 @@ void discovery_set_device(char * discdevice)
 
 }
 
-void discovery_set_address(char * begin, char * end)
+void discovery_set_address(int begin, int end)
 {
 
 }

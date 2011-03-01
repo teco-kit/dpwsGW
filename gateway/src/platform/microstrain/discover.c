@@ -24,6 +24,9 @@
 
 #include "microstrain.h"
 
+#define MODEL(X) AccelModel_##X
+#include <device.h>
+
 #ifdef WIN32
 DWORD workerid;
 HANDLE discovery_worker;
@@ -842,7 +845,7 @@ int processLogging(msmessage * msg)
 	struct dpws_s *device = rem_device ? remote_device_get_dpws_device(	rem_device) : NULL;
 	if (!device) {
 		printf("device for event not found");
-		return;
+		return 0;
 	}
 	int checksum = 0;
 	int i =0;
@@ -1789,7 +1792,7 @@ unsigned short getLDCRateIndex(char * rate)
 	return 5;
 }
 
-unsigned short getLDCSampleCount(unsigned short rateindex,char * duration)
+unsigned short getLDCSampleCount(unsigned short rateindex, char * duration)
 {
 	float rate = 1.0f/getLDCPeriod(rateindex);
 	int sec = 0;
@@ -1926,7 +1929,7 @@ int send_buf(struct dpws_s *device, uint16_t service_id, uint8_t op_id,
 
 			LDCInfo * ldcinfo = (LDCInfo *) buf;
 			pthread_mutex_lock(&gw_mutex);
-			initLDC(msdev->id,getLDCRateIndex(ldcinfo->rate),getLDCSampleCount(getLDCRateIndex(ldcinfo->rate),getLDCSampleCount));
+			initLDC(msdev->id,getLDCRateIndex(ldcinfo->rate),getLDCSampleCount(getLDCRateIndex(ldcinfo->rate),ldcinfo->duration));
 			pthread_mutex_unlock(&gw_mutex);
 		}break;
 
@@ -2139,16 +2142,10 @@ void discovery_set_device(char * discdevice)
 	}
 }
 
-void discovery_set_address(char * begin, char * end)
+void discovery_set_address(int begin, int end)
 {
-	if(begin!=NULL)
-	{
-		sscanf(begin,"%hu",&begin_address);
-	}
-	if(end!=NULL)
-	{
-		sscanf(end,"%hu",&end_address);
-	}
+	begin_address=begin;
+	end_address=end;
 }
 
 void *discovery_worker_loop();
@@ -2167,13 +2164,15 @@ int discovery_worker_init() {
 	// Ping to discover existing nodes
 	unsigned short usNode = 0;
 	pthread_mutex_lock(&gw_mutex);
-	for(usNode = begin_address;end_address < 10000;usNode++)
+	if(begin_address<end_address)
+	for(usNode = begin_address;usNode <= end_address ; usNode++)
 	{
 		if(pingNode(usNode))
 		{
 			printf("Found node %d\n",usNode);
 			registerNode(usNode);
 		}
+		else printf("%d",usNode);fflush(stdout);
 
 	}
 	tcflush(handle,TCIOFLUSH);
