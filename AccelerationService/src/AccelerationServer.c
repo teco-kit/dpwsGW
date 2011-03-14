@@ -20,16 +20,17 @@ static int soap_serve_StartLDC(struct soap *soap) //TODO: pass device context
 
 	LDCInfo info;
 	strcpy(info.rate,"1"); // Default rate is 1 Hz
-
+	int ret = 0;
 	if(!readLDCInfo(soap, &info))
 	{
 		printf("Error Calling readLDCInfo\n");
 		printf("Read LDC rate: %s\n",info.rate);
 		error=soap->error;
+	} else {
+		printf("LDC rate %s\n",info.rate);
+		printf("Calling send_buf\n");
+		ret = send_buf(device, service_id, op_id, soap, (u_char *)&info, sizeof(LDCInfo));
 	}
-	printf("LDC rate %s\n",info.rate);
-	printf("Calling send_buf\n");
-	int ret = send_buf(device, service_id, op_id, soap, (u_char *)&info, sizeof(LDCInfo));
 
 	/* prepare response */
 	{
