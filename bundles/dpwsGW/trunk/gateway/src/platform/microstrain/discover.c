@@ -216,7 +216,7 @@ int readMessage(int expectmultiple)
 		return 0;
 	}
 
-	//printf("Received byte: %#x\n",msgqueue[msgslot].buffer[0]);
+	printf("Received byte: %#x\n",msgqueue[msgslot].buffer[0]);
 	gettimeofday(&msgqueue[msgslot].received,NULL);
 
 	switch(msgqueue[msgslot].buffer[0])
@@ -388,7 +388,7 @@ int readMessage(int expectmultiple)
 				printf("High speed streaming is currently not supported\n");
 				return -1;
 				// TODO: Deal with High speed streaming packets, length may be greater than 266
-			} else if(((msgqueue[msgslot].buffer[0] & 0x08) && msgqueue[msgslot].buffer[1]==0x07))
+			} else if(((msgqueue[msgslot].buffer[0] & 0x08) && msgqueue[msgslot].buffer[1]==0x07)||((msgqueue[msgslot].buffer[0] == 0) && msgqueue[msgslot].buffer[1]==0))
 			{
 				bytes_read = read(handle,msgqueue[msgslot].buffer,10);
 				if(bytes_read==-1)
@@ -399,7 +399,7 @@ int readMessage(int expectmultiple)
 
 				if(bytes_read!=10)
 				{
-					printf("Failed to read rest of MS_DISCOVERY message\n");
+					printf("Failed to read rest of MS_DISCOVERY message, read only %d bytes\n",bytes_read);
 					return -1;
 				}
 				msgqueue[msgslot].length = 10;
@@ -435,7 +435,7 @@ int readMessage(int expectmultiple)
 
 	}
 
-	//printf("%s message received\n",msmessagestr(msgqueue[msgslot].type));
+	printf("%s message received\n",msmessagestr(msgqueue[msgslot].type));
 	return 1;
 
 }
@@ -445,6 +445,10 @@ void processDiscovery(msmessage * msg)
 	unsigned short id = (msg->buffer[0] << 8) + msg->buffer[1];
 	if(device_proxy_list_get_device_by_id(&id)!=NULL)
 	{
+		struct remote_device *rem_device = device_proxy_list_get_device_by_id(&id);
+		msdevice *msdev=(msdevice *)remote_device_get_addr(rem_device);
+		msdev->state = DEVICE_IDLE;
+		printf("Node %d set to idle\n",id);
 		return;
 	}
 	registerNode(id);
@@ -2172,7 +2176,7 @@ int discovery_worker_init() {
 			printf("Found node %d\n",usNode);
 			registerNode(usNode);
 		}
-		else printf("%d",usNode);fflush(stdout);
+		else printf("%d\n",usNode);fflush(stdout);
 
 	}
 	tcflush(handle,TCIOFLUSH);
@@ -2221,9 +2225,12 @@ void *discovery_worker_loop() {
 		// Process packets
 		if(inMessageQueue(MS_DISCOVERY))
 		{
+			// Message comes in pairs
+			readMessage(1);
 			msmessage msg;
 			getMessageFromQueue(MS_DISCOVERY,&msg);
 			processDiscovery(&msg);
+			getMessageFromQueue(MS_DISCOVERY,&msg);
 		}
 
 		if(inMessageQueue(MS_LDC))
