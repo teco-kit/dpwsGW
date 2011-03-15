@@ -3,6 +3,9 @@
 #include <ws4d-gSOAP/dpws_device.h>
 #include <stdio.h>
 #include <dpws_append_wsdl.h>
+#define MODEL(X) SSimpDevice_##X
+#include <device.h>
+#include <assert.h>
 
 static struct Namespace namespaces[] = {
 
@@ -18,12 +21,13 @@ static struct Namespace namespaces[] = {
 
 { NULL, NULL, NULL, NULL } };
 
-void SSimpDevice_init_service(struct soap *service) {
+int SSimpDevice_init_service(struct soap *service) {
 	soap_init(service);
 #ifdef DEBUG
 	soap_omode (service, SOAP_XML_INDENT);
 #endif
 	soap_set_namespaces(service, namespaces);
+	return WS4D_OK;
 }
 
 typedef int (*serve_requests_ptr)(struct soap *);
@@ -33,8 +37,12 @@ extern int SensorValues_serve_request(struct soap * soap);
 static serve_requests_ptr serve_requests[] = SOAP_SERVE_SET(
 		SensorValues_serve_request);
 
-serve_requests_ptr *SSimpDevice_get_serve_requests() {
-	return serve_requests;
+ssize_t MODEL(get_serve_requests(device_serve_requests_ptr **s)) {
+	ssize_t len=0;
+	while (serve_requests[len])len++;
+	assert(len<sizeof(serve_requests));
+	*s=serve_requests;
+	return len;
 }
 
 int SSimpDevice_setup_hosting_service(struct dpws_s *device,
