@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsoap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:tns="http://www.teco.edu/SensorValues" xmlns:wse="http://schemas.xmlsoap.org/ws/2004/08/eventing" xmlns:wsa_="http://www.w3.org/2006/05/addressing/wsdl" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap12/" name="SensorValues" targetNamespace="http://www.teco.edu/SensorValues" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <xsd:schema xmlns="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" targetNamespace="http://www.teco.edu/SensorValues">
+      <xsd:annotation>
+        <xsd:appinfo>
+          <UnitSet xmlns="urn:oasis:names:tc:unitsml:schema:xsd:UnitsMLSchema-0.9.18">
+					<Unit xmlns="urn:oasis:names:tc:unitsml:schema:xsd:UnitsMLSchema-0.9.18" xml:id="U_mm.s-2">
+									<UnitSystem name="SI" type="SI_derived" xml:lang="en-US" />
+									<UnitName xml:lang="en-US">
+										millimeter per second squared
+									</UnitName>
+									<UnitSymbol type="HTML">
+										mm · s
+										<sup>-2</sup>
+									</UnitSymbol>
+									<RootUnits>
+										<EnumeratedRootUnit unit="meter" prefix="m" />
+										<EnumeratedRootUnit unit="second" powerNumerator="-2" />
+									</RootUnits>
+								</Unit>
+					</UnitSet>
+        </xsd:appinfo>
+      </xsd:annotation>
+      <xsd:complexType name="ADXL210_Sample">
+        <xsd:annotation>
+          <xsd:documentation>Analog Devices ADXL210 Low-Cost ±10 g Dual-Axis
+						Accelerometer with Duty Cycle
+
+						(z-output from optional orthogonally mounted
+						second device)
+
+
+
+						http://www.analog.com/static/imported-files/data_sheets_obsolete/OBSOLETE%20WATERMARK/ADXL210.pdf
+					</xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+          <xsd:element name="x">
+            <xsd:annotation>
+              <xsd:appinfo>
+                <Quantity xmlns="urn:oasis:names:tc:unitsml:schema:xsd:UnitsMLSchema-0.9.18">
+									<QuantityName>acceleration</QuantityName>
+									<UnitReference>#U_mm.s-2</UnitReference>
+								</Quantity>
+              </xsd:appinfo>
+            </xsd:annotation>
+            <xsd:simpleType>
+              <xsd:restriction base="xsd:short">
+                <xsd:maxInclusive value="+2000" />
+                <xsd:minInclusive value="-2000" />
+              </xsd:restriction>
+            </xsd:simpleType>
+          </xsd:element>
+          <xsd:element name="y">
+            <xsd:simpleType>
+              <xsd:restriction base="xsd:short">
+                <xsd:minInclusive value="-2000" />
+                <xsd:maxInclusive value="+2000" />
+              </xsd:restriction>
+            </xsd:simpleType>
+          </xsd:element>
+          <xsd:element name="z">
+            <xsd:simpleType>
+              <xsd:restriction base="xsd:short">
+                <xsd:maxInclusive value="+2000" />
+                <xsd:minInclusive value="-2000" />
+              </xsd:restriction>
+            </xsd:simpleType>
+          </xsd:element>
+          <xsd:element minOccurs="0" maxOccurs="1" name="index" type="xsd:byte" />
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:complexType name="TSL2550_Sample">
+        <xsd:annotation>
+          <xsd:documentation>Taos TSL2550 Ambient Light Sensor
+
+						The TSL2550 is a digital-output light sensor
+						with a two-wire, SMBus serial interface. It
+						combines two photodiodes and a companding
+						analog-to-digital converter (ADC) on a single
+						CMOS integrated circuit to provide light
+						measurements over an effective 12-bit dynamic
+						range with a response similar to that of the
+						human eye. The TSL2550 is designed for use with
+						broad wavelength light sources. One of the
+						photodiodes (channel 0) is sensitive to visible
+						and infrared light, while the second photodiode
+						(channel 1) is sensitive primarily to infrared
+						light.
+
+
+
+						http://www.taosinc.com/getfile.aspx?type=press&amp;file=tsl2550-e75.pdf
+						Light Level (lux)
+						=(daylight-infrared)*0.39*e(0.181R^2 )
+
+						Typical outputs:
+
+						Fluorescent (297 lux) : daylight=831 infrared=68
+						Daylight, shade (201 lux): daylight=895
+						infrared=343 Incadescent (42 lux): daylight 42
+						infrared=959
+					</xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+          <xsd:element name="daylight" type="xsd:unsignedShort">
+            <xsd:annotation>
+              <xsd:documentation>ADC ouput for channel 0
+							</xsd:documentation>
+            </xsd:annotation>
+          </xsd:element>
+          <xsd:element name="infrared" type="xsd:unsignedShort">
+            <xsd:annotation>
+              <xsd:documentation>ADC ouput for channel 1
+							</xsd:documentation>
+            </xsd:annotation>
+          </xsd:element>
+          <xsd:element minOccurs="0" maxOccurs="1" name="index" type="xsd:byte" />
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:complexType name="FSR152_Sample">
+        <xsd:sequence>
+          <xsd:element name="value" type="xsd:unsignedByte" />
+          <xsd:element minOccurs="0" maxOccurs="1" name="index" type="xsd:byte" />
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:complexType name="SP101_Sample">
+        <xsd:sequence>
+          <xsd:element name="volume" type="xsd:unsignedByte" />
+          <xsd:element minOccurs="0" maxOccurs="1" name="index" type="xsd:byte" />
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:complexType name="TC74_Sample">
+        <xsd:annotation>
+          <xsd:documentation>Microchip TC74 Tiny Serial Digital Thermal
+						Sensor
+
+
+
+						http://ww1.microchip.com/downloads/en/devicedoc/21462c.pdf
+					</xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+          <xsd:element name="value">
+            <xsd:simpleType>
+              <xsd:restriction base="xsd:byte">
+                <xsd:minInclusive value="-20" />
+                <xsd:maxInclusive value="80" />
+              </xsd:restriction>
+            </xsd:simpleType>
+          </xsd:element>
+          <xsd:element minOccurs="0" maxOccurs="1" name="index" type="xsd:byte" />
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:complexType name="SSimpSample">
+        <xsd:annotation>
+          <xsd:documentation>Single Sample with sensors enabled according to
+						configuration
+					</xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+          <xsd:element minOccurs="0" maxOccurs="1" name="TimeStamp" type="xsd:dateTime" />
+          <xsd:element minOccurs="0" maxOccurs="1" name="Accelleration" type="tns:ADXL210_Sample" />
+          <xsd:element minOccurs="0" maxOccurs="1" name="Audio" type="tns:SP101_Sample" />
+          <xsd:element minOccurs="0" maxOccurs="1" name="Light" type="tns:TSL2550_Sample" />
+          <xsd:element minOccurs="0" maxOccurs="1" name="Force" type="tns:FSR152_Sample" />
+          <xsd:element minOccurs="0" maxOccurs="1" name="Temperature" type="tns:TC74_Sample" />
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element name="Sample" type="tns:SSimpSample" />
+      <xsd:complexType name="SSimpRateConfig">
+        <xsd:annotation>
+          <xsd:documentation />
+        </xsd:annotation>
+        <xsd:sequence>
+          <xsd:element minOccurs="1" maxOccurs="1" name="rate" type="xsd:byte">
+            <xsd:annotation>
+              <xsd:documentation>sample period= 2^rate * 13 ms
+							</xsd:documentation>
+            </xsd:annotation>
+          </xsd:element>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:complexType name="SensorConfigurationType">
+        <xsd:annotation>
+          <xsd:documentation>If a config element is present the sensor will
+						be enabled, otherwise it will be disable.
+					</xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+          <xsd:element minOccurs="0" maxOccurs="1" name="Acceleration" type="tns:SSimpRateConfig" />
+          <xsd:element minOccurs="0" maxOccurs="1" name="Audio" type="tns:SSimpRateConfig" />
+          <xsd:element minOccurs="0" maxOccurs="1" name="Light" type="tns:SSimpRateConfig" />
+          <xsd:element minOccurs="0" maxOccurs="1" name="AmbientLight" type="tns:SSimpRateConfig" />
+          <xsd:element minOccurs="0" maxOccurs="1" name="Force" type="tns:SSimpRateConfig" />
+          <xsd:element minOccurs="0" maxOccurs="1" name="Temperature" type="tns:SSimpRateConfig" />
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:complexType name="SSimpStatus">
+        <xsd:sequence>
+          <xsd:element name="SensorConfig" type="tns:SensorConfigurationType" />
+          <xsd:element name="AllSensorConfig" type="tns:SensorConfigurationType" />
+          <xsd:element name="BatteryVoltage" type="xsd:unsignedShort">
+            <xsd:annotation>
+              <xsd:documentation />
+            </xsd:annotation>
+          </xsd:element>
+          <xsd:element name="CurrentTime" type="xsd:dateTime" />
+          <xsd:element name="UpTime" type="xsd:dateTime" />
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element name="Status" type="tns:SSimpStatus" />
+      <xsd:complexType name="SSimpControl">
+        <xsd:sequence>
+          <xsd:element minOccurs="0" maxOccurs="1" name="SensorConfig" type="tns:SensorConfigurationType" />
+          <xsd:element minOccurs="0" maxOccurs="1" name="NewTime" type="xsd:dateTime" />
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element name="StatusControl" type="tns:SSimpControl" />
+    </xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="GetSensorValuesMessageIn" />
+  <wsdl:message name="GetSensorValuesMessageOut">
+    <wsdl:part name="out" element="tns:Sample" />
+  </wsdl:message>
+  <wsdl:message name="SensorValuesEventMessageOut">
+    <wsdl:part name="event" element="tns:Sample" />
+  </wsdl:message>
+  <wsdl:message name="ConfigRequest">
+    <wsdl:part name="in" element="tns:StatusControl" />
+  </wsdl:message>
+  <wsdl:message name="ConfigResponse">
+    <wsdl:part name="out" element="tns:Status" />
+  </wsdl:message>
+  <wsdl:portType wse:EventSource="true" name="SensorValues">
+    <wsdl:operation name="GetSensorValues">
+      <wsdl:input wsa:Action="http://www.teco.edu/SensorValues/GetSensorValuesIn" message="tns:GetSensorValuesMessageIn" />
+      <wsdl:output wsa:Action="http://www.teco.edu/SensorValues/GetSensorValuesOut" message="tns:GetSensorValuesMessageOut" />
+    </wsdl:operation>
+    <wsdl:operation name="SensorValuesEvent">
+      <wsdl:output wsa:Action="http://www.teco.edu/SensorValues/SensorValuesEventOut" message="tns:SensorValuesEventMessageOut" />
+    </wsdl:operation>
+    <wsdl:operation name="Config">
+      <wsdl:input wsa:Action="http://www.teco.edu/SensorValues/ConfigRequest" message="tns:ConfigRequest" />
+      <wsdl:output wsa:Action="http://www.teco.edu/SensorValues/ConfigResponse" message="tns:ConfigResponse" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="SensorValuesSOAP" type="tns:SensorValues">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="GetSensorValues">
+      <soap:operation soapAction="http://www.teco.edu/GetSensorValues"/>
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SensorValuesEvent">
+      <soap:operation soapAction="http://www.teco.edu/SensorValuesEvent"></soap:operation>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Config">
+      <soap:operation soapAction="http://www.teco.edu/Config"></soap:operation>
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="SensorValues">
+    <wsdl:port name="SensorValues" binding="tns:SensorValuesSOAP">
+      <soap:address location="http://localhost:8080" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>
