@@ -448,6 +448,7 @@ void processDiscovery(msmessage * msg)
 		struct remote_device *rem_device = device_proxy_list_get_device_by_id(&id);
 		msdevice *msdev=(msdevice *)remote_device_get_addr(rem_device);
 		msdev->state = DEVICE_IDLE;
+		updateGWState();
 		printf("Node %d set to idle\n",id);
 		return;
 	}
@@ -765,11 +766,11 @@ void processLDC(msmessage * msg)
 		printf("device for event not found");
 		return;
 	}
-	int checksum = 0x07 + 0x04;
+	unsigned short checksum = 0x07 + 0x04;
 	int i = 0;
 	for(i = 0;i< msg->length-4;i++)
 	{
-		checksum=(checksum+msg->buffer[i])%65535;
+		checksum=(checksum+msg->buffer[i]);
 	}
 	if(checksum!=((msg->buffer[msg->length-2] << 8) + msg->buffer[msg->length-1]))
 	{
@@ -851,12 +852,12 @@ int processLogging(msmessage * msg)
 		printf("device for event not found");
 		return 0;
 	}
-	int checksum = 0;
+	uint16_t checksum = 0;
 	int i =0;
 	int next = 1;
 	for(i=0;i<264;i++)
 	{
-		checksum = (checksum + msg->buffer[i]) % 65535;
+		checksum = (checksum + msg->buffer[i]);
 	}
 	if(checksum!=(msg->buffer[264]<<8)+msg->buffer[265])
 	{
@@ -1046,7 +1047,10 @@ int processLogging(msmessage * msg)
 
 	gw_cur_device->session.lastmsg = (*msg);
 	//Deliver events
-	AccelModel_event(SRV_DataLogging,OP_DataLogging_DataEvent,device,(char*)&page,sizeof(loggingpage));
+	if(page.samplecount>0)
+	{
+		AccelModel_event(SRV_DataLogging,OP_DataLogging_DataEvent,device,(char*)&page,sizeof(loggingpage));
+	}
 
 	return next;
 }
@@ -1267,7 +1271,7 @@ void initLDC(unsigned short node,unsigned short rateindex, unsigned short sample
 		printf("Started node %d in LDC\n",node);
 	}
 	msdev->state = DEVICE_LDC;
-	gw_state = GATEWAY_LDC;
+	updateGWState();
 }
 
 void initLogging(unsigned short node,unsigned short rateindex, unsigned short samples)
@@ -1452,11 +1456,11 @@ void initDownload(unsigned short node)
 		return;
 	}
 	// Check checksum
-	int checksum = 0;
+	unsigned short checksum = 0;
 	int i =0;
 	for(i=0;i<264;i++)
 	{
-		checksum = (checksum + msg.buffer[i]) % 65535;
+		checksum = (checksum + msg.buffer[i]);
 	}
 	if(checksum!=(msg.buffer[264]<<8)+msg.buffer[265])
 	{
@@ -1481,8 +1485,8 @@ void initDownload(unsigned short node)
 			msdev->session.wrap = 0;
 			msdev->session.rate = getLoggingPeriod((msg.buffer[i+10] <<8) + msg.buffer[i+11]);
 			memset(msdev->session.wrappedval,0,sizeof(char)*16);
-			gw_state = GATEWAY_RECEIVING;
 			msdev->state = DEVICE_SENDING;
+			updateGWState();
 			gw_cur_device = msdev;
 			break;
 		}
@@ -1591,7 +1595,7 @@ int stopNode(unsigned short node)
 	struct remote_device *rem_device = device_proxy_list_get_device_by_id(&node);
 	msdevice *msdev=(msdevice *)remote_device_get_addr(rem_device);
 	msdev->state = DEVICE_IDLE;
-	gw_state = GATEWAY_IDLE;
+	updateGWState();
 	return 1;
 }
 
@@ -1859,6 +1863,31 @@ unsigned short getLoggingSampleCount(unsigned short rateindex,char * duration)
 	int sec = 0;
 	sscanf(duration,"%d",&sec);
 	return (rate * sec)/100;
+}
+
+int updateGWStateHelper(void *in,void *dummy)
+{
+	msdevice * msdev=(msdevice*) in;
+	if(msdev->state!=DEVICE_IDLE&&msdev->state!=DEVICE_LOGGING)
+		return 1;
+	return 0;
+}
+
+void updateGWState()
+{
+	gw_state = GATEWAY_IDLE;
+	struct remote_device * rem_device = device_proxy_list_get_device(updateGWStateHelper,NULL);
+	if(rem_device!=NULL)
+	{
+		msdevice * msdev = (msdevice *)remote_device_get_addr(rem_device);
+		if(msdev->state==DEVICE_LDC)
+		{
+			gw_state = GATEWAY_LDC;
+		} else if(msdev->state==DEVICE_SENDING)
+		{
+			gw_state = GATEWAY_RECEIVING;
+		}
+	}
 }
 
 const char * getDeviceInfoString(int state)
@@ -2260,7 +2289,7 @@ void *discovery_worker_loop() {
 				} else {
 					gw_cur_device->state = DEVICE_IDLE;
 					gw_cur_device = NULL;
-					gw_state = GATEWAY_IDLE;
+					updateGWState();
 				}
 
 
@@ -2291,7 +2320,7 @@ void *discovery_worker_loop() {
 			} else {
 				gw_cur_device->state = DEVICE_IDLE;
 				gw_cur_device = NULL;
-				gw_state = GATEWAY_IDLE;
+				updateGWState();
 
 			}
 		}
