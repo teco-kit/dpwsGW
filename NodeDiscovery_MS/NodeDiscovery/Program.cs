@@ -140,7 +140,7 @@ Select: ");
                         {
                             if (accelerationServiceEndPoint != null)
                             {
-                                invokeStartLDC(accelerationServiceEndPoint);
+                                //invokeStartLDC(accelerationServiceEndPoint);
                                 subscribeToLDC(accelerationServiceEndPoint);
                             }
                             else
@@ -164,7 +164,6 @@ Select: ");
                         {
                             if (dataLoggingServiceEndPoint != null)
                             {
-                                invokeStartDownload(dataLoggingServiceEndPoint);
                                 subscribeToDownload(dataLoggingServiceEndPoint);
                             }
                             else
@@ -258,11 +257,33 @@ Select: ");
                 {
                     client.Endpoint.Address = hostedEndPoint;
                     client.Open();
-
                     EndpointAddress callbackEndpoint = client.InnerDuplexChannel.LocalAddress;
-                    EventSourceClient eventSource = new EventSourceClient(ithis, "WSEventing");
+                   EventSourceClient eventSource = new EventSourceClient(ithis, "WSEventing");
+                    
                     eventSource.Endpoint.Address = hostedEndPoint;
                     eventSource.Open();
+                    String subscriptionId = subscribe(eventSource,callbackEndpoint,"http://www.teco.edu/DataLoggingService/DataLoggingServiceEventOut");
+
+                    Console.WriteLine("Got subscription: {0}", subscriptionId);
+
+                    Console.WriteLine("Press <ENTER> to unsubscribe.");
+                    invokeStartDownload(dataLoggingServiceEndPoint);
+
+                    Console.ReadLine();
+
+                    Console.WriteLine("Unsubscribing {0}", subscriptionId);
+                    SubscriptionManagerClient subscriptionManager = new SubscriptionManagerClient("WSEventingUnsubscribe");
+                    subscriptionManager.Endpoint.Address = hostedEndPoint;
+                    unsubscribe(subscriptionManager,subscriptionId);
+                    client.Close();
+                }
+            }
+        }
+          
+    //    private static String subscribe(EndpointAddress hostedEndPoint, String eventOut)
+         private static String subscribe(EventSourceClient eventSource, EndpointAddress callbackEndpoint, String eventOut)
+        {
+             //
 
                     Subscribe s = new Subscribe();
                     (s.Delivery = new DeliveryType()).Mode = "http://schemas.xmlsoap.org/ws/2004/08/eventing/DeliveryModes/Push";
@@ -296,20 +317,14 @@ Select: ");
 
                     (s.Delivery.Any = new XmlElement[1])[0] = doc.DocumentElement;
                     (s.Filter = new FilterType()).Dialect = "http://schemas.xmlsoap.org/ws/2006/02/devprof/Action";
-                    (s.Filter.Any = new System.Xml.XmlNode[1])[0] = new System.Xml.XmlDocument().CreateTextNode("http://www.teco.edu/DataLoggingService/DataLoggingServiceEventOut");
+                    (s.Filter.Any = new System.Xml.XmlNode[1])[0] = new System.Xml.XmlDocument().CreateTextNode(eventOut);
 
                     SubscribeResponse subscription;
-                    try
-                    {
-                        Console.WriteLine("Subscribing to the event...");
-                        //Console.ReadLine();
-                        subscription = eventSource.SubscribeOp(s);
-                    }
-                    catch (TimeoutException t)
-                    {
-                        Console.WriteLine("Error reply time out: {0}!!", t.Message);
-                        return;
-                    }
+                    
+                    Console.WriteLine("Subscribing to the event...");
+                    //Console.ReadLine();
+                    subscription = eventSource.SubscribeOp(s);
+                    
 
                     String subscriptionId = null;
                     foreach (XmlNode xel in subscription.SubscriptionManager.ReferenceParameters.Any)
@@ -317,19 +332,12 @@ Select: ");
                         if (xel.LocalName.Equals("Identifier") && xel.NamespaceURI.Equals("http://schemas.xmlsoap.org/ws/2004/08/eventing"))
                             subscriptionId = xel.InnerText;
                     }
+             return subscriptionId;
+        }
 
-                    Console.WriteLine("Got subscription: {0}", subscriptionId);
-
-                    Console.WriteLine("Press <ENTER> to unsubscribe.");
-                    Console.ReadLine();
-
-                    Console.WriteLine("Unsubscribing {0}", subscriptionId);
-                    SubscriptionManagerClient subscriptionManager = new SubscriptionManagerClient("WSEventingUnsubscribe");
-                    subscriptionManager.Endpoint.Address = hostedEndPoint;
+        private static void unsubscribe(SubscriptionManagerClient subscriptionManager, String subscriptionId)
+        {
                     subscriptionManager.UnsubscribeOp(subscriptionId, new Unsubscribe());
-                    client.Close();
-                }
-            }
         }
 
         private static void invokeStartDownload(EndpointAddress hostedEndPoint)
@@ -436,80 +444,30 @@ Select: ");
                 //  EndpointAddress hostedEndPoint = GetMetaData(endpointAddress);
 
                 InstanceContext ithis = new InstanceContext(new DiscoveryCallBack());
-
+               
                 using (AccelerationServiceClient client = new AccelerationServiceClient(ithis))
                 {
                     client.Endpoint.Address = hostedEndPoint;
                     client.Open();
 
-                    EndpointAddress callbackEndpoint = client.InnerDuplexChannel.LocalAddress;
+                    EndpointAddress callbackEndpoint = client.InnerDuplexChannel.LocalAddress;                
                     EventSourceClient eventSource = new EventSourceClient(ithis, "WSEventing");
                     eventSource.Endpoint.Address = hostedEndPoint;
-                    eventSource.Open();
 
-                    Subscribe s = new Subscribe();
-                    (s.Delivery = new DeliveryType()).Mode = "http://schemas.xmlsoap.org/ws/2004/08/eventing/DeliveryModes/Push";
 
-                    XmlDocument doc = new XmlDocument();
-                    using (XmlWriter writer = doc.CreateNavigator().AppendChild())
-                    {
-                        EndpointReferenceType notifyTo = new EndpointReferenceType();
-
-                        (notifyTo.Address = new AttributedURI()).Value = callbackEndpoint.Uri.AbsoluteUri;
-
-                        XmlRootAttribute notifyToElem = new XmlRootAttribute("NotifyTo");
-                        notifyToElem.Namespace = "http://schemas.xmlsoap.org/ws/2004/08/eventing";
-
-                        XmlDocument doc2 = new XmlDocument();
-                        using (XmlWriter writer2 = doc2.CreateNavigator().AppendChild())
-                        {
-                            XmlRootAttribute ReferenceElement = new XmlRootAttribute("ReferenceElement");
-                            foreach (AddressHeader h in callbackEndpoint.Headers)
-                            {
-                                h.WriteAddressHeader(writer2);
-                            }
-
-                            writer2.Close();
-                            notifyTo.ReferenceParameters = new ReferenceParametersType();
-                            notifyTo.ReferenceParameters.Any = notifyTo.ReferenceParameters.Any = doc2.ChildNodes.Cast<XmlElement>().ToArray<XmlElement>();
-                        }
-
-                        new XmlSerializer(notifyTo.GetType(), notifyToElem).Serialize(writer, notifyTo);
-                    }
-
-                    (s.Delivery.Any = new XmlElement[1])[0] = doc.DocumentElement;
-                    (s.Filter = new FilterType()).Dialect = "http://schemas.xmlsoap.org/ws/2006/02/devprof/Action";
-                    (s.Filter.Any = new System.Xml.XmlNode[1])[0] = new System.Xml.XmlDocument().CreateTextNode("http://www.teco.edu/AccelerationService/AccelerationServiceEventOut");
-
-                    SubscribeResponse subscription;
-                    try
-                    {
-                        Console.WriteLine("Subscribing to the event...");
-                        //Console.ReadLine();
-                        subscription = eventSource.SubscribeOp(s);
-                    }
-                    catch (TimeoutException t)
-                    {
-                        Console.WriteLine("Error reply time out: {0}!!", t.Message);
-                        return;
-                    }
-
-                    String subscriptionId = null;
-                    foreach (XmlNode xel in subscription.SubscriptionManager.ReferenceParameters.Any)
-                    {
-                        if (xel.LocalName.Equals("Identifier") && xel.NamespaceURI.Equals("http://schemas.xmlsoap.org/ws/2004/08/eventing"))
-                            subscriptionId = xel.InnerText;
-                    }
+                    String subscriptionId = subscribe(eventSource, callbackEndpoint, "http://www.teco.edu/AccelerationService/AccelerationServiceEventOut");
 
                     Console.WriteLine("Got subscription: {0}", subscriptionId);
 
                     Console.WriteLine("Press <ENTER> to unsubscribe.");
+                    invokeStartLDC(accelerationServiceEndPoint);
+
                     Console.ReadLine();
 
                     Console.WriteLine("Unsubscribing {0}", subscriptionId);
                     SubscriptionManagerClient subscriptionManager = new SubscriptionManagerClient("WSEventingUnsubscribe");
                     subscriptionManager.Endpoint.Address = hostedEndPoint;
-                    subscriptionManager.UnsubscribeOp(subscriptionId, new Unsubscribe());
+                    unsubscribe(subscriptionManager, subscriptionId);
                     client.Close();
                 }
             }
@@ -835,6 +793,7 @@ Select: ");
                     Console.WriteLine("\tAcceleration Z: {0}", request.series.sample[i].accl.z);
                 }
             }
+            
         }
 
         #endregion
