@@ -232,4 +232,9 @@ unsigned short getLoggingSampleCount(unsigned short rateindex,char * duration);
  */
 unsigned short getLDCSampleCount(unsigned short rateindex,char * duration);
 
+/**
+ * Update GW state by checking all nodes
+ */
+void updateGWState();
+
 #endif /* MICROSTRAIN */
