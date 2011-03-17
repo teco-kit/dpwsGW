@@ -744,7 +744,7 @@ wsa_response_override(struct soap *soap, int status, size_t count)
   soap->fresponse =wsa_get_plugindata (soap)->fresponse; //restore old (necessary??)
   count=count;
  //TODO: why is this done elsewhere already???:
-  soap->fpost(soap, soap_strdup(soap, soap->endpoint), soap->host, soap->port, soap->path, NULL, count);
+  //soap->fpost(soap, soap_strdup(soap, soap->endpoint), soap->host, soap->port, soap->path, NULL, count);
   return status;
 }
 
