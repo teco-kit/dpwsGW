@@ -43,7 +43,7 @@ static int has_NodeId(void *c,void *id) {return (0==memcmp(&((msdevice *)c)->id,
  * Serial handle
  */
 int handle = -1;
-char * serialdevice = "/dev/com3";
+char serialdevice[256];
 
 /**
  * Message queue
@@ -2167,18 +2167,14 @@ ssize_t rcv_buf(struct dpws_s *device, uint16_t service_id, uint8_t op_id,
 	return 0;
 }
 
-void discovery_set_device(char * discdevice)
+int processPlatformSection(char * path)
 {
-	if(discdevice!=NULL)
-	{
-		serialdevice = discdevice;
-	}
-}
-
-void discovery_set_address(int begin, int end)
-{
-	begin_address=begin;
-	end_address=end;
+	ini_gets("MicroStrain","device","/dev/com3",serialdevice,256,path);
+	printf("Read device: %s\n",serialdevice);
+	begin_address = ini_getl("MicroStrain","begin_address",0,path);
+	end_address = ini_getl("MicroStrain","end_address",10000,path);
+	printf("Scanning address from %d to %d\n",begin_address,end_address);
+	return 1;
 }
 
 void *discovery_worker_loop();

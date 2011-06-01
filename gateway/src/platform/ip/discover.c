@@ -68,14 +68,9 @@ static int has_ev_sock(void *c, void *ev_sock) {
 
 int shutdownFlag_discovery = 0; /* Flag indicates systemshutdown. */
 
-void discovery_set_device(char * discdevice)
+int processPlatformSection(char * path)
 {
-
-}
-
-void discovery_set_address(int begin, int end)
-{
-
+	return 1;
 }
 
 void *discovery_worker_loop();

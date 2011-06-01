@@ -19,8 +19,4 @@ void discovery_worker_wait(void);
 void discovery_notify_unregister(struct remote_device *rem_device);
 int gateway_running(void);
 
-void discovery_set_device(char * discdevice);
-
-void discovery_set_address(int begin, int end);
-
 #endif /* UDP_DISCOVER_H_ */
