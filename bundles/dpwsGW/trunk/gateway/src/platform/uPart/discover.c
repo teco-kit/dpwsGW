@@ -381,3 +381,8 @@
 		particle_connection *p=(particle_connection *)remote_device_get_addr(rem_device);
 		printf("deleted particle %d.%d.%d.%d.%d.%d.%d.%d",p->id[0],p->id[1],p->id[2],p->id[3],p->id[4],p->id[5],p->id[6],p->id[7]);
 	}
+
+	int processPlatformSection(char * path)
+	{
+		return 1;
+	}
