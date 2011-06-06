@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<wsm:Metadata xmlns:wsm="http://schemas.xmlsoap.org/ws/2004/09/mex" 
+		xmlns:acs1="http://www.ws4d.org/axis2/tutorial/AirConditioner" 
+		xmlns:aces1="http://www.ws4d.org/axis2/tutorial/AirConditionerEvent" 
+		xmlns:wdp="http://schemas.xmlsoap.org/ws/2006/02/devprof" 
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+		xmlns:wsd="http://schemas.xmlsoap.org/ws/2005/04/discovery" 
+		xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing" 
+		xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <wsm:MetadataSection Dialect="http://schemas.xmlsoap.org/ws/2006/02/devprof/Relationship">
+    <wdp:Relationship Type="http://schemas.xmlsoap.org/ws/2006/02/devprof/host">
+      <wdp:Host>
+      </wdp:Host>
+      <wdp:Hosted>
+	<wsa:EndpointReference>
+          <wsa:Address>http://host:5001/</wsa:Address>
+        </wsa:EndpointReference>
+        <wdp:Types>acs1:AirConditionerInterface</wdp:Types>
+        <wdp:ServiceId>AirConditioner</wdp:ServiceId>
+        <Name>AirConditioner</Name>
+      </wdp:Hosted>
+    </wdp:Relationship>
+  </wsm:MetadataSection>
+</wsm:Metadata>
