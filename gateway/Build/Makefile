@@ -34,7 +34,7 @@ endif
 	$(foreach platform,$(PLATFORM),$(MAKE) PLATFORM=$(platform) -C $(platform) -f ../$(firstword $(MAKEFILE_LIST))&&) true
 	$(RM) -rf $(TOPDIR)../bin
 	mkdir $(TOPDIR)../bin
-	cp $(foreach platform,$(PLATFORM),$(platform)/$(platform)_gateway.exe) $(TOPDIR)../bin
+	cp $(foreach platform,$(PLATFORM),$(platform)/$(platform)_gateway) $(TOPDIR)../bin
 	cp $(TOPDIR)../default.ini $(TOPDIR)../bin/gateway.ini
 
 include $(foreach platform,$(PLATFORM),$(TOPDIR)$(platform)/platform/$(platform)/pre)

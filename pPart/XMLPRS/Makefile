@@ -2,8 +2,8 @@ PBS=../ParticleBaseSystem
 
 BOARD?=pc232
 #SENSORBOARD?=dummy
-#SENSORBOARD?=ssimp202
-SENSORBOARD?=cateyeclip10
+SENSORBOARD?=ssimp202
+#SENSORBOARD?=cateyeclip10
 MAC?=5
 
 TARGET=prs_app

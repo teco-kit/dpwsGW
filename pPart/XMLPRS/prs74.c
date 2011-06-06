@@ -67,11 +67,7 @@ void PRSRun()
 
  has_dat=!get_sensor_values(&sensors, PRS_slot_counter%(1<<15));
 
- if(PRS_slot_counter%(1<<3))
- {
-	if(PRS_slot_counter&(1<<3)) output_high(PIN_LED_ONE_POWER); else output_low(PIN_LED_ONE_POWER);
- }
-
+#undef PIN_LED_AMBER_POWER
 #ifdef PIN_LED_AMBER_POWER
    if(has_dat) SSimpLEDAmberOn();
    else  SSimpLEDAmberOff();

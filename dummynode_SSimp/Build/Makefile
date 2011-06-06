@@ -14,5 +14,11 @@ LDLIBS=-lm $(addprefix -l,$(SERVICES)) -lbitsio_buf
 
 dummynode: $(OBJ_FILES)
 
+
+release: dummynode
+	rm -rf ../bin
+	mkdir ../bin
+	cp $^ ../bin 
+
 clean:
 	rm $(OBJ_FILES) main
