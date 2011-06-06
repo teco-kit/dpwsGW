@@ -32,9 +32,10 @@ ifndef NOXDEP
 endif
 endif
 	$(foreach platform,$(PLATFORM),$(MAKE) PLATFORM=$(platform) -C $(platform) -f ../$(firstword $(MAKEFILE_LIST))&&) true
-	$(RM) -rf bin
-	mkdir bin
-	cp $(foreach platform,$(PLATFORM),$(platform)/$(platform)_gateway.exe) bin
+	$(RM) -rf $(TOPDIR)../bin
+	mkdir $(TOPDIR)../bin
+	cp $(foreach platform,$(PLATFORM),$(platform)/$(platform)_gateway.exe) $(TOPDIR)../bin
+	cp $(TOPDIR)../default.ini $(TOPDIR)../bin/gateway.ini
 
 include $(foreach platform,$(PLATFORM),$(TOPDIR)$(platform)/platform/$(platform)/pre)
 
@@ -61,14 +62,13 @@ all: $(PLATFORM)_gateway
 
 $(PLATFORM)_gateway: $(TOPDIR)../../$(DEVICES)/Build/lib$(DEVICES).a $(foreach lib,$(DPWSLIBS),$(WS4DDIR)/lib$(lib).a) $(foreach service,$(SERVICES),$(TOPDIR)../../$(service)/Build/lib$(service).a) $(OBJ_FILES) $(PLATFORM)_gateway.c  
 
-$(PLATFORM)_gateway.c:
-	echo "#include \"$(SRCPATH)main.c\"" >$@
-
-
-clean:
-	rm $(OBJ_FILES) main
+$(PLATFORM)_gateway.c: $(SRCPATH)main.c
+	echo "#include \"$^\"" >$@
 
 endif
+
+clean:
+	$(RM) -rf $(foreach platform,$(PLATFORM),$(TOPDIR)$(platform)/)
 
 $(foreach platform,$(PLATFORM),$(TOPDIR)$(platform)/platform/$(platform)/pre):
 	mkdir -p `dirname $@`

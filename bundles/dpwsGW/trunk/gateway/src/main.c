@@ -76,7 +76,7 @@ int main(int argc, char **argv)
 	struct sigaction sa;
 #endif
 
-	char * path = "default.ini";
+	char * path = "gateway.ini";
 
 	/* parsing command line options */
 	while (argc > 1) {
