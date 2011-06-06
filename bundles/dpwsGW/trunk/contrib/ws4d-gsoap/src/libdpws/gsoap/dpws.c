@@ -2858,8 +2858,9 @@ int dpws_header_gen_event (struct soap *soap, struct dpws_s *device, char* soap_
 		struct dpws_deliveryMode_push_data *subs_data=((struct dpws_deliveryMode_push_data *)subs->delivery_mode->data);
 	    int ret=dpws_header_gen_oneway(soap, NULL,  subs_data->Address,soap_action_uri,NULL,size);
 
-	#define REF_PARAM_HACK 1
+	dpws_header_gen_wseIdentifier(soap,device,subs); 
 
+	#define REF_PARAM_HACK 1
 #ifdef REF_PARAM_HACK
 	if(ret!=WS4D_OK) return ret;
 	soap->header->elts=subs_data->ReferenceParameters;
@@ -2882,6 +2883,7 @@ dpws_header_gen_wseIdentifier (struct soap *soap, struct dpws_s *device,
   identifier = dpws_subsm_get_deliveryPush_identifier (device, subs);
   return wse_header_set_Identifier (soap, identifier);
 }
+
 static struct soap_dom_attribute *ws4d_dom_attribute_copy(struct soap_dom_attribute  *att, struct soap* soap, ws4d_alloc_list * alist)
 {
 	if(att==NULL) return NULL;
