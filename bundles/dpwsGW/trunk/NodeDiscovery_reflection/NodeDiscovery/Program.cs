@@ -174,7 +174,8 @@ Contact N. L. Fantana (nicolaie.fantana@de.abb.com)
         private static void Init()
         {
             // Add SSimp Device to known devices
-            deviceTypes.Add(new System.Xml.XmlQualifiedName("SSimpDeviceType", "http://www.teco.edu/SensorValues"), typeof(edu.teco.DPWS.SSimpDevice));
+            deviceTypes.Add(new System.Xml.XmlQualifiedName("SSimpDeviceType", "http://www.teco.edu/SensorValues"), typeof(edu.teco.DPWS.SSimp.SSimpDevice));
+            deviceTypes.Add(new System.Xml.XmlQualifiedName("AccelerationDeviceType", "http://www.teco.edu/AccelerationModel"), typeof(edu.teco.DPWS.MStr.MStrDevice));
         }
 
         /// <summary>
@@ -260,6 +261,7 @@ Contact N. L. Fantana (nicolaie.fantana@de.abb.com)
         /// </summary>
         private static void StartDiscoveryProcess()
         {
+            knownDevices.Clear();
 
             // Check if the application will run the FindServiceAddress again.
             bool runAgainFind = true;

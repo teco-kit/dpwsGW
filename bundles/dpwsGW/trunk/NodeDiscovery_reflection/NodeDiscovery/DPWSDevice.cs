@@ -230,7 +230,15 @@ namespace edu.teco.DPWS
                 throw new InvalidOperationException("Service not initialized");
 
             /// Open connection
-            Object client = Activator.CreateInstance(clientType, new InstanceContext(this));
+            Object client = null;
+            try
+            {
+                client = Activator.CreateInstance(clientType, new InstanceContext(this));
+            } catch (Exception e)
+            { 
+                /// If client does not support subscription
+                client = Activator.CreateInstance(clientType);
+            }
             ServiceEndpoint endpoint = (ServiceEndpoint)endpointField.GetValue(client,null);
             endpoint.Address = endpointAddress;
             endpoint.Binding.ReceiveTimeout = new TimeSpan(0, 0, 2);
@@ -340,154 +348,379 @@ namespace edu.teco.DPWS
         }
     }
 
-    /// <summary>
-    /// Wrapper for the TecO SSimp device
-    /// </summary>
-    public class SSimpDevice : Device
+    namespace SSimp
     {
-        protected System.Xml.XmlQualifiedName _name = new System.Xml.XmlQualifiedName("SSimpDeviceType", "http://www.teco.edu/SensorValues");
 
-        public SSimpDevice()
+        /// <summary>
+        /// Wrapper for the TecO SSimp device
+        /// </summary>
+        public class SSimpDevice : Device
         {
-            services.Add(new SSimpService());
-        }
+            protected System.Xml.XmlQualifiedName _name = new System.Xml.XmlQualifiedName("SSimpDeviceType", "http://www.teco.edu/SensorValues");
 
-        public override System.Xml.XmlQualifiedName GetDeviceType()
-        {
-            return _name;
-        }
-    }
-
-    /// <summary>
-    /// Wrapper for the TecO SSimp SensorValues service
-    /// </summary>
-    public class SSimpService : Service, EventSourceCallback, NodeDiscovery.Gateway.SensorValuesCallback
-    {
-        public SSimpService()
-        {
-            clientType = typeof(NodeDiscovery.Gateway.SensorValuesClient);
-        }
-
-        public override string GetServiceID()
-        {
-            return "SensorValues";
-        }
-
-        [DPWSInvokeMethod("Read sensor values")]
-        public void ReadSensorValues(Object client)
-        {
-            NodeDiscovery.Gateway.SensorValuesClient ssclient = (NodeDiscovery.Gateway.SensorValuesClient)client;
-            NodeDiscovery.Gateway.SSimpSample response;
-
-            do
+            public SSimpDevice()
             {
-                response = ssclient.GetSensorValues();
+                services.Add(new SSimpService());
+            }
 
-                // Show the results in the console window.
-
-                ShowValues(response);
-                Console.WriteLine("Read Again?");
-
-            } while (Console.ReadKey().Key == ConsoleKey.Y);
-        }
-
-        [DPWSInvokeMethod("Configure the service")]
-        public void Configure(Object client)
-        {
-            NodeDiscovery.Gateway.SensorValuesClient ssclient = (NodeDiscovery.Gateway.SensorValuesClient)client;
-
-            NodeDiscovery.Gateway.SSimpControl control = new NodeDiscovery.Gateway.SSimpControl();
-
-
-
-            Console.WriteLine("\nSet time (y/N)");
-            if (Console.ReadKey().Key == ConsoleKey.Y)
+            public override System.Xml.XmlQualifiedName GetDeviceType()
             {
-                control.NewTime = DateTime.Now;
-                control.NewTimeSpecified = true;
-            };
-            Console.WriteLine("\nSet Sensors (y/N)");
-
-            if (Console.ReadKey().Key == ConsoleKey.Y)
-            {
-                control.SensorConfig = new NodeDiscovery.Gateway.SensorConfigurationType();
-                Console.WriteLine("\nAcclRate");
-                try
-                {
-                    sbyte input = sbyte.Parse(Console.ReadLine());
-                    if (input > 0)
-                    {
-                        control.SensorConfig.Acceleration = new NodeDiscovery.Gateway.SSimpRateConfig();
-                        control.SensorConfig.Acceleration.rate = input;
-                    }
-                }
-                catch (ArgumentException) { }
-            };
-
-
-            NodeDiscovery.Gateway.SSimpStatus response = ssclient.Config(control);
-
-            // Show the results in the console window.
-
-            Console.WriteLine("Configuration set successful. Current Status:");
-            Console.WriteLine("(New) time: {0}", response.CurrentTime);
-
-            Console.WriteLine("BatteryVoltage: {0}", response.BatteryVoltage);
-            Console.WriteLine("SensorConfigurarion: {0}", response.SensorConfig.ToString());
-
-
-            Console.WriteLine("SensorCapabilities: {0}", response.AllSensorConfig.ToString());
-            Console.WriteLine("Uptime: {0}", response.UpTime);
-
-        }
-
-        [DPWSSubscription("Subscribe to the service","http://www.teco.edu/SensorValues/SensorValuesEventOut")]
-        public void Subscribe(Object client)
-        { 
+                return _name;
+            }
         }
 
         /// <summary>
-        /// Shows the values.
+        /// Wrapper for the TecO SSimp SensorValues service
         /// </summary>
-        /// <param name="response">The response.</param>
-        public void ShowValues(NodeDiscovery.Gateway.SSimpSample response)
+        public class SSimpService : Service, EventSourceCallback, NodeDiscovery.Gateway.SensorValuesCallback
         {
-            Console.WriteLine("Results:");
-            if (response.Accelleration != null)
+            public SSimpService()
             {
-                Console.WriteLine("\tAcceleration X: {0}", response.Accelleration.x);
-                Console.WriteLine("\tAcceleration Y: {0}", response.Accelleration.y);
-                Console.WriteLine("\tAcceleration Z: {0}", response.Accelleration.z);
+                clientType = typeof(NodeDiscovery.Gateway.SensorValuesClient);
             }
 
-            if (response.Audio != null)
-                Console.WriteLine("\tAudio: {0}", response.Audio.volume);
-            if (response.Force != null)
-                Console.WriteLine("\tForce: {0}", response.Force.value);
-            if (response.Light != null)
-                Console.WriteLine("\tLight: {0}", response.Light.infrared);
-            if (response.Temperature != null)
-                Console.WriteLine("\tTemperature: {0}", response.Temperature.value);
+            public override string GetServiceID()
+            {
+                return "SensorValues";
+            }
+
+            [DPWSInvokeMethod("Read sensor values")]
+            public void ReadSensorValues(Object client)
+            {
+                NodeDiscovery.Gateway.SensorValuesClient ssclient = (NodeDiscovery.Gateway.SensorValuesClient)client;
+                NodeDiscovery.Gateway.SSimpSample response;
+
+                do
+                {
+                    response = ssclient.GetSensorValues();
+
+                    // Show the results in the console window.
+
+                    ShowValues(response);
+                    Console.WriteLine("Read Again?");
+
+                } while (Console.ReadKey().Key == ConsoleKey.Y);
+            }
+
+            [DPWSInvokeMethod("Configure the service")]
+            public void Configure(Object client)
+            {
+                NodeDiscovery.Gateway.SensorValuesClient ssclient = (NodeDiscovery.Gateway.SensorValuesClient)client;
+
+                NodeDiscovery.Gateway.SSimpControl control = new NodeDiscovery.Gateway.SSimpControl();
+
+
+
+                Console.WriteLine("\nSet time (y/N)");
+                if (Console.ReadKey().Key == ConsoleKey.Y)
+                {
+                    control.NewTime = DateTime.Now;
+                    control.NewTimeSpecified = true;
+                };
+                Console.WriteLine("\nSet Sensors (y/N)");
+
+                if (Console.ReadKey().Key == ConsoleKey.Y)
+                {
+                    control.SensorConfig = new NodeDiscovery.Gateway.SensorConfigurationType();
+                    Console.WriteLine("\nAcclRate");
+                    try
+                    {
+                        sbyte input = sbyte.Parse(Console.ReadLine());
+                        if (input > 0)
+                        {
+                            control.SensorConfig.Acceleration = new NodeDiscovery.Gateway.SSimpRateConfig();
+                            control.SensorConfig.Acceleration.rate = input;
+                        }
+                    }
+                    catch (ArgumentException) { }
+                };
+
+
+                NodeDiscovery.Gateway.SSimpStatus response = ssclient.Config(control);
+
+                // Show the results in the console window.
+
+                Console.WriteLine("Configuration set successful. Current Status:");
+                Console.WriteLine("(New) time: {0}", response.CurrentTime);
+
+                Console.WriteLine("BatteryVoltage: {0}", response.BatteryVoltage);
+                Console.WriteLine("SensorConfigurarion: {0}", response.SensorConfig.ToString());
+
+
+                Console.WriteLine("SensorCapabilities: {0}", response.AllSensorConfig.ToString());
+                Console.WriteLine("Uptime: {0}", response.UpTime);
+
+            }
+
+            [DPWSSubscription("Subscribe to the service", "http://www.teco.edu/SensorValues/SensorValuesEventOut")]
+            public void Subscribe(Object client)
+            {
+            }
+
+            /// <summary>
+            /// Shows the values.
+            /// </summary>
+            /// <param name="response">The response.</param>
+            public void ShowValues(NodeDiscovery.Gateway.SSimpSample response)
+            {
+                Console.WriteLine("Results:");
+                if (response.Accelleration != null)
+                {
+                    Console.WriteLine("\tAcceleration X: {0}", response.Accelleration.x);
+                    Console.WriteLine("\tAcceleration Y: {0}", response.Accelleration.y);
+                    Console.WriteLine("\tAcceleration Z: {0}", response.Accelleration.z);
+                }
+
+                if (response.Audio != null)
+                    Console.WriteLine("\tAudio: {0}", response.Audio.volume);
+                if (response.Force != null)
+                    Console.WriteLine("\tForce: {0}", response.Force.value);
+                if (response.Light != null)
+                    Console.WriteLine("\tLight: {0}", response.Light.infrared);
+                if (response.Temperature != null)
+                    Console.WriteLine("\tTemperature: {0}", response.Temperature.value);
+            }
+
+            #region SensorValuesCallback Members
+
+            public void SensorValuesEvent(NodeDiscovery.Gateway.SensorValuesEvent request)
+            {
+                Console.WriteLine(string.Format("Got response: {0}", request.Sample.TimeStamp));
+                ShowValues(request.Sample);
+            }
+
+            #endregion
+
+            #region EventSourceCallback Members
+
+            public void SubscriptionEnd(SubscriptionEnd1 request)
+            {
+                Console.WriteLine("Event closed.");
+            }
+
+            #endregion
         }
-
-        #region SensorValuesCallback Members
-
-        public void SensorValuesEvent(NodeDiscovery.Gateway.SensorValuesEvent request)
+    }
+    namespace MStr
+    {
+        /// <summary>
+        /// Wrapper for the MicroStrain device
+        /// </summary>
+        public class MStrDevice : Device
         {
-            Console.WriteLine(string.Format("Got response: {0}", request.Sample.TimeStamp));
-            ShowValues(request.Sample);
+            protected System.Xml.XmlQualifiedName _name = new System.Xml.XmlQualifiedName("AccelerationDeviceType", "http://www.teco.edu/AccelerationModel");
+
+            public MStrDevice()
+            {
+                services.Add(new AccelerationService());
+                services.Add(new DataLoggingService());
+                services.Add(new DeviceInfoService());
+            }
+
+            public override System.Xml.XmlQualifiedName GetDeviceType()
+            {
+                return _name;
+            }
         }
 
-        #endregion
-
-        #region EventSourceCallback Members
-
-        public void SubscriptionEnd(SubscriptionEnd1 request)
+        /// <summary>
+        /// Wrapper for the MStr Acceleration service
+        /// </summary>
+        public class AccelerationService : Service, EventSourceCallback, NodeDiscovery.AccelerationModel.AccelerationServiceCallback
         {
-            Console.WriteLine("Event closed.");
+            public AccelerationService()
+            {
+                clientType = typeof(NodeDiscovery.AccelerationModel.AccelerationServiceClient);
+            }
+
+            public override string GetServiceID()
+            {
+                return "AccelerationService";
+            }
+
+            [DPWSSubscription("Subscribe to the service", "http://www.teco.edu/AccelerationService/AccelerationServiceEventOut")]
+            public void Subscribe(Object client)
+            {
+                NodeDiscovery.AccelerationModel.AccelerationServiceClient asclient = (NodeDiscovery.AccelerationModel.AccelerationServiceClient)client;
+                NodeDiscovery.AccelerationModel.LDCInfo info = new NodeDiscovery.AccelerationModel.LDCInfo();
+                info.rate = NodeDiscovery.AccelerationModel.LDCInfoRate.Item5;
+                info.duration = "30";
+                asclient.StartLDC(info);
+            }
+
+
+
+            #region AccelerationServiceCallback Members
+
+            public void AccelerationServiceEvent(NodeDiscovery.AccelerationModel.AccelerationServiceEvent request)
+            {
+                Console.WriteLine("Incoming event");
+                Console.WriteLine("Results:");
+                if (request.series != null)
+                {
+                    Console.WriteLine("Series:");
+                    Console.WriteLine("\tFragment count: {0}", request.series.count);
+                    if (request.series.timestampSpecified)
+                    {
+                        Console.WriteLine("\tTimestamp: {0}", request.series.timestamp);
+                    }
+                    Console.WriteLine("\tDelta: {0}", request.series.delta);
+                    for (int i = 0; i < request.series.sample.Length; i++)
+                    {
+                        Console.WriteLine("Sample:");
+                        Console.WriteLine("\tDelta: {0}", request.series.sample[i].delta);
+                        Console.WriteLine("\tAcceleration X: {0}", request.series.sample[i].accl.x);
+                        Console.WriteLine("\tAcceleration Y: {0}", request.series.sample[i].accl.y);
+                        Console.WriteLine("\tAcceleration Z: {0}", request.series.sample[i].accl.z);
+                    }
+                }
+
+            }
+
+            #endregion
+
+            #region EventSourceCallback Members
+
+            public void SubscriptionEnd(SubscriptionEnd1 request)
+            {
+                Console.WriteLine("Event closed.");
+            }
+
+            #endregion
         }
 
-        #endregion
+        /// <summary>
+        /// Wrapper for the MStr DeviceInfoService service
+        /// </summary>
+        public class DeviceInfoService : Service, EventSourceCallback
+        {
+            public DeviceInfoService()
+            {
+                clientType = typeof(NodeDiscovery.DeviceInfoService.DeviceInfoServiceClient);
+            }
+
+            public override string GetServiceID()
+            {
+                return "DeviceInfoService";
+            }
+
+            [DPWSInvokeMethod("Get the device status")]
+            public void GetDeviceStatus(Object client)
+            {
+                NodeDiscovery.DeviceInfoService.DeviceInfoServiceClient dsclient = (NodeDiscovery.DeviceInfoService.DeviceInfoServiceClient)client;
+
+
+                NodeDiscovery.DeviceInfoService.StatusMessage msg = dsclient.GetNodeStatus();
+                Console.WriteLine("Device Status: Desc: {0} Ready: {1}", msg.description, msg.ready);
+            }
+
+            [DPWSInvokeMethod("Stop the device")]
+            public void StopNode(Object client)
+            {
+                NodeDiscovery.DeviceInfoService.DeviceInfoServiceClient dsclient = (NodeDiscovery.DeviceInfoService.DeviceInfoServiceClient)client;
+                dsclient.StopNode();
+
+            }
+
+            #region EventSourceCallback Members
+
+            public void SubscriptionEnd(SubscriptionEnd1 request)
+            {
+                Console.WriteLine("Event closed.");
+            }
+
+            #endregion
+        }
+
+        /// <summary>
+        /// Wrapper for the MStr DataLogging service
+        /// </summary>
+        public class DataLoggingService : Service, EventSourceCallback, NodeDiscovery.DataLogging.DataLoggingServiceCallback
+        {
+            public DataLoggingService()
+            {
+                clientType = typeof(NodeDiscovery.DataLogging.DataLoggingServiceClient);
+            }
+
+            public override string GetServiceID()
+            {
+                return "DataLoggingService";
+            }
+
+            [DPWSInvokeMethod("Start logging to the node")]
+            public void StartLogging(Object client)
+            {
+                NodeDiscovery.DataLogging.DataLoggingServiceClient dlclient = (NodeDiscovery.DataLogging.DataLoggingServiceClient)client;
+                NodeDiscovery.DataLogging.LoggingConfig config = new NodeDiscovery.DataLogging.LoggingConfig();
+                config.rate = NodeDiscovery.DataLogging.LoggingConfigRate.Item256;
+                config.duration = "30";
+                dlclient.StartLogging(config);
+
+            }
+
+            [DPWSInvokeMethod("Get the number of sessions stored on the node")]
+            public void GetSessions(Object client)
+            {
+                NodeDiscovery.DataLogging.DataLoggingServiceClient dlclient = (NodeDiscovery.DataLogging.DataLoggingServiceClient)client;
+                NodeDiscovery.DataLogging.SessionInfo info = dlclient.GetSessionCount();
+                Console.WriteLine("Session Count: {0}", info.count);
+
+            }
+
+            [DPWSInvokeMethod("Erase sessions stored on the node")]
+            public void Erase(Object client)
+            {
+                NodeDiscovery.DataLogging.DataLoggingServiceClient dlclient = (NodeDiscovery.DataLogging.DataLoggingServiceClient)client;
+                dlclient.Erase();
+
+            }
+
+            [DPWSSubscription("Subscribe to the service", "http://www.teco.edu/DataLoggingService/DataLoggingServiceEventOut")]
+            public void Subscribe(Object client)
+            {
+                NodeDiscovery.DataLogging.DataLoggingServiceClient dlclient = (NodeDiscovery.DataLogging.DataLoggingServiceClient)client;
+                dlclient.StartDownload();
+            }
+
+
+
+            #region DataLoggingServiceCallback Members
+
+            public void DataLoggingServiceEvent(NodeDiscovery.DataLogging.DataLoggingServiceEvent request)
+            {
+                Console.WriteLine("Incoming event");
+                Console.WriteLine("Results:");
+                if (request.series != null)
+                {
+                    Console.WriteLine("Series:");
+                    Console.WriteLine("\tFragment count: {0}", request.series.count);
+                    if (request.series.timestampSpecified)
+                    {
+                        Console.WriteLine("\tTimestamp: {0}", request.series.timestamp);
+                    }
+                    Console.WriteLine("\tDelta: {0}", request.series.delta);
+                    for (int i = 0; i < request.series.sample.Length; i++)
+                    {
+                        Console.WriteLine("Sample:");
+                        Console.WriteLine("\tDelta: {0}", request.series.sample[i].delta);
+                        Console.WriteLine("\tAcceleration X: {0}", request.series.sample[i].accl.x);
+                        Console.WriteLine("\tAcceleration Y: {0}", request.series.sample[i].accl.y);
+                        Console.WriteLine("\tAcceleration Z: {0}", request.series.sample[i].accl.z);
+                    }
+                }
+            }
+
+            #endregion
+
+            #region EventSourceCallback Members
+
+            public void SubscriptionEnd(SubscriptionEnd1 request)
+            {
+                Console.WriteLine("Event closed.");
+            }
+
+            #endregion
+        }
     }
 
 
