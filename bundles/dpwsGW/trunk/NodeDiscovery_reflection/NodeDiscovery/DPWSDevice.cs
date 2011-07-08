@@ -94,6 +94,8 @@ namespace edu.teco.DPWS
 
         public abstract string GetServiceID();
 
+        public abstract string GetConfigurationName();
+
         public void Init()
         {
             if (Initialized)
@@ -233,7 +235,7 @@ namespace edu.teco.DPWS
             Object client = null;
             try
             {
-                client = Activator.CreateInstance(clientType, new InstanceContext(this));
+                client = Activator.CreateInstance(clientType, new InstanceContext(this), GetConfigurationName());
             } catch (Exception e)
             { 
                 /// If client does not support subscription
@@ -271,7 +273,7 @@ namespace edu.teco.DPWS
 
             /// Open connection
             InstanceContext instanceContext = new InstanceContext(this);
-            Object client = Activator.CreateInstance(clientType, instanceContext);
+            Object client = Activator.CreateInstance(clientType, instanceContext, GetConfigurationName());
             ServiceEndpoint endpoint = (ServiceEndpoint)endpointField.GetValue(client,null);
             endpoint.Address = endpointAddress;
             endpoint.Binding.ReceiveTimeout = new TimeSpan(0, 0, 2);
@@ -380,6 +382,11 @@ namespace edu.teco.DPWS
             }
 
             public override string GetServiceID()
+            {
+                return "SensorValues";
+            }
+
+            public override string GetConfigurationName()
             {
                 return "SensorValues";
             }
@@ -538,6 +545,11 @@ namespace edu.teco.DPWS
                 return "AccelerationService";
             }
 
+            public override string GetConfigurationName()
+            {
+                return "AccelerationService";
+            }
+
             [DPWSSubscription("Subscribe to the service", "http://www.teco.edu/AccelerationService/AccelerationServiceEventOut")]
             public void Subscribe(Object client)
             {
@@ -604,6 +616,11 @@ namespace edu.teco.DPWS
                 return "DeviceInfoService";
             }
 
+            public override string GetConfigurationName()
+            {
+                return "DeviceInfoService";
+            }
+
             [DPWSInvokeMethod("Get the device status")]
             public void GetDeviceStatus(Object client)
             {
@@ -643,6 +660,11 @@ namespace edu.teco.DPWS
             }
 
             public override string GetServiceID()
+            {
+                return "DataLoggingService";
+            }
+
+            public override string GetConfigurationName()
             {
                 return "DataLoggingService";
             }
@@ -711,6 +733,106 @@ namespace edu.teco.DPWS
             }
 
             #endregion
+
+            #region EventSourceCallback Members
+
+            public void SubscriptionEnd(SubscriptionEnd1 request)
+            {
+                Console.WriteLine("Event closed.");
+            }
+
+            #endregion
+        }
+    }
+
+    namespace SSimpFH
+    {
+
+        /// <summary>
+        /// Wrapper for the FH WirelessSensorNode device
+        /// </summary>
+        public class WirelessSensorNode : Device
+        {
+            protected System.Xml.XmlQualifiedName _name = new System.Xml.XmlQualifiedName("WirelessSensorNode", "http://www.iis.fraunhofer.de/kom/abt/wsn/");
+
+            public WirelessSensorNode()
+            {
+                services.Add(new SensorValuesService());
+            }
+
+            public override System.Xml.XmlQualifiedName GetDeviceType()
+            {
+                return _name;
+            }
+        }
+
+        /// <summary>
+        /// Wrapper for the FH WirelessSensorNode SensorValues service
+        /// </summary>
+        public class SensorValuesService : Service, EventSourceCallback
+        {
+            public SensorValuesService()
+            {
+                clientType = typeof(NodeDiscovery.SensorValuesFH.SensorValuesClient);
+            }
+
+            public override string GetServiceID()
+            {
+                return "http://localhost:8080/0-00000000-0000-0000000000123-00/SensorValues";
+            }
+
+            public override string GetConfigurationName()
+            {
+                return "SensorValuesBinding";
+            }
+
+            [DPWSInvokeMethod("Read sensor values")]
+            public void ReadSensorValues(Object client)
+            {
+                NodeDiscovery.SensorValuesFH.SensorValuesClient ssclient = (NodeDiscovery.SensorValuesFH.SensorValuesClient)client;
+                NodeDiscovery.SensorValuesFH.Series response;
+
+                do
+                {
+                    response = ssclient.GetSensorValues();
+
+                    // Show the results in the console window.
+
+                    ShowValues(response);
+                    Console.WriteLine("Read Again?");
+
+                } while (Console.ReadKey().Key == ConsoleKey.Y);
+            }
+            
+            /// <summary>
+            /// Shows the values.
+            /// </summary>
+            /// <param name="response">The response.</param>
+            public void ShowValues(NodeDiscovery.SensorValuesFH.Series response)
+            {
+                Console.WriteLine("Results:");
+                if (response.fragment != null)
+                {
+                    if (response.fragment.countSpecified)
+                    {
+                        Console.WriteLine("Fragment: Count {0} Delta {1}", response.fragment.count, response.fragment.delta_t);
+                    }
+                    else
+                    {
+                        Console.WriteLine("Fragment: Delta {0}", response.fragment.delta_t);
+                    }
+                }
+
+                if(response.timeStampSpecified)
+                {
+                    Console.WriteLine("Timestamp: {0}",response.timeStamp);
+                }
+                foreach(NodeDiscovery.SensorValuesFH.Sample sample in response.sample)
+                {
+                    Console.WriteLine("Sample: Delta {0} Temperature {1}",sample.delta_t,sample.Temperature.value);
+                }
+                
+            }
 
             #region EventSourceCallback Members
 
