@@ -1,0 +1,209 @@
+﻿<wsdl:definitions xmlns:wsoap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:log="http://www.teco.edu/DataLoggingService" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:wsa="http://www.w3.org/2006/05/addressing/wsdl" xmlns:wse="http://schemas.xmlsoap.org/ws/2004/08/eventing" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="DataLoggingService" targetNamespace="http://www.teco.edu/DataLoggingService">
+    
+    <wsdl:types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema"
+            elementFormDefault="qualified"
+            targetNamespace="http://www.teco.edu/DataLoggingService">	
+            <annotation>
+                <appinfo>
+                    <UnitSet xmlns="urn:oasis:names:tc:unitsml:schema:xsd:UnitsMLSchema-0.9.18">
+                        <Unit
+                            xmlns="urn:oasis:names:tc:unitsml:schema:xsd:UnitsMLSchema-0.9.18"
+                            xml:id="U_mm.s-2">
+                            <UnitSystem name="SI"
+                                type="SI_derived" xml:lang="en-US" />
+                            <UnitName xml:lang="en-US">
+                                millimeter per second squared
+                            </UnitName>
+                            <UnitSymbol type="HTML">
+                                mm &#183; s
+                                <sup>-2</sup>
+                            </UnitSymbol>
+                            <RootUnits>
+                                <EnumeratedRootUnit unit="meter"
+                                    prefix="m" />
+                                <EnumeratedRootUnit
+                                    unit="second" powerNumerator="-2" />
+                            </RootUnits>
+                        </Unit>
+                    </UnitSet>
+                </appinfo>
+            </annotation>
+            <complexType name="ADXL210_Sample">
+                <annotation>
+                    <documentation>
+                        Analog Devices ADXL210 Low-Cost Â±10 g Dual-Axis
+                        Accelerometer with Duty Cycle
+                        
+                        (z-output from optional orthogonally mounted
+                        second device)
+                        
+                        
+                        
+                        http://www.analog.com/static/imported-files/data_sheets_obsolete/OBSOLETE%20WATERMARK/ADXL210.pdf
+                    </documentation>
+                </annotation>
+                <sequence>
+                    <element name="x" type="float">
+                    </element>
+                    <element name="y" type="float">
+                    </element>
+                    <element name="z" type="float">
+                    </element>
+                </sequence>
+            </complexType>
+            
+            <complexType name="AccelerationSample">
+                <annotation>
+                    <documentation>
+                        Acceleration Sample
+                    </documentation>
+                </annotation>
+                
+                <sequence>
+                    <element maxOccurs="1" minOccurs="0"
+                        name="delta" type="duration" />
+                    <element maxOccurs="1" minOccurs="1"
+                        name="accl" type="log:ADXL210_Sample">
+                    </element>
+                </sequence>
+                
+            </complexType>
+            
+            <complexType name="AccelerationSeries">
+                <annotation>
+                    <documentation>
+                        Series of measurements
+                    </documentation>
+                </annotation>
+                <sequence>
+                    <element maxOccurs="1" minOccurs="1" name="count" type="nonNegativeInteger"/>
+                    <element maxOccurs="1" minOccurs="0" name="timestamp" type="dateTime"/>
+                    <element maxOccurs="1" minOccurs="1" name="delta" type="duration" />
+                    <element maxOccurs="unbounded" minOccurs="1" name="sample" type="log:AccelerationSample"/>
+                </sequence>
+            </complexType>
+            
+            <complexType name="LoggingConfig">
+                <sequence>
+                    <element maxOccurs="1" minOccurs="1" name="rate" >
+                        <simpleType>
+                            <restriction base="nonNegativeInteger"> 
+                                <enumeration value="2048"/>
+                                <enumeration value="1024"/>
+                                <enumeration value="512"/>
+                                <enumeration value="256"/>
+                                <enumeration value="128"/>
+                                <enumeration value="64"/>
+                                <enumeration value="32"/>
+                            </restriction>
+                        </simpleType>
+                    </element>
+                  <element maxOccurs="1" minOccurs="1" name="duration" type="nonNegativeInteger"/>
+                </sequence>
+            </complexType>
+            
+            <complexType name="SessionInfo">
+                <sequence>
+                    <element maxOccurs="1" minOccurs="1" name="count" type="nonNegativeInteger"/>
+                </sequence>
+            </complexType>
+            
+            <element name="series" type="log:AccelerationSeries" />
+            <element name="loggingconfig" type="log:LoggingConfig" />
+            <element name="sessioninfo" type="log:SessionInfo" />
+            
+        </schema>
+    </wsdl:types>
+    
+    <wsdl:message name="DataLoggingServiceEventMessageOut">
+        <wsdl:part name="event" element="log:series" />
+    </wsdl:message>
+    
+    <wsdl:message name="StartLoggingMessageIn" >
+        <wsdl:part name="in" element="log:loggingconfig"></wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="StartLoggingMessageOut" />
+    
+    <wsdl:message name="StartDownloadMessageIn" />
+    <wsdl:message name="StartDownloadMessageOut" />
+    
+    <wsdl:message name="EraseMessageIn" />
+    <wsdl:message name="EraseMessageOut" />
+    
+    <wsdl:message name="GetSessionCountMessageIn" />
+    <wsdl:message name="GetSessionCountMessageOut" >
+        <wsdl:part name="out" element="log:sessioninfo"></wsdl:part>
+    </wsdl:message>
+    
+    <wsdl:portType name="DataLoggingService" wse:EventSource="true">
+        <wsdl:operation name="DataLoggingServiceEvent">
+            <wsdl:output message="log:DataLoggingServiceEventMessageOut"
+                wsa:Action="http://www.teco.edu/DataLoggingService/DataLoggingServiceEventOut" />
+        </wsdl:operation>
+        <wsdl:operation name="StartLogging">
+            <wsdl:input message="log:StartLoggingMessageIn"
+                wsa:Action="http://www.teco.edu/DataLoggingService/StartLoggingIn" />
+            <wsdl:output message="log:StartLoggingMessageOut"
+                wsa:Action="http://www.teco.edu/DataLoggingService/StartLoggingOut" />
+        </wsdl:operation>
+        <wsdl:operation name="StartDownload">
+            <wsdl:input message="log:StartDownloadMessageIn"
+                wsa:Action="http://www.teco.edu/DataLoggingService/StartDownloadIn" />
+            <wsdl:output message="log:StartDownloadMessageOut"
+                wsa:Action="http://www.teco.edu/DataLoggingService/StartDownloadOut" />
+        </wsdl:operation>
+        <wsdl:operation name="Erase">
+            <wsdl:input message="log:EraseMessageIn"
+                wsa:Action="http://www.teco.edu/DataLoggingService/EraseIn" />
+            <wsdl:output message="log:EraseMessageOut"
+                wsa:Action="http://www.teco.edu/DataLoggingService/EraseOut" />
+        </wsdl:operation>
+        <wsdl:operation name="GetSessionCount">
+            <wsdl:input message="log:GetSessionCountMessageIn"
+                wsa:Action="http://www.teco.edu/DataLoggingService/GetSessionCountIn" />
+            <wsdl:output message="log:GetSessionCountMessageOut"
+                wsa:Action="http://www.teco.edu/DataLoggingService/GetSessionCountOut" />
+        </wsdl:operation>
+    </wsdl:portType>
+    
+    <wsdl:binding name="DataLoggingServiceSOAP" type="log:DataLoggingService">
+        <soap:binding style="document"
+            transport="http://schemas.xmlsoap.org/soap/http" />
+        <wsdl:operation name="DataLoggingServiceEvent">
+            <wsdl:output>
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="StartDownload">
+            <wsdl:input>
+                <soap:body use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="StartLogging">
+            <wsdl:input>
+                <soap:body use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="Erase">
+            <wsdl:input>
+                <soap:body use="literal" />
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" />
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    
+    <wsdl:service name="DataLoggingService">
+        <wsdl:port name="DataLoggingService" binding="log:DataLoggingServiceSOAP">
+            <wsoap12:address location="http://localhost:8080" />
+                </wsdl:port>
+    </wsdl:service>
+</wsdl:definitions>

@@ -1,0 +1,12 @@
+C:\Users\Administrator\Documents\dpwsGW\NodeDiscovery\NodeDiscovery\bin\Debug\NodeDiscovery.exe.config
+C:\Users\Administrator\Documents\dpwsGW\NodeDiscovery\NodeDiscovery\bin\Debug\NodeDiscovery.exe
+C:\Users\Administrator\Documents\dpwsGW\NodeDiscovery\NodeDiscovery\bin\Debug\NodeDiscovery.pdb
+C:\Users\Administrator\Documents\dpwsGW\NodeDiscovery\NodeDiscovery\obj\x86\Debug\ResolveAssemblyReference.cache
+C:\Users\Administrator\Documents\dpwsGW\NodeDiscovery\NodeDiscovery\obj\x86\Debug\NodeDiscovery.exe
+C:\Users\Administrator\Documents\dpwsGW\NodeDiscovery\NodeDiscovery\obj\x86\Debug\NodeDiscovery.pdb
+C:\Users\Administrator\Documents\dpwsGW\NodeDiscovery_reflection\NodeDiscovery\bin\Debug\NodeDiscovery.exe.config
+C:\Users\Administrator\Documents\dpwsGW\NodeDiscovery_reflection\NodeDiscovery\obj\x86\Debug\NodeDiscovery.exe
+C:\Users\Administrator\Documents\dpwsGW\NodeDiscovery_reflection\NodeDiscovery\obj\x86\Debug\NodeDiscovery.pdb
+C:\Users\Administrator\Documents\dpwsGW\NodeDiscovery_reflection\NodeDiscovery\obj\x86\Debug\ResolveAssemblyReference.cache
+C:\Users\Administrator\Documents\dpwsGW\NodeDiscovery_reflection\NodeDiscovery\bin\Debug\NodeDiscovery.exe
+C:\Users\Administrator\Documents\dpwsGW\NodeDiscovery_reflection\NodeDiscovery\bin\Debug\NodeDiscovery.pdb
