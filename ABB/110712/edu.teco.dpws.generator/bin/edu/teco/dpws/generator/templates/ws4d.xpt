@@ -1,0 +1,247 @@
+«IMPORT mex»
+«IMPORT wsdp»
+
+«EXTENSION edu::teco::dpws::generator::templates::ws4d»
+
+
+
+«DEFINE setup_Host FOR wsdp::HostServiceType»
+int «serviceId»_setup_hosting_service(struct dpws_s *device, struct soap *service, char *uuid)
+{
+  int ret = 0;
+
+  ret = dpws_add_hosting_service (device, service, 0,
+                                  "«serviceId»",
+                                  uuid,
+                                  100,
+                                  0);
+
+  if (ret != WS4D_OK)
+    {
+      fprintf (stderr, "%s:%d:Can't init device and services\n",__FILE__,__LINE__);
+      return ret;
+    }
+  
+   «EXPAND addType("device","") FOREACH types»«REM»ignore syntax error«ENDREM»
+   
+   return WS4D_OK;
+  
+}
+«ENDDEFINE»
+
+«DEFINE setup_Services(wsdp::HostServiceType hosted) FOR wsdp::HostServiceType»
+int «serviceId»_setup_device(struct dpws_s *device, struct soap *service)
+{
+«EXPAND setup_Service(serviceId,1) FOR hosted»
+  return WS4D_OK;
+}
+«ENDDEFINE»
+
+«DEFINE setup_Service(String hostServiceId,Integer count) FOR wsdp::HostServiceType»
+ {
+  char uri[DPWS_URI_MAX_LEN] = "http://host:0/";
+  int ret;
+  
+  strcat(uri, device->hosting_addr);
+  strcat(uri, "-«count»"); //TODO: every service gets an unique id!
+  
+  struct ws4d_epr *dpws_service = dpws_service_init(device, "«serviceId»");
+
+  if (0!=(ret=dpws_service_bind (device, dpws_service, service, uri, DPWS_URI_MAX_LEN, 100)))
+    {
+      fprintf (stderr, "%s:%d:Can't init device and services\n",__FILE__,__LINE__);
+      return ret;
+    }
+
+  «EXPAND addType("dpws_service","service_") FOREACH types»«REM»ignore syntax error«ENDREM»
+  
+  if (0!=(ret=dpws_service_set_wsdl(dpws_service, "«serviceId»")))
+  {
+      fprintf (stderr, "%s:%d:Can't init device and services\n",__FILE__,__LINE__);
+      return ret;
+    }
+
+  if(0!=(ret=dpws_add_hosted_service (device, dpws_service, uri, DPWS_URI_MAX_LEN)))
+  {
+      fprintf (stderr, "%s:%d:Can't init device and services\n",__FILE__,__LINE__);
+      return ret;
+  }
+
+ }
+«ENDDEFINE»
+
+
+«DEFINE addType(String parent,String prefix) FOR type::QName»
+{
+  struct ws4d_qname *service_type=ws4d_qname_alloc (1, &device->alloc_list);
+  service_type->ns = ws4d_strdup (
+               "«namespaceURI»" 
+               , &device->alloc_list);
+  service_type->name = ws4d_strdup (
+         "«localPart»"
+         , &device->alloc_list);
+  if(0!=(ret=dpws_«prefix»add_type («parent», service_type)))
+  {
+      fprintf (stderr, "%s:%d:Can't init device and services\n",__FILE__,__LINE__);
+      return ret;
+  }
+}
+«ENDDEFINE»
+
+
+«DEFINE set_metadata_ThisDevice(String hostserviceId) FOR ThisDeviceType»
+int «hostserviceId»_set_metadata_device(struct dpws_s *device)
+{
+  /*set_metadata_ThisDevice*/
+  struct ws4d_thisDevice *_device = dpws_change_thisdevice(device);
+  static const ws4d_device_FriendlyName_var(friendlyName) = {«EXPAND loc_strings FOREACH this.friendlyName»};
+  
+  ws4d_device_set_FriendlyName(_device, friendlyName,2);
+  ws4d_device_set_FirmwareVersion(_device, "«this.firmwareVersion»");
+  ws4d_device_set_SerialNumber(_device, "«this.serialNumber»");
+  return WS4D_OK;
+}
+«ENDDEFINE»
+
+«DEFINE set_metadata_ThisModel(String hostserviceId) FOR ThisModelType»
+int «hostserviceId»_set_metadata_model(struct dpws_s *device)
+ { /*set_metadata_ThisModel*/
+    struct ws4d_thisModel *model = dpws_change_thismodel(device);
+    static const ws4d_model_Name_var(name) = {«EXPAND loc_strings FOREACH this.modelName»};
+    static const ws4d_model_Manufacturer_var(manufacturer)={«EXPAND loc_strings FOREACH this.manufacturer»};
+    
+    ws4d_model_set_Manufacturer(model, manufacturer,«this.manufacturer.size»);
+    ws4d_model_set_ManufacturerUrl(model, "«this.manufacturerUrl»");
+    ws4d_model_set_Name(model, name,«this.modelName.size»);
+    ws4d_model_set_Number(model, "«this.modelNumber»");
+    ws4d_model_set_Url(model, "«this.modelUrl»");
+    return WS4D_OK;
+}
+«ENDDEFINE»
+
+«DEFINE loc_strings FOR LocalizedStringType»
+ws4d_locstring_init_string("«getLang()»","«value»"),
+«ENDDEFINE»
+
+«DEFINE nsmap FOR type::QName»
+{"«this.prefix»","«this.namespaceURI»",NULL,NULL},
+«ENDDEFINE»
+
+«DEFINE nsmap FOR wsdp::HostServiceType»
+static struct Namespace namespaces[]= {
+
+    {"SOAP-ENV", "http://www.w3.org/2003/05/soap-envelope", "http://www.w3.org/2002/06/soap-envelope"},
+«REM»  
+    {"SOAP-ENC", "http://schemas.xmlsoap.org/soap/encoding/", "http://www.w3.org/2002/06/soap-encoding"},
+    {"wsdp", "http://docs.oasis-open.org/ws-dd/ns/dpws/2009/01", NULL, NULL},
+    {"wsa", "http://www.w3.org/2005/08/addressing", NULL, NULL},
+«ENDREM»
+  
+	{"xsi", "http://www.w3.org/2001/XMLSchema-instance", "http://www.w3.org/*/XMLSchema-instance", NULL},
+	{"xsd", "http://www.w3.org/2001/XMLSchema", "http://www.w3.org/*/XMLSchema", NULL},
+
+	
+
+«EXPAND nsmap FOREACH types»
+	{NULL, NULL, NULL, NULL}
+}; 
+«ENDDEFINE»
+
+«DEFINE init_service FOR wsdp::HostServiceType»
+void «serviceId»_init_service(struct soap *service)
+{
+	soap_init(service);
+#ifdef DEBUG
+	soap_omode (service, SOAP_XML_INDENT);
+#endif
+	soap_set_namespaces(service, namespaces);
+}
+«ENDDEFINE»
+
+
+«DEFINE setup_wsdls(wsdp::HostServiceType hosted) FOR wsdp::HostServiceType»
+int «serviceId»_set_wsdl(struct dpws_s *device)
+{
+«EXPAND set_wsdl FOR hosted»
+return WS4D_OK;
+}
+«ENDDEFINE»
+
+«DEFINE set_wsdl FOR wsdp::HostServiceType»
+	dpws_append_wsdl (device,"«serviceId»",«serviceId.getQuotedWSDL()»);
+«ENDDEFINE»
+
+«DEFINE Root FOR mex::MetadataType»
+«metaType.toString()»
+«FOREACH metadataSection.getHostRel() AS rel»
+«LET rel.getHostService("host") AS host»
+«LET rel.getHostService("hosted") AS hosted»
+«FILE host.serviceId+"_device.c"»
+/* Generated file */ 
+
+#include <ws4d-gSOAP/dpws_device.h>
+#include <stdio.h>
+#include <dpws_append_wsdl.h>
+«EXPAND nsmap FOR hosted»
+«EXPAND init_service FOR host» 
+
+«EXPAND serve_requests(hosted) FOR host»       
+        
+«EXPAND setup_Host FOR host»
+«EXPAND setup_Services(hosted) FOR host»
+
+«EXPAND set_metadata_ThisDevice(host.serviceId) FOREACH metadataSection.getThisDevice()»
+«EXPAND set_metadata_ThisModel(host.serviceId) FOREACH metadataSection.getThisModel()»
+
+«EXPAND setup_wsdls(hosted) FOR host»
+              
+«EXPAND event(hosted) FOR host»
+
+«ENDFILE»
+«ENDLET»
+«ENDLET»
+«ENDFOREACH»
+«ENDDEFINE»
+
+«DEFINE event(wsdp::HostServiceType hosted) FOR  wsdp::HostServiceType» 
+void «serviceId»_event(int svc, int op, void* dev, char *buf, size_t len)
+{
+switch(svc)
+{
+       «FOREACH hosted.types AS t ITERATOR i-»
+       «EXPAND serve_event(i.counter0) FOR t-»
+       «ENDFOREACH-»
+}
+}
+«ENDDEFINE»
+
+«DEFINE serve_requests(wsdp::HostServiceType hosted) FOR  wsdp::HostServiceType»
+typedef int (*serve_requests_ptr)(struct soap *);
+
+«EXPAND extern_serve_requests FOREACH hosted.types»
+static serve_requests_ptr serve_requests[] = 
+        SOAP_SERVE_SET («EXPAND serve_requests FOREACH hosted.types SEPARATOR "," »);
+        
+serve_requests_ptr *«serviceId»_get_serve_requests()
+{
+	return serve_requests;
+}
+«ENDDEFINE»
+
+«DEFINE serve_requests FOR type::QName»
+«localPart»_serve_request
+«ENDDEFINE»
+
+«DEFINE extern_serve_requests FOR type::QName»
+extern int «localPart»_serve_request(struct soap * soap);
+«ENDDEFINE»
+
+«DEFINE serve_event(Integer casenum) FOR type::QName»
+case «casenum»:
+{
+		extern void	«localPart»_event(int, void *, char *, size_t);
+		«localPart»_event(op, dev, buf, len);
+		break;
+}
+«ENDDEFINE»
+
