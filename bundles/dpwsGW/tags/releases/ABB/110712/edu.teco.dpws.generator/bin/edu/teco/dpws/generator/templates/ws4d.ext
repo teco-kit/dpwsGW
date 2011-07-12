@@ -1,0 +1,17 @@
+import wsdp;
+import mex;
+
+wsdp::HostServiceType getHostService(wsdp::RelationshipType r, String h):  r.any.toSet().typeSelect(EFeatureMapEntry).select(e|e.feature.name.toLowerCase()==h).value.typeSelect(wsdp::HostServiceType).first();
+
+String getLang(LocalizedStringType ls): ls.anyAttribute.toSet().typeSelect(EFeatureMapEntry).value.typeSelect(String).first();
+
+RelationshipType getHostRel( MetadataSectionType metadataSection): metadataSection.any.toList().typeSelect(EFeatureMapEntry).value.typeSelect(RelationshipType).select(e|e.type.toString()=="http://schemas.xmlsoap.org/ws/2006/02/devprof/host");
+
+ThisDeviceType getThisDevice( MetadataSectionType metadataSection): metadataSection.any.toList().typeSelect(EFeatureMapEntry).value.typeSelect(ThisDeviceType);
+ThisModelType getThisModel( MetadataSectionType metadataSection): metadataSection.any.toList().typeSelect(EFeatureMapEntry).value.typeSelect(ThisModelType);
+
+String getWSDLPath(): GLOBALVAR WSDLPath;
+
+String getQuotedWSDL(String serviceId): getQuoted(getWSDLPath()+"/"+serviceId+".wsdl");
+
+String getQuoted(String filename): JAVA  edu.teco.dpws.generator.util.QuoteFile.quote(java.lang.String);
