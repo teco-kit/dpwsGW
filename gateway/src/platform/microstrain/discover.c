@@ -18,13 +18,33 @@
 #include <termios.h>
 #include <unistd.h>
 
+#include <microstrain_struct.h>
+#ifdef MICROSTRAIN_GLINK
 #include "Acceleration_operations.h"
+#else
+#include "Streaming_operations.h"
+#endif
 #include "DeviceInfo_operations.h"
 #include "DataLogging_operations.h"
 
 #include "microstrain.h"
 
+#ifdef UPART
+#define MODEL(X) uPartDevice_##X
+#elif MICROSTRAIN_GLINK
 #define MODEL(X) AccelModel_##X
+#elif MICROSTRAIN_VLINK
+#define MODEL(X) VLinkModel_##X
+#else
+#define MODEL(X) SSimpDevice_##X
+#endif
+
+#ifdef MICROSTRAIN_GLINK
+#define OP(X) OP_AccelModel_##X
+#elif MICROSTRAIN_VLINK
+#define OP(X) OP_VLinkModel_##X
+#endif
+
 #include <device.h>
 
 #ifdef WIN32
@@ -795,6 +815,8 @@ void processLDC(msmessage * msg)
 	delta*=msdev->ldcrate;
 	//printf("Delta: %f Rate: %f\n",delta,msdev->ldcrate);
 
+	msdev->channelmask = msg->buffer[4];
+
 	for (i = 0; i < 8; i++)
 	{
 		if ((msg->buffer[4] >> i) & 1) {
@@ -830,12 +852,13 @@ void processLDC(msmessage * msg)
 		}
 	}
 	printf("Delivering LDC event\n");
-	ldcmessage ldcmsg;
+	ldc_message ldcmsg;
 
 	memcpy(ldcmsg.values,msdev->lastvalue,sizeof(float)*8);
 	ldcmsg.timertick = tick;
 	ldcmsg.delta = delta;
-	AccelModel_event(SRV_Acceleration,OP_GetAccelerationValuesEvent,device,(char*)&ldcmsg,sizeof(ldcmessage));
+	ldcmsg.channelmask = msdev->channelmask;
+	MODEL(event(SRV_Streaming,OP(Streaming_ValuesEvent),device,(char*)&ldcmsg,sizeof(ldc_message)));
 
 }
 
@@ -887,13 +910,13 @@ int processLogging(msmessage * msg)
 	}
 
 	// Get channels
-	loggingpage page;
+	logging_page page;
 	page.channelmask = gw_cur_device->session.channelmask;
 	page.channels = 0;
 	page.samplecount = 0;
 	page.rate = gw_cur_device->session.rate;
 	page.prevsamplecount = gw_cur_device->session.samplecount;
-	memset(page.samples,0,sizeof(loggingsample)*132);
+	memset(page.samples,0,sizeof(logging_sample)*132);
 	for(i=0;i<8;i++)
 	{
 		if ((page.channelmask >> i) & 1)
@@ -916,7 +939,7 @@ int processLogging(msmessage * msg)
 			break;
 		}
 	}
-	loggingsample cursample;
+	logging_sample cursample;
 	memset(cursample.values,0,sizeof(float)*8);
 	unsigned char msb;
 	unsigned char lsb;
@@ -1049,7 +1072,7 @@ int processLogging(msmessage * msg)
 	//Deliver events
 	if(page.samplecount>0)
 	{
-		AccelModel_event(SRV_DataLogging,OP_DataLogging_DataEvent,device,(char*)&page,sizeof(loggingpage));
+		MODEL(event(SRV_DataLogging,OP(DataLogging_DataEvent),device,(char*)&page,sizeof(logging_page)));
 	}
 
 	return next;
@@ -1943,12 +1966,12 @@ int send_buf(struct dpws_s *device, uint16_t service_id, uint8_t op_id,
 	printf("Device found\n");
 	switch(service_id)
 	{
-	case SRV_Acceleration:
+	case SRV_Streaming:
 	{
-		printf("SRV_Acceleration\n");
+		printf("SRV_Streaming\n");
 		switch(op_id)
 		{
-		case OP_StartLDC:
+		case OP(Streaming_StartLDC):
 		{
 			printf("Invoking StartLDC\n");
 			if(msdev->state!=DEVICE_IDLE)
@@ -1960,7 +1983,7 @@ int send_buf(struct dpws_s *device, uint16_t service_id, uint8_t op_id,
 				return ACLERR_GW_Busy;
 			}
 
-			LDCInfo * ldcinfo = (LDCInfo *) buf;
+			LDC_info * ldcinfo = (LDC_info *) buf;
 			pthread_mutex_lock(&gw_mutex);
 			initLDC(msdev->id,getLDCRateIndex(ldcinfo->rate),getLDCSampleCount(getLDCRateIndex(ldcinfo->rate),ldcinfo->duration));
 			pthread_mutex_unlock(&gw_mutex);
@@ -1974,7 +1997,7 @@ int send_buf(struct dpws_s *device, uint16_t service_id, uint8_t op_id,
 		printf("SRV_DeviceInfo\n");
 		switch(op_id)
 		{
-		case OP_DeviceInfo_GetDeviceInfo:
+		case OP(DeviceInfo_GetDeviceInfo):
 		{
 			printf("Invoking GetDeviceInfo\n");
 			if(gw_state==GATEWAY_IDLE&&msdev->state==DEVICE_LOGGING)
@@ -1991,7 +2014,7 @@ int send_buf(struct dpws_s *device, uint16_t service_id, uint8_t op_id,
 
 			return 1;
 		}break;
-		case OP_DeviceInfo_StopDevice:
+		case OP(DeviceInfo_StopDevice):
 		{
 			if(msdev->state==DEVICE_IDLE)
 			{
@@ -2010,7 +2033,7 @@ int send_buf(struct dpws_s *device, uint16_t service_id, uint8_t op_id,
 		printf("SRV_DataLogging\n");
 		switch(op_id)
 		{
-		case OP_DataLogging_StartLogging:
+		case OP(DataLogging_StartLogging):
 		{
 			printf("Invoking StartLogging\n");
 			if(msdev->state!=DEVICE_IDLE)
@@ -2028,12 +2051,12 @@ int send_buf(struct dpws_s *device, uint16_t service_id, uint8_t op_id,
 			{
 				return DLERR_NotCleared;
 			}
-			LoggingInfo * loginfo = (LoggingInfo*) buf;
+			logging_info * loginfo = (logging_info*) buf;
 			pthread_mutex_lock(&gw_mutex);
 			initLogging(msdev->id,getLoggingRateIndex(loginfo->rate),getLoggingSampleCount(getLoggingRateIndex(loginfo->rate),loginfo->duration));
 			pthread_mutex_unlock(&gw_mutex);
 		}break;
-		case OP_DataLogging_StartDownload:
+		case OP(DataLogging_StartDownload):
 		{
 			printf("Invoking StartDownload\n");
 			if(msdev->state!=DEVICE_IDLE)
@@ -2055,7 +2078,7 @@ int send_buf(struct dpws_s *device, uint16_t service_id, uint8_t op_id,
 			initDownload(msdev->id);
 			pthread_mutex_unlock(&gw_mutex);
 		}break;
-		case OP_DataLogging_Erase:
+		case OP(DataLogging_Erase):
 		{
 			printf("Invoking Erase\n");
 			if(msdev->state!=DEVICE_IDLE)
@@ -2071,7 +2094,7 @@ int send_buf(struct dpws_s *device, uint16_t service_id, uint8_t op_id,
 			eraseSessions(msdev->id);
 			pthread_mutex_unlock(&gw_mutex);
 		}break;
-		case OP_DataLogging_GetSessionCount:
+		case OP(DataLogging_GetSessionCount):
 		{
 			printf("Invoking GetSessionCount\n");
 			if(msdev->state!=DEVICE_IDLE)
@@ -2105,11 +2128,11 @@ ssize_t rcv_buf(struct dpws_s *device, uint16_t service_id, uint8_t op_id,
 
 	switch(service_id)
 	{
-	case SRV_Acceleration:
+	case SRV_Streaming:
 	{
 		switch(op_id)
 		{
-		case OP_StartLDC:
+		case OP(Streaming_StartLDC):
 		{
 			return 0;
 		}break;
@@ -2120,13 +2143,13 @@ ssize_t rcv_buf(struct dpws_s *device, uint16_t service_id, uint8_t op_id,
 	{
 		switch(op_id)
 		{
-		case OP_DeviceInfo_GetDeviceInfo:
+		case OP(DeviceInfo_GetDeviceInfo):
 		{
-			DeviceInfo * info = (DeviceInfo*)(*buf);
+			device_info * info = (device_info*)(*buf);
 			strcpy(info->status,getDeviceInfoString(msdev->state));
 			return strlen(info->status);
 		}break;
-		case OP_DeviceInfo_StopDevice:
+		case OP(DeviceInfo_StopDevice):
 		{
 			return 0;
 		}break;
@@ -2137,27 +2160,27 @@ ssize_t rcv_buf(struct dpws_s *device, uint16_t service_id, uint8_t op_id,
 	{
 		switch(op_id)
 		{
-		case OP_DataLogging_StartLogging:
+		case OP(DataLogging_StartLogging):
 		{
 			return 0;
 
 		}break;
-		case OP_DataLogging_StartDownload:
+		case OP(DataLogging_StartDownload):
 		{
 			return 0;
 
 		}break;
-		case OP_DataLogging_Erase:
+		case OP(DataLogging_Erase):
 		{
 			return 0;
 		}break;
-		case OP_DataLogging_GetSessionCount:
+		case OP(DataLogging_GetSessionCount):
 		{
-			sessioninfo * sessioncount = (sessioninfo*)(*buf);
+			session_info * sessioncount = (session_info*)(*buf);
 			pthread_mutex_lock(&gw_mutex);
 			sessioncount->count = getSavedSessions(msdev->id);
 			pthread_mutex_unlock(&gw_mutex);
-			return sizeof(sessioninfo);
+			return sizeof(session_info);
 		}break;
 		}
 	}break;

@@ -20,10 +20,18 @@
 
 #ifdef UPART
 #define MODEL(X) uPartDevice_##X
-#elif MICROSTRAIN
+#elif MICROSTRAIN_GLINK
 #define MODEL(X) AccelModel_##X
+#elif MICROSTRAIN_VLINK
+#define MODEL(X) VLinkModel_##X
 #else
 #define MODEL(X) SSimpDevice_##X
+#endif
+
+#ifdef MICROSTRAIN_GLINK
+#define OP(X) OP_AccelModel_##X
+#elif MICROSTRAIN_VLINK
+#define OP(X) OP_VLinkModel_##X
 #endif
 
 #include <device.h>

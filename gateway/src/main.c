@@ -84,7 +84,7 @@ int main(int argc, char **argv)
 			char *option = &argv[1][1];
 
 			switch (option[0]) {
-			case 'c': /* set interface with option -i */
+			case 'c': /* set config file with option -c */
 				if (strlen(option) > 2) {
 					++option;
 					path = option;
