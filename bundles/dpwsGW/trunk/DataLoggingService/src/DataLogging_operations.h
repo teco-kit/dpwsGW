@@ -5,34 +5,12 @@
 #define SRV_DataLogging 2
 
 enum DataLogging_operations {
-	OP_DataLogging_DataEvent,
-	OP_DataLogging_StartLogging,
-	OP_DataLogging_StartDownload,
-	OP_DataLogging_Erase,
-	OP_DataLogging_GetSessionCount
+	OP_AccelModel_DataLogging_DataEvent,
+	OP_AccelModel_DataLogging_StartLogging,
+	OP_AccelModel_DataLogging_StartDownload,
+	OP_AccelModel_DataLogging_Erase,
+	OP_AccelModel_DataLogging_GetSessionCount
 };
-
-typedef struct {
-	char rate[64];
-	char duration[64];
-} LoggingInfo;
-
-typedef struct {
-	float values[8];
-} loggingsample;
-
-typedef struct {
-	unsigned char channelmask;
-	unsigned char channels;
-	unsigned char samplecount;
-	float rate;
-	int prevsamplecount;
-	loggingsample samples[132];
-} loggingpage;
-
-typedef struct {
-	int count;
-} sessioninfo;
 
 
 #define	DLERR_NotReady -1

@@ -1,6 +1,7 @@
 #include <ws4d-gSOAP/dpws_device.h>
 #include <bitsio/read_bits_buf.h>
 #include <ws4d-gSOAP/dpwsH.h>
+#include <microstrain_struct.h>
 #include "DataLogging_operations.h"
 #include <sendrcv.h>
 #include <assert.h>
@@ -14,7 +15,7 @@ enum DataLogging_operations DataLoggingService_get_opid(char *soap_action_uri) {
 
 	if (0 == strcmp(soap_action_uri,
 			"http://www.teco.edu/DataLoggingService/DataLoggingServiceEventOut"))
-		return OP_DataLogging_DataEvent;
+		return OP_AccelModel_DataLogging_DataEvent;
 
 	return -1;
 }
@@ -22,7 +23,7 @@ enum DataLogging_operations DataLoggingService_get_opid(char *soap_action_uri) {
 char * DataLoggingService_get_opuri(enum DataLogging_operations op) {
 	switch (op) {
 
-	case OP_DataLogging_DataEvent:
+	case OP_AccelModel_DataLogging_DataEvent:
 		return "http://www.teco.edu/DataLoggingService/DataLoggingServiceEventOut";
 
 	default:
@@ -79,7 +80,7 @@ dpws_for_each_subs		(subs, next, _device,
 				{
 					assert(0&&"unreachable"); //optimized for compiler if NDEBUG
 
-					case OP_DataLogging_DataEvent:
+					case OP_AccelModel_DataLogging_DataEvent:
 
 					{
 						writeEvent(&soap,buf,buf_len);

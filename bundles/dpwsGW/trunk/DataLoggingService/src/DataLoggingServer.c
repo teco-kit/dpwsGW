@@ -7,17 +7,18 @@
 int send_buf(struct dpws_s *, uint16_t , uint8_t , struct soap* , u_char* , ssize_t );
 ssize_t rcv_buf(struct dpws_s *device, uint16_t service_id, uint8_t op_id, struct soap* msg, char **buf);
 
+#include <microstrain_struct.h>
 #include "DataLogging_operations.h"
 #include "Conversion.h"
 
 static int soap_serve_StartLogging(struct soap *soap) //TODO: pass device context
 {
 	printf("Calling soap_serve_StartLogging\n");
-	int op_id = OP_DataLogging_StartLogging;
+	int op_id = OP_AccelModel_DataLogging_StartLogging;
 	int service_id = SRV_DataLogging;
 	struct dpws_s *device = NULL;
 
-	LoggingInfo info;
+	logging_info info;
 	strcpy(info.rate,"32"); // Default rate is 32 Hz
 
 
@@ -25,7 +26,7 @@ static int soap_serve_StartLogging(struct soap *soap) //TODO: pass device contex
 		return soap->error;
 
 
-	int ret = send_buf(device, service_id, op_id, soap, (u_char*)&info, sizeof(LoggingInfo));
+	int ret = send_buf(device, service_id, op_id, soap, (u_char*)&info, sizeof(logging_info));
 
 	/* prepare response */
 	{
@@ -104,7 +105,7 @@ static int soap_serve_StartLogging(struct soap *soap) //TODO: pass device contex
 static int soap_serve_StartDownload(struct soap *soap)
 {
 	printf("Calling soap_serve_StartDownload\n");
-	int op_id = OP_DataLogging_StartDownload;
+	int op_id = OP_AccelModel_DataLogging_StartDownload;
 	int service_id = SRV_DataLogging;
 	struct dpws_s *device = NULL;
 
@@ -187,7 +188,7 @@ static int soap_serve_StartDownload(struct soap *soap)
 static int soap_serve_Erase(struct soap *soap)
 {
 	printf("Calling soap_serve_Erase\n");
-	int op_id = OP_DataLogging_Erase;
+	int op_id = OP_AccelModel_DataLogging_Erase;
 	int service_id = SRV_DataLogging;
 	struct dpws_s *device = NULL;
 
@@ -267,7 +268,7 @@ static int soap_serve_Erase(struct soap *soap)
 static int soap_serve_GetSessionCount(struct soap *soap)
 {
 	printf("Calling soap_serve_GetSessionCount\n");
-	int op_id = OP_DataLogging_GetSessionCount;
+	int op_id = OP_AccelModel_DataLogging_GetSessionCount;
 	int service_id = SRV_DataLogging;
 	struct dpws_s *device = NULL;
 
@@ -322,8 +323,8 @@ static int soap_serve_GetSessionCount(struct soap *soap)
 	}
 
 	{
-		sessioninfo info;
-		sessioninfo * info_ptr = &info;
+		session_info info;
+		session_info * info_ptr = &info;
 		ssize_t len = rcv_buf(device, service_id, op_id, soap, (char**)&info_ptr);
 
 		if (ret == DLERR_NotReady) {
