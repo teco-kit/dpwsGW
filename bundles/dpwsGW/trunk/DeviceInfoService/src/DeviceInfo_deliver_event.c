@@ -1,6 +1,7 @@
 #include <ws4d-gSOAP/dpws_device.h>
 #include <bitsio/read_bits_buf.h>
 #include <ws4d-gSOAP/dpwsH.h>
+#include <microstrain_struct.h>
 #include "DeviceInfo_operations.h"
 #include <sendrcv.h>
 #include <assert.h>

@@ -6,13 +6,13 @@
 
 int send_buf(struct dpws_s *, uint16_t , uint8_t , struct soap* , u_char* , ssize_t );
 ssize_t rcv_buf(struct dpws_s *device, uint16_t service_id, uint8_t op_id, struct soap* msg, char **buf);
-
+#include <microstrain_struct.h>
 #include "DeviceInfo_operations.h"
 #include "Conversion.h"
 
 static int soap_serve_GetDeviceInfo(struct soap *soap) //TODO: pass device context
 {
-	int op_id = OP_DeviceInfo_GetDeviceInfo;
+	int op_id = OP_AccelModel_DeviceInfo_GetDeviceInfo;
 	int service_id = SRV_DeviceInfo;
 	struct dpws_s *device = NULL;
 
@@ -67,8 +67,8 @@ static int soap_serve_GetDeviceInfo(struct soap *soap) //TODO: pass device conte
 	}
 
 	{
-		DeviceInfo info;
-		DeviceInfo * info_ptr = &info;
+		device_info info;
+		device_info * info_ptr = &info;
 		ssize_t len = rcv_buf(device, service_id, op_id, soap, (char**)&info_ptr);
 
 		if (len < 0) {
@@ -91,7 +91,7 @@ static int soap_serve_GetDeviceInfo(struct soap *soap) //TODO: pass device conte
 
 static int soap_serve_StopDevice(struct soap *soap)
 {
-	int op_id = OP_DeviceInfo_StopDevice;
+	int op_id = OP_AccelModel_DeviceInfo_StopDevice;
 	int service_id = SRV_DeviceInfo;
 	struct dpws_s *device = NULL;
 
