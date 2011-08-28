@@ -7,6 +7,7 @@
 		<project>SensorValuesService</project>
 		<project>SSimpDevice</project>
 		<project>AccelerationModel_static</project>
+		<project>VLinkModel</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
