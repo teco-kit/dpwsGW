@@ -9,6 +9,7 @@
 #include <errno.h>
 #include <stdsoap2.h>
 
+#include <microstrain_struct.h>
 #include "DataLogging_operations.h"
 #include "Conversion.h"
 
@@ -19,7 +20,7 @@
 void writeEvent(struct soap *soap,char * buf,int len)
 {
 	printf("Calling writeEvent\n");
-	loggingpage * page = (loggingpage*) buf;
+	logging_page * page = (logging_page*) buf;
 	char * str = NULL;
 
 	soap_element_begin_out(soap, "logging:series", 0, "");
@@ -70,7 +71,7 @@ void writeEvent(struct soap *soap,char * buf,int len)
 	soap_element_end_out(soap, "logging:series");
 }
 
-int readLoggingInfo(struct soap *soap, LoggingInfo * info)
+int readLoggingInfo(struct soap *soap, logging_info * info)
 {
 	printf("Calling readLoggingInfo\n");
 
@@ -114,7 +115,7 @@ int readLoggingInfo(struct soap *soap, LoggingInfo * info)
 	return 1;
 }
 
-void writeSessionCount(struct soap *soap,sessioninfo * info)
+void writeSessionCount(struct soap *soap,session_info * info)
 {
 	printf("Calling writeSessionCount\n");
 	soap_element_begin_out(soap, "logging:sessioninfo", 0, "");
