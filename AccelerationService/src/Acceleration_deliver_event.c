@@ -1,6 +1,7 @@
 #include <ws4d-gSOAP/dpws_device.h>
 #include <bitsio/read_bits_buf.h>
 #include <ws4d-gSOAP/dpwsH.h>
+#include <microstrain_struct.h>
 #include "Acceleration_operations.h"
 #include <sendrcv.h>
 #include <assert.h>
@@ -15,7 +16,7 @@ enum Acceleration_operations AccelerationService_get_opid(char *soap_action_uri)
 
 	if (0 == strcmp(soap_action_uri,
 			"http://www.teco.edu/AccelerationService/AccelerationServiceEventOut"))
-		return OP_GetAccelerationValuesEvent;
+		return OP_AccelModel_Streaming_ValuesEvent;
 
 	return -1;
 }
@@ -23,7 +24,7 @@ enum Acceleration_operations AccelerationService_get_opid(char *soap_action_uri)
 char * AccelerationService_get_opuri(enum Acceleration_operations op) {
 	switch (op) {
 
-	case OP_GetAccelerationValuesEvent:
+	case OP_AccelModel_Streaming_ValuesEvent:
 		return "http://www.teco.edu/AccelerationService/AccelerationServiceEventOut";
 
 	default:
@@ -73,7 +74,7 @@ dpws_for_each_subs		(subs, next, _device,
 				{
 					assert(0&&"unreachable"); //optimized for compiler if NDEBUG
 
-					case OP_GetAccelerationValuesEvent:
+					case OP_AccelModel_Streaming_ValuesEvent:
 
 					{
 						writeSOAPBuf(&soap,buf);
