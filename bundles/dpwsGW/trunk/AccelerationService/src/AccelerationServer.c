@@ -6,19 +6,19 @@
 
 int send_buf(struct dpws_s *, uint16_t , uint8_t , struct soap* , u_char* , ssize_t );
 ssize_t rcv_buf(struct dpws_s *device, uint16_t service_id, uint8_t op_id, struct soap* msg, char **buf);
-
+#include <microstrain_struct.h>
 #include "Acceleration_operations.h"
 #include "Conversion.h"
 
 static int soap_serve_StartLDC(struct soap *soap) //TODO: pass device context
 {
 	printf("Calling soap_serve_StartLDC\n");
-	int op_id = OP_StartLDC;
-	int service_id = SRV_Acceleration;
+	int op_id = OP_AccelModel_Streaming_StartLDC;
+	int service_id = SRV_Streaming;
 	struct dpws_s *device = NULL;
 	int error=WS4D_OK;
 
-	LDCInfo info;
+	LDC_info info;
 	strcpy(info.rate,"1"); // Default rate is 1 Hz
 	int ret = 0;
 	if(!readLDCInfo(soap, &info))
@@ -29,7 +29,7 @@ static int soap_serve_StartLDC(struct soap *soap) //TODO: pass device context
 	} else {
 		printf("LDC rate %s\n",info.rate);
 		printf("Calling send_buf\n");
-		ret = send_buf(device, service_id, op_id, soap, (u_char *)&info, sizeof(LDCInfo));
+		ret = send_buf(device, service_id, op_id, soap, (u_char *)&info, sizeof(LDC_info));
 	}
 
 	/* prepare response */

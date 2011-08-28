@@ -8,7 +8,7 @@
 #include <limits.h>
 #include <errno.h>
 #include <stdsoap2.h>
-
+#include <microstrain_struct.h>
 #include "Acceleration_operations.h"
 #include "Conversion.h"
 
@@ -18,7 +18,7 @@
 
 void writeSOAPBuf(struct soap *soap,char * buf)
 {
-	ldcmessage * msg = (ldcmessage*) buf;
+	ldc_message * msg = (ldc_message*) buf;
 	writeSOAPValues(soap,msg->values[0],msg->values[1],msg->values[2],msg->timertick,msg->delta);
 }
 
@@ -79,7 +79,7 @@ void writeSOAPValues(struct soap *soap,float x,float y,float z,float tick, float
 	soap_element_end_out(soap, "acs:series");
 }
 
-int readLDCInfo(struct soap *soap, LDCInfo * info)
+int readLDCInfo(struct soap *soap, LDC_info * info)
 {
 	printf("Calling readLDCInfo\n");
 	if (soap_element_begin_in(soap, "acs:ldcinfo", 0, NULL) != SOAP_OK)

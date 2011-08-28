@@ -17,6 +17,6 @@ void writeSOAPValues(struct soap *soap,float x,float y,float z,float tick, float
 /**
  * Read Logging info from SOAP
  */
-int readLDCInfo(struct soap *soap,LDCInfo * info);
+int readLDCInfo(struct soap *soap,LDC_info * info);
 
 #endif /* CONVERSION_H_ */
