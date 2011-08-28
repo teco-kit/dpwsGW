@@ -759,10 +759,10 @@ int MODEL(set_wsdl(struct dpws_s *device)) {
 }
 
 void MODEL(event(int svc, int op, void* dev, char *buf, size_t len)) {
-	printf("Calling MODEL(event\n");
+	printf("Calling MODEL(event)\n");
 	switch (svc) {
 
-	case SRV_Acceleration: {
+	case SRV_Streaming: {
 		extern void AccelerationService_event(int, void *, char *, size_t);
 		AccelerationService_event(op, dev, buf, len);
 		break;
