@@ -5,7 +5,7 @@
 /**
  * Write Device Info to SOAP output
  */
-void writeDeviceInfo(struct soap *soap,DeviceInfo * info);
+void writeDeviceInfo(struct soap *soap,device_info * info);
 
 /**
  * Write StopDevice result to SOAP output

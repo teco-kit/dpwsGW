@@ -8,7 +8,7 @@
 #include <limits.h>
 #include <errno.h>
 #include <stdsoap2.h>
-
+#include <microstrain_struct.h>
 #include "DeviceInfo_operations.h"
 #include "Conversion.h"
 
@@ -16,7 +16,7 @@
 #define SOAP_TYPE_string 0
 #endif
 
-void writeDeviceInfo(struct soap *soap,DeviceInfo * info)
+void writeDeviceInfo(struct soap *soap,device_info * info)
 {
 	soap_element_begin_out(soap, "dvcinf:status", 0, "");
 
