@@ -742,8 +742,7 @@ static int
 wsa_response_override(struct soap *soap, int status, size_t count)
 { 
   DBGFUN("wsa_response_override");
-  fputs("xx_response_xx\n",stderr);
-  fflush(stderr);
+
   count=count;
   soap->fresponse =wsa_get_plugindata (soap)->fresponse; //restore old (necessary??)
   return SOAP_OK;
