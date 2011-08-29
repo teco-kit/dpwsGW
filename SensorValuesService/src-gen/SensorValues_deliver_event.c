@@ -8,23 +8,25 @@
 #include <assert.h>
 extern char * DPWS_SUBS_END_FAILURE; //TODO missing decleration in ws4d header
 
-
 #include "Sample_bin2sax.h"
 
 struct dpws_s *_device;
 
 enum SensorValues_operations SensorValues_get_opid(char *soap_action_uri) {
 
-	if (0 == strcmp(soap_action_uri,
-			"http://www.teco.edu/SensorValues/GetSensorValuesOut"))
+	if (0
+			== strcmp(soap_action_uri,
+					"http://www.teco.edu/SensorValues/GetSensorValuesOut"))
 		return OP_SensorValues_GetSensorValues;
 
-	if (0 == strcmp(soap_action_uri,
-			"http://www.teco.edu/SensorValues/SensorValuesEventOut"))
+	if (0
+			== strcmp(soap_action_uri,
+					"http://www.teco.edu/SensorValues/SensorValuesEventOut"))
 		return OP_SensorValues_SensorValuesEvent;
 
-	if (0 == strcmp(soap_action_uri,
-			"http://www.teco.edu/SensorValues/ConfigResponse"))
+	if (0
+			== strcmp(soap_action_uri,
+					"http://www.teco.edu/SensorValues/ConfigResponse"))
 		return OP_SensorValues_Config;
 	else
 		return -1;
@@ -63,57 +65,56 @@ void SensorValues_event(enum SensorValues_operations op, void *_device,
 
 		{
 
-dpws_for_each_subs		(subs, next, _device,
-				soap_action_uri)
-		{
-
-			if(WS4D_OK!=
-					dpws_header_gen_event(&soap,device,soap_action_uri,subs,sizeof(struct SOAP_ENV__Header)))
-			continue;
-
-			soap.omode|=SOAP_IO_CHUNK;
-			if ( soap_connect(&soap, dpws_subsm_get_deliveryPush_address (device, subs), soap_action_uri)
-					|| soap_envelope_begin_out(&soap)
-					|| soap_putheader(&soap)
-					|| soap_body_begin_out(&soap) )
+			dpws_for_each_subs(subs, next, _device, soap_action_uri)
 			{
-				soap_closesock(&soap);
-				soap_print_fault (&soap, stderr);
-				dpws_end_subscription(_device,subs,DPWS_SUBS_END_FAILURE,NULL);
-			}
 
-			{
-				struct READER_STRUCT* reader=read_bits_bufreader_stack_new(buf,buf_len);
-				switch(op)
+				if (WS4D_OK
+						!= dpws_header_gen_event(&soap, device, soap_action_uri,
+								subs, sizeof(struct SOAP_ENV__Header)))
+					continue;
+
+				soap.omode |= SOAP_IO_CHUNK;
+				if (soap_connect(&soap,
+						dpws_subsm_get_deliveryPush_address(device, subs),
+						soap_action_uri) || soap_envelope_begin_out(&soap)
+						|| soap_putheader(&soap)
+						|| soap_body_begin_out(&soap)) {
+					soap_closesock(&soap);
+					soap_print_fault(&soap, stderr);
+					dpws_end_subscription(_device, subs, DPWS_SUBS_END_FAILURE,
+							NULL);
+				}
+
 				{
+					struct READER_STRUCT* reader =
+							read_bits_bufreader_stack_new(buf, buf_len);
+					switch (op) {
 
 					case OP_SensorValues_GetSensorValues:
 
 					case OP_SensorValues_Config:
 
-					assert(0&&"unreachable"); //optimized for compiler if NDEBUG
+						assert(0 && "unreachable"); //optimized for compiler if NDEBUG
 
 					case OP_SensorValues_SensorValuesEvent:
 
 					{
-						Sample_bin2sax_run(reader,&soap);
+						Sample_bin2sax_run(reader, &soap);
 					}
 
-					break;
+						break;
+					}
 				}
+				if (soap_body_end_out(&soap) || soap_envelope_end_out(&soap)
+						|| soap_end_send(&soap)) {
+					soap_closesock(&soap);
+					soap_print_fault(&soap, stderr);
+				}
+				soap_end(&soap);
 			}
-			if ( soap_body_end_out(&soap)
-					|| soap_envelope_end_out(&soap)
-					|| soap_end_send(&soap) )
-			{
-				soap_closesock(&soap);
-				soap_print_fault (&soap, stderr);
-			}
-			soap_end (&soap);
 		}
+		soap_done(&soap);
+		return;
 	}
-	soap_done (&soap);
-	return;
-}
 }
 

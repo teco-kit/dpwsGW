@@ -13,10 +13,9 @@ int Sample_bin2dom_run(struct READER_STRUCT *reader, sens_SSimpSample *dom) {
 	for (;;) {
 		switch (label) {
 
-		// Start State
+// Start State
 
-
-		case 0://stateComplexBegin(Sample)
+		case 0: //stateComplexBegin(Sample)
 		{
 			label = 1; //assert 1==label+1
 
@@ -24,9 +23,7 @@ int Sample_bin2dom_run(struct READER_STRUCT *reader, sens_SSimpSample *dom) {
 
 			//push(pop()): preinitialized stack
 
-
 			//push Sample: next 
-
 
 			break;
 		} /* stateEnd */
@@ -34,7 +31,6 @@ int Sample_bin2dom_run(struct READER_STRUCT *reader, sens_SSimpSample *dom) {
 		case 1: //stateBegin(TimeStamp)
 		{
 			label = 2; //assert 2==label+1
-
 
 			/* loop /SampleTimeStamp label=label */
 			while (read_bit(reader))
@@ -75,7 +71,7 @@ int Sample_bin2dom_run(struct READER_STRUCT *reader, sens_SSimpSample *dom) {
 			break;
 		} /* stateEnd */
 
-		case 2://stateComplexBegin(Accelleration)
+		case 2: //stateComplexBegin(Accelleration)
 		{
 			label = 3; //assert 3==label+1
 
@@ -94,7 +90,6 @@ int Sample_bin2dom_run(struct READER_STRUCT *reader, sens_SSimpSample *dom) {
 
 				//push Accelleration: next 8
 
-
 			} else {
 				label = 8;
 				continue;
@@ -106,7 +101,6 @@ int Sample_bin2dom_run(struct READER_STRUCT *reader, sens_SSimpSample *dom) {
 		case 3: //stateBegin(x)
 		{
 			label = 4; //assert 4==label+1
-
 
 			{
 
@@ -140,7 +134,6 @@ int Sample_bin2dom_run(struct READER_STRUCT *reader, sens_SSimpSample *dom) {
 		{
 			label = 5; //assert 5==label+1
 
-
 			{
 
 				{
@@ -173,7 +166,6 @@ int Sample_bin2dom_run(struct READER_STRUCT *reader, sens_SSimpSample *dom) {
 		{
 			label = 6; //assert 6==label+1
 
-
 			{
 
 				{
@@ -205,7 +197,6 @@ int Sample_bin2dom_run(struct READER_STRUCT *reader, sens_SSimpSample *dom) {
 		case 6: //stateBegin(index)
 		{
 			label = 7; //assert 7==label+1
-
 
 			/* loop /Sample/Accellerationindex label=label */
 			while (read_bit(reader))
@@ -254,8 +245,7 @@ int Sample_bin2dom_run(struct READER_STRUCT *reader, sens_SSimpSample *dom) {
 		} /* case */
 			//pop Accelleration
 
-
-		case 8://stateComplexBegin(Audio)
+		case 8: //stateComplexBegin(Audio)
 		{
 			label = 9; //assert 9==label+1
 
@@ -274,7 +264,6 @@ int Sample_bin2dom_run(struct READER_STRUCT *reader, sens_SSimpSample *dom) {
 
 				//push Audio: next 12
 
-
 			} else {
 				label = 12;
 				continue;
@@ -286,7 +275,6 @@ int Sample_bin2dom_run(struct READER_STRUCT *reader, sens_SSimpSample *dom) {
 		case 9: //stateBegin(volume)
 		{
 			label = 10; //assert 10==label+1
-
 
 			{
 
@@ -303,7 +291,8 @@ int Sample_bin2dom_run(struct READER_STRUCT *reader, sens_SSimpSample *dom) {
 					{
 						uint8_t c;
 						read_bits(reader, (u_char *) &c, 8);
-						*(uint8_t*) cur = (((c) * 1) + (0));
+						*(uint8_t*) cur = (((c) * 1) + (0))
+						;
 					}
 
 				}
@@ -319,7 +308,6 @@ int Sample_bin2dom_run(struct READER_STRUCT *reader, sens_SSimpSample *dom) {
 		case 10: //stateBegin(index)
 		{
 			label = 11; //assert 11==label+1
-
 
 			/* loop /Sample/Audioindex label=label */
 			while (read_bit(reader))
@@ -368,8 +356,7 @@ int Sample_bin2dom_run(struct READER_STRUCT *reader, sens_SSimpSample *dom) {
 		} /* case */
 			//pop Audio
 
-
-		case 12://stateComplexBegin(Light)
+		case 12: //stateComplexBegin(Light)
 		{
 			label = 13; //assert 13==label+1
 
@@ -388,7 +375,6 @@ int Sample_bin2dom_run(struct READER_STRUCT *reader, sens_SSimpSample *dom) {
 
 				//push Light: next 17
 
-
 			} else {
 				label = 17;
 				continue;
@@ -400,7 +386,6 @@ int Sample_bin2dom_run(struct READER_STRUCT *reader, sens_SSimpSample *dom) {
 		case 13: //stateBegin(daylight)
 		{
 			label = 14; //assert 14==label+1
-
 
 			{
 
@@ -417,7 +402,8 @@ int Sample_bin2dom_run(struct READER_STRUCT *reader, sens_SSimpSample *dom) {
 					{
 						uint16_t c;
 						read_bits(reader, (u_char *) &c, 16);
-						*(uint16_t*) cur = (((c) * 1) + (0));
+						*(uint16_t*) cur = (((c) * 1) + (0))
+						;
 					}
 
 				}
@@ -434,7 +420,6 @@ int Sample_bin2dom_run(struct READER_STRUCT *reader, sens_SSimpSample *dom) {
 		{
 			label = 15; //assert 15==label+1
 
-
 			{
 
 				{
@@ -450,7 +435,8 @@ int Sample_bin2dom_run(struct READER_STRUCT *reader, sens_SSimpSample *dom) {
 					{
 						uint16_t c;
 						read_bits(reader, (u_char *) &c, 16);
-						*(uint16_t*) cur = (((c) * 1) + (0));
+						*(uint16_t*) cur = (((c) * 1) + (0))
+						;
 					}
 
 				}
@@ -466,7 +452,6 @@ int Sample_bin2dom_run(struct READER_STRUCT *reader, sens_SSimpSample *dom) {
 		case 15: //stateBegin(index)
 		{
 			label = 16; //assert 16==label+1
-
 
 			/* loop /Sample/Lightindex label=label */
 			while (read_bit(reader))
@@ -515,8 +500,7 @@ int Sample_bin2dom_run(struct READER_STRUCT *reader, sens_SSimpSample *dom) {
 		} /* case */
 			//pop Light
 
-
-		case 17://stateComplexBegin(Force)
+		case 17: //stateComplexBegin(Force)
 		{
 			label = 18; //assert 18==label+1
 
@@ -535,7 +519,6 @@ int Sample_bin2dom_run(struct READER_STRUCT *reader, sens_SSimpSample *dom) {
 
 				//push Force: next 21
 
-
 			} else {
 				label = 21;
 				continue;
@@ -547,7 +530,6 @@ int Sample_bin2dom_run(struct READER_STRUCT *reader, sens_SSimpSample *dom) {
 		case 18: //stateBegin(value)
 		{
 			label = 19; //assert 19==label+1
-
 
 			{
 
@@ -564,7 +546,8 @@ int Sample_bin2dom_run(struct READER_STRUCT *reader, sens_SSimpSample *dom) {
 					{
 						uint8_t c;
 						read_bits(reader, (u_char *) &c, 8);
-						*(uint8_t*) cur = (((c) * 1) + (0));
+						*(uint8_t*) cur = (((c) * 1) + (0))
+						;
 					}
 
 				}
@@ -580,7 +563,6 @@ int Sample_bin2dom_run(struct READER_STRUCT *reader, sens_SSimpSample *dom) {
 		case 19: //stateBegin(index)
 		{
 			label = 20; //assert 20==label+1
-
 
 			/* loop /Sample/Forceindex label=label */
 			while (read_bit(reader))
@@ -629,8 +611,7 @@ int Sample_bin2dom_run(struct READER_STRUCT *reader, sens_SSimpSample *dom) {
 		} /* case */
 			//pop Force
 
-
-		case 21://stateComplexBegin(Temperature)
+		case 21: //stateComplexBegin(Temperature)
 		{
 			label = 22; //assert 22==label+1
 
@@ -649,7 +630,6 @@ int Sample_bin2dom_run(struct READER_STRUCT *reader, sens_SSimpSample *dom) {
 
 				//push Temperature: next 25
 
-
 			} else {
 				label = 25;
 				continue;
@@ -661,7 +641,6 @@ int Sample_bin2dom_run(struct READER_STRUCT *reader, sens_SSimpSample *dom) {
 		case 22: //stateBegin(value)
 		{
 			label = 23; //assert 23==label+1
-
 
 			{
 
@@ -694,7 +673,6 @@ int Sample_bin2dom_run(struct READER_STRUCT *reader, sens_SSimpSample *dom) {
 		case 23: //stateBegin(index)
 		{
 			label = 24; //assert 24==label+1
-
 
 			/* loop /Sample/Temperatureindex label=label */
 			while (read_bit(reader))
@@ -743,12 +721,10 @@ int Sample_bin2dom_run(struct READER_STRUCT *reader, sens_SSimpSample *dom) {
 		} /* case */
 			//pop Temperature
 
-
 		case 25: //stateComplexEnd(Sample) : 1..1
 		{
 
 			label = 26; // Complex End
-
 
 			if (pop())
 				;
@@ -758,9 +734,7 @@ int Sample_bin2dom_run(struct READER_STRUCT *reader, sens_SSimpSample *dom) {
 		} /* case */
 			//pop Sample
 
-
 		default: //StopState
-
 
 			return 0;
 
