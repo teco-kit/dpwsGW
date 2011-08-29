@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:dis="http://www.teco.edu/VLink/DeviceInfoService" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsoap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:wsa="http://www.w3.org/2006/05/addressing/wsdl" xmlns:wse="http://schemas.xmlsoap.org/ws/2004/08/eventing" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap12/" name="DeviceInfoService" targetNamespace="http://www.teco.edu/VLink/DeviceInfoService" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <xsd:schema xmlns="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" targetNamespace="http://www.teco.edu/VLink/DeviceInfoService">
+      <xsd:complexType name="StatusMessage">
+        <xsd:annotation>
+          <xsd:documentation>
+                        Node status
+                    </xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+          <xsd:element minOccurs="1" maxOccurs="1" name="description" type="xsd:string" />
+          <xsd:element minOccurs="1" maxOccurs="1" name="ready" type="xsd:boolean" />
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element name="status" type="dis:StatusMessage" />
+    </xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="StopNodeMessageIn" />
+  <wsdl:message name="StopNodeMessageOut" />
+  <wsdl:message name="GetNodeStatusMessageIn" />
+  <wsdl:message name="GetNodeStatusMessageOut">
+    <wsdl:part name="out" element="dis:status" />
+  </wsdl:message>
+  <wsdl:portType name="DeviceInfoService">
+    <wsdl:operation name="StopNode">
+      <wsdl:input wsa:Action="http://www.teco.edu/VLink/DeviceInfoService/StopNodeIn" message="dis:StopNodeMessageIn" />
+      <wsdl:output wsa:Action="http://www.teco.edu/VLink/DeviceInfoService/StopNodeOut" message="dis:StopNodeMessageOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetNodeStatus">
+      <wsdl:input wsa:Action="http://www.teco.edu/VLink/DeviceInfoService/GetNodeStatusIn" message="dis:GetNodeStatusMessageIn" />
+      <wsdl:output wsa:Action="http://www.teco.edu/VLink/DeviceInfoService/GetNodeStatusOut" message="dis:GetNodeStatusMessageOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="DeviceInfoServiceSOAP" type="dis:DeviceInfoService">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="GetNodeStatus">
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="StopNode">
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="DeviceInfoService">
+    <wsdl:port name="DeviceInfoService" binding="dis:DeviceInfoServiceSOAP">
+      <soap:address location="http://localhost:8080" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

@@ -510,6 +510,7 @@ namespace edu.teco.DPWS
     }
     namespace MStr
     {
+        namespace GLink {
         /// <summary>
         /// Wrapper for the MicroStrain device
         /// </summary>
@@ -742,6 +743,270 @@ namespace edu.teco.DPWS
             }
 
             #endregion
+        }
+    }
+        namespace VLink
+        {
+            /// <summary>
+            /// Wrapper for the MicroStrain device
+            /// </summary>
+            public class MStrDevice : Device
+            {
+                protected System.Xml.XmlQualifiedName _name = new System.Xml.XmlQualifiedName("VLinkDeviceType", "http://www.teco.edu/VLinkModel");
+
+                public MStrDevice()
+                {
+                    services.Add(new StreamingService());
+                    services.Add(new DataLoggingService());
+                    services.Add(new DeviceInfoService());
+                }
+
+                public override System.Xml.XmlQualifiedName GetDeviceType()
+                {
+                    return _name;
+                }
+            }
+
+            /// <summary>
+            /// Wrapper for the MStr VLink Streaming service
+            /// </summary>
+            public class StreamingService : Service, EventSourceCallback, NodeDiscovery.VLinkStreaming.StreamingServiceCallback
+            {
+                public StreamingService()
+                {
+                    clientType = typeof(NodeDiscovery.VLinkStreaming.StreamingServiceClient);
+                }
+
+                public override string GetServiceID()
+                {
+                    return "StreamingService";
+                }
+
+                public override string GetConfigurationName()
+                {
+                    return "StreamingService";
+                }
+
+                [DPWSSubscription("Subscribe to the service", "http://www.teco.edu/VLink/StreamingService/AccelerationServiceEventOut")]
+                public void Subscribe(Object client)
+                {
+                    NodeDiscovery.VLinkStreaming.StreamingServiceClient asclient = (NodeDiscovery.VLinkStreaming.StreamingServiceClient)client;
+                    NodeDiscovery.VLinkStreaming.LDCInfo info = new NodeDiscovery.VLinkStreaming.LDCInfo();
+                    info.rate = NodeDiscovery.VLinkStreaming.LDCInfoRate.Item5;
+                    info.duration = "30";
+                    asclient.StartLDC(info);
+                }
+
+
+
+                #region StreamingServiceCallback Members
+
+                public void StreamingServiceEvent(NodeDiscovery.VLinkStreaming.StreamingServiceEvent request)
+                {
+                    Console.WriteLine("Incoming event");
+                    Console.WriteLine("Results:");
+                    if (request.series != null)
+                    {
+                        Console.WriteLine("Series:");
+                        Console.WriteLine("\tFragment count: {0}", request.series.count);
+                        if (request.series.timestampSpecified)
+                        {
+                            Console.WriteLine("\tTimestamp: {0}", request.series.timestamp);
+                        }
+                        Console.WriteLine("\tDelta: {0}", request.series.delta);
+                        for (int i = 0; i < request.series.sample.Length; i++)
+                        {
+                            Console.WriteLine("Sample:");
+                            Console.WriteLine("\tDelta: {0}", request.series.sample[i].delta);
+                            if(request.series.sample[i].differential1Specified)
+                                Console.WriteLine("\tDifferential 1: {0}", request.series.sample[i].differential1);
+                            if (request.series.sample[i].differential2Specified)
+                                Console.WriteLine("\tDifferential 2: {0}", request.series.sample[i].differential2);
+                            if (request.series.sample[i].differential3Specified)
+                                Console.WriteLine("\tDifferential 3: {0}", request.series.sample[i].differential3);
+                            if (request.series.sample[i].differential4Specified)
+                                Console.WriteLine("\tDifferential 4: {0}", request.series.sample[i].differential4);
+                            if(request.series.sample[i].single1Specified)
+                                Console.WriteLine("\tSingle 1: {0}", request.series.sample[i].single1);
+                            if (request.series.sample[i].single2Specified)
+                                Console.WriteLine("\tSingle 2: {0}", request.series.sample[i].single2);
+                            if (request.series.sample[i].single3Specified)
+                                Console.WriteLine("\tSingle 3: {0}", request.series.sample[i].single3);
+                            if (request.series.sample[i].temperatureSpecified)
+                                Console.WriteLine("\tTemperature: {0}", request.series.sample[i].temperature);
+                        }
+                      
+                    }
+
+                }
+
+                #endregion
+
+                #region EventSourceCallback Members
+
+                public void SubscriptionEnd(SubscriptionEnd1 request)
+                {
+                    Console.WriteLine("Event closed.");
+                }
+
+                #endregion
+            }
+
+            /// <summary>
+            /// Wrapper for the MStr DeviceInfoService service
+            /// </summary>
+            public class DeviceInfoService : Service, EventSourceCallback
+            {
+                public DeviceInfoService()
+                {
+                    clientType = typeof(NodeDiscovery.VLinkDeviceInfoService.DeviceInfoServiceClient);
+                }
+
+                public override string GetServiceID()
+                {
+                    return "DeviceInfoService";
+                }
+
+                public override string GetConfigurationName()
+                {
+                    return "DeviceInfoService1";
+                }
+
+                [DPWSInvokeMethod("Get the device status")]
+                public void GetDeviceStatus(Object client)
+                {
+                    NodeDiscovery.VLinkDeviceInfoService.DeviceInfoServiceClient dsclient = (NodeDiscovery.VLinkDeviceInfoService.DeviceInfoServiceClient)client;
+
+
+                    NodeDiscovery.VLinkDeviceInfoService.StatusMessage msg = dsclient.GetNodeStatus();
+                    Console.WriteLine("Device Status: Desc: {0} Ready: {1}", msg.description, msg.ready);
+                }
+
+                [DPWSInvokeMethod("Stop the device")]
+                public void StopNode(Object client)
+                {
+                    NodeDiscovery.VLinkDeviceInfoService.DeviceInfoServiceClient dsclient = (NodeDiscovery.VLinkDeviceInfoService.DeviceInfoServiceClient)client;
+                    dsclient.StopNode();
+
+                }
+
+                #region EventSourceCallback Members
+
+                public void SubscriptionEnd(SubscriptionEnd1 request)
+                {
+                    Console.WriteLine("Event closed.");
+                }
+
+                #endregion
+            }
+
+            /// <summary>
+            /// Wrapper for the MStr DataLogging service
+            /// </summary>
+            public class DataLoggingService : Service, EventSourceCallback, NodeDiscovery.VLinkDataLogging.DataLoggingServiceCallback
+            {
+                public DataLoggingService()
+                {
+                    clientType = typeof(NodeDiscovery.VLinkDataLogging.DataLoggingServiceClient);
+                }
+
+                public override string GetServiceID()
+                {
+                    return "DataLoggingService";
+                }
+
+                public override string GetConfigurationName()
+                {
+                    return "DataLoggingService1";
+                }
+
+                [DPWSInvokeMethod("Start logging to the node")]
+                public void StartLogging(Object client)
+                {
+                    NodeDiscovery.VLinkDataLogging.DataLoggingServiceClient dlclient = (NodeDiscovery.VLinkDataLogging.DataLoggingServiceClient)client;
+                    NodeDiscovery.VLinkDataLogging.LoggingConfig config = new NodeDiscovery.VLinkDataLogging.LoggingConfig();
+                    config.rate = NodeDiscovery.VLinkDataLogging.LoggingConfigRate.Item256;
+                    config.duration = "30";
+                    dlclient.StartLogging(config);
+
+                }
+
+                [DPWSInvokeMethod("Get the number of sessions stored on the node")]
+                public void GetSessions(Object client)
+                {
+                    NodeDiscovery.VLinkDataLogging.DataLoggingServiceClient dlclient = (NodeDiscovery.VLinkDataLogging.DataLoggingServiceClient)client;
+                    NodeDiscovery.VLinkDataLogging.SessionInfo info = dlclient.GetSessionCount();
+                    Console.WriteLine("Session Count: {0}", info.count);
+
+                }
+
+                [DPWSInvokeMethod("Erase sessions stored on the node")]
+                public void Erase(Object client)
+                {
+                    NodeDiscovery.VLinkDataLogging.DataLoggingServiceClient dlclient = (NodeDiscovery.VLinkDataLogging.DataLoggingServiceClient)client;
+                    dlclient.Erase();
+
+                }
+
+                [DPWSSubscription("Subscribe to the service", "http://www.teco.edu/DataLoggingService/DataLoggingServiceEventOut")]
+                public void Subscribe(Object client)
+                {
+                    NodeDiscovery.VLinkDataLogging.DataLoggingServiceClient dlclient = (NodeDiscovery.VLinkDataLogging.DataLoggingServiceClient)client;
+                    dlclient.StartDownload();
+                }
+
+
+
+                #region DataLoggingServiceCallback Members
+
+                public void DataLoggingServiceEvent(NodeDiscovery.VLinkDataLogging.DataLoggingServiceEvent request)
+                {
+                    Console.WriteLine("Incoming event");
+                    Console.WriteLine("Results:");
+                    if (request.series != null)
+                    {
+                        Console.WriteLine("Series:");
+                        Console.WriteLine("\tFragment count: {0}", request.series.count);
+                        if (request.series.timestampSpecified)
+                        {
+                            Console.WriteLine("\tTimestamp: {0}", request.series.timestamp);
+                        }
+                        Console.WriteLine("\tDelta: {0}", request.series.delta);
+                        for (int i = 0; i < request.series.sample.Length; i++)
+                        {
+                            Console.WriteLine("Sample:");
+                            Console.WriteLine("\tDelta: {0}", request.series.sample[i].delta);
+                            if (request.series.sample[i].differential1Specified)
+                                Console.WriteLine("\tDifferential 1: {0}", request.series.sample[i].differential1);
+                            if (request.series.sample[i].differential2Specified)
+                                Console.WriteLine("\tDifferential 2: {0}", request.series.sample[i].differential2);
+                            if (request.series.sample[i].differential3Specified)
+                                Console.WriteLine("\tDifferential 3: {0}", request.series.sample[i].differential3);
+                            if (request.series.sample[i].differential4Specified)
+                                Console.WriteLine("\tDifferential 4: {0}", request.series.sample[i].differential4);
+                            if (request.series.sample[i].single1Specified)
+                                Console.WriteLine("\tSingle 1: {0}", request.series.sample[i].single1);
+                            if (request.series.sample[i].single2Specified)
+                                Console.WriteLine("\tSingle 2: {0}", request.series.sample[i].single2);
+                            if (request.series.sample[i].single3Specified)
+                                Console.WriteLine("\tSingle 3: {0}", request.series.sample[i].single3);
+                            if (request.series.sample[i].temperatureSpecified)
+                                Console.WriteLine("\tTemperature: {0}", request.series.sample[i].temperature);
+                        }
+                    }
+                }
+
+                #endregion
+
+                #region EventSourceCallback Members
+
+                public void SubscriptionEnd(SubscriptionEnd1 request)
+                {
+                    Console.WriteLine("Event closed.");
+                }
+
+                #endregion
+            }
         }
     }
 
