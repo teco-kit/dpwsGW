@@ -15,10 +15,9 @@ int Status_dom2bin_run(struct sens_SSimpStatus *dom,
 #endif
 			switch (label) {
 
-			// Start State
+// Start State
 
-
-			case 0://stateComplexBegin(Status)
+			case 0: //stateComplexBegin(Status)
 			{
 				label = 1; //assert 1==label+1
 
@@ -26,14 +25,12 @@ int Status_dom2bin_run(struct sens_SSimpStatus *dom,
 
 				//assert preinitialized stack 
 
-
 				//push Status: next 
-
 
 				break;
 			} /* stateEnd */
 
-			case 1://stateComplexBegin(SensorConfig)
+			case 1: //stateComplexBegin(SensorConfig)
 			{
 				label = 2; //assert 2==label+1
 
@@ -49,11 +46,10 @@ int Status_dom2bin_run(struct sens_SSimpStatus *dom,
 
 				//push SensorConfig: next 
 
-
 				break;
 			} /* stateEnd */
 
-			case 2://stateComplexBegin(Acceleration)
+			case 2: //stateComplexBegin(Acceleration)
 			{
 				label = 3; //assert 3==label+1
 
@@ -61,13 +57,13 @@ int Status_dom2bin_run(struct sens_SSimpStatus *dom,
 
 				{
 					sens_SSimpRateConfig *cur;
-					if (NULL != (cur
-							= sens_SensorConfigurationType_next_acceleration(
-									(sens_SensorConfigurationType *) top(),
-									(sens_SSimpRateConfig *) last))) { /* depth 2*/
+					if (NULL
+							!= (cur =
+									sens_SensorConfigurationType_next_acceleration(
+											(sens_SensorConfigurationType *) top(),
+											(sens_SSimpRateConfig *) last))) { /* depth 2*/
 
 						//push Acceleration: next 5
-
 
 						push(cur);
 						write_true(writer);
@@ -86,7 +82,6 @@ int Status_dom2bin_run(struct sens_SSimpStatus *dom,
 			{
 				label = 4; //assert 4==label+1
 
-
 				{
 					sens_SSimpRateConfig *parent;
 					sens_Byte *cur;
@@ -110,8 +105,7 @@ int Status_dom2bin_run(struct sens_SSimpStatus *dom,
 
 					}
 
-					//stateNameEnd rate
-
+//stateNameEnd rate
 
 					if (pop())
 						;
@@ -126,8 +120,7 @@ int Status_dom2bin_run(struct sens_SSimpStatus *dom,
 
 				label = 2; /* constLoopEnd1 /Status/SensorConfig/Acceleration/ */
 
-				//stateNameEnd Acceleration
-
+//stateNameEnd Acceleration
 
 				last = pop();
 
@@ -136,8 +129,7 @@ int Status_dom2bin_run(struct sens_SSimpStatus *dom,
 			} /* case */
 				//pop Acceleration
 
-
-			case 5://stateComplexBegin(Audio)
+			case 5: //stateComplexBegin(Audio)
 			{
 				label = 6; //assert 6==label+1
 
@@ -145,12 +137,12 @@ int Status_dom2bin_run(struct sens_SSimpStatus *dom,
 
 				{
 					sens_SSimpRateConfig *cur;
-					if (NULL != (cur = sens_SensorConfigurationType_next_audio(
-							(sens_SensorConfigurationType *) top(),
-							(sens_SSimpRateConfig *) last))) { /* depth 2*/
+					if (NULL
+							!= (cur = sens_SensorConfigurationType_next_audio(
+									(sens_SensorConfigurationType *) top(),
+									(sens_SSimpRateConfig *) last))) { /* depth 2*/
 
 						//push Audio: next 8
-
 
 						push(cur);
 						write_true(writer);
@@ -169,7 +161,6 @@ int Status_dom2bin_run(struct sens_SSimpStatus *dom,
 			{
 				label = 7; //assert 7==label+1
 
-
 				{
 					sens_SSimpRateConfig *parent;
 					sens_Byte *cur;
@@ -193,8 +184,7 @@ int Status_dom2bin_run(struct sens_SSimpStatus *dom,
 
 					}
 
-					//stateNameEnd rate
-
+//stateNameEnd rate
 
 					if (pop())
 						;
@@ -209,8 +199,7 @@ int Status_dom2bin_run(struct sens_SSimpStatus *dom,
 
 				label = 5; /* constLoopEnd1 /Status/SensorConfig/Audio/ */
 
-				//stateNameEnd Audio
-
+//stateNameEnd Audio
 
 				last = pop();
 
@@ -219,8 +208,7 @@ int Status_dom2bin_run(struct sens_SSimpStatus *dom,
 			} /* case */
 				//pop Audio
 
-
-			case 8://stateComplexBegin(Light)
+			case 8: //stateComplexBegin(Light)
 			{
 				label = 9; //assert 9==label+1
 
@@ -228,12 +216,12 @@ int Status_dom2bin_run(struct sens_SSimpStatus *dom,
 
 				{
 					sens_SSimpRateConfig *cur;
-					if (NULL != (cur = sens_SensorConfigurationType_next_light(
-							(sens_SensorConfigurationType *) top(),
-							(sens_SSimpRateConfig *) last))) { /* depth 2*/
+					if (NULL
+							!= (cur = sens_SensorConfigurationType_next_light(
+									(sens_SensorConfigurationType *) top(),
+									(sens_SSimpRateConfig *) last))) { /* depth 2*/
 
 						//push Light: next 11
-
 
 						push(cur);
 						write_true(writer);
@@ -252,7 +240,6 @@ int Status_dom2bin_run(struct sens_SSimpStatus *dom,
 			{
 				label = 10; //assert 10==label+1
 
-
 				{
 					sens_SSimpRateConfig *parent;
 					sens_Byte *cur;
@@ -276,8 +263,7 @@ int Status_dom2bin_run(struct sens_SSimpStatus *dom,
 
 					}
 
-					//stateNameEnd rate
-
+//stateNameEnd rate
 
 					if (pop())
 						;
@@ -292,8 +278,7 @@ int Status_dom2bin_run(struct sens_SSimpStatus *dom,
 
 				label = 8; /* constLoopEnd1 /Status/SensorConfig/Light/ */
 
-				//stateNameEnd Light
-
+//stateNameEnd Light
 
 				last = pop();
 
@@ -302,8 +287,7 @@ int Status_dom2bin_run(struct sens_SSimpStatus *dom,
 			} /* case */
 				//pop Light
 
-
-			case 11://stateComplexBegin(AmbientLight)
+			case 11: //stateComplexBegin(AmbientLight)
 			{
 				label = 12; //assert 12==label+1
 
@@ -311,13 +295,13 @@ int Status_dom2bin_run(struct sens_SSimpStatus *dom,
 
 				{
 					sens_SSimpRateConfig *cur;
-					if (NULL != (cur
-							= sens_SensorConfigurationType_next_ambientLight(
-									(sens_SensorConfigurationType *) top(),
-									(sens_SSimpRateConfig *) last))) { /* depth 2*/
+					if (NULL
+							!= (cur =
+									sens_SensorConfigurationType_next_ambientLight(
+											(sens_SensorConfigurationType *) top(),
+											(sens_SSimpRateConfig *) last))) { /* depth 2*/
 
 						//push AmbientLight: next 14
-
 
 						push(cur);
 						write_true(writer);
@@ -336,7 +320,6 @@ int Status_dom2bin_run(struct sens_SSimpStatus *dom,
 			{
 				label = 13; //assert 13==label+1
 
-
 				{
 					sens_SSimpRateConfig *parent;
 					sens_Byte *cur;
@@ -360,8 +343,7 @@ int Status_dom2bin_run(struct sens_SSimpStatus *dom,
 
 					}
 
-					//stateNameEnd rate
-
+//stateNameEnd rate
 
 					if (pop())
 						;
@@ -376,8 +358,7 @@ int Status_dom2bin_run(struct sens_SSimpStatus *dom,
 
 				label = 11; /* constLoopEnd1 /Status/SensorConfig/AmbientLight/ */
 
-				//stateNameEnd AmbientLight
-
+//stateNameEnd AmbientLight
 
 				last = pop();
 
@@ -386,8 +367,7 @@ int Status_dom2bin_run(struct sens_SSimpStatus *dom,
 			} /* case */
 				//pop AmbientLight
 
-
-			case 14://stateComplexBegin(Force)
+			case 14: //stateComplexBegin(Force)
 			{
 				label = 15; //assert 15==label+1
 
@@ -395,12 +375,12 @@ int Status_dom2bin_run(struct sens_SSimpStatus *dom,
 
 				{
 					sens_SSimpRateConfig *cur;
-					if (NULL != (cur = sens_SensorConfigurationType_next_force(
-							(sens_SensorConfigurationType *) top(),
-							(sens_SSimpRateConfig *) last))) { /* depth 2*/
+					if (NULL
+							!= (cur = sens_SensorConfigurationType_next_force(
+									(sens_SensorConfigurationType *) top(),
+									(sens_SSimpRateConfig *) last))) { /* depth 2*/
 
 						//push Force: next 17
-
 
 						push(cur);
 						write_true(writer);
@@ -419,7 +399,6 @@ int Status_dom2bin_run(struct sens_SSimpStatus *dom,
 			{
 				label = 16; //assert 16==label+1
 
-
 				{
 					sens_SSimpRateConfig *parent;
 					sens_Byte *cur;
@@ -443,8 +422,7 @@ int Status_dom2bin_run(struct sens_SSimpStatus *dom,
 
 					}
 
-					//stateNameEnd rate
-
+//stateNameEnd rate
 
 					if (pop())
 						;
@@ -459,8 +437,7 @@ int Status_dom2bin_run(struct sens_SSimpStatus *dom,
 
 				label = 14; /* constLoopEnd1 /Status/SensorConfig/Force/ */
 
-				//stateNameEnd Force
-
+//stateNameEnd Force
 
 				last = pop();
 
@@ -469,8 +446,7 @@ int Status_dom2bin_run(struct sens_SSimpStatus *dom,
 			} /* case */
 				//pop Force
 
-
-			case 17://stateComplexBegin(Temperature)
+			case 17: //stateComplexBegin(Temperature)
 			{
 				label = 18; //assert 18==label+1
 
@@ -478,13 +454,13 @@ int Status_dom2bin_run(struct sens_SSimpStatus *dom,
 
 				{
 					sens_SSimpRateConfig *cur;
-					if (NULL != (cur
-							= sens_SensorConfigurationType_next_temperature(
-									(sens_SensorConfigurationType *) top(),
-									(sens_SSimpRateConfig *) last))) { /* depth 2*/
+					if (NULL
+							!= (cur =
+									sens_SensorConfigurationType_next_temperature(
+											(sens_SensorConfigurationType *) top(),
+											(sens_SSimpRateConfig *) last))) { /* depth 2*/
 
 						//push Temperature: next 20
-
 
 						push(cur);
 						write_true(writer);
@@ -503,7 +479,6 @@ int Status_dom2bin_run(struct sens_SSimpStatus *dom,
 			{
 				label = 19; //assert 19==label+1
 
-
 				{
 					sens_SSimpRateConfig *parent;
 					sens_Byte *cur;
@@ -527,8 +502,7 @@ int Status_dom2bin_run(struct sens_SSimpStatus *dom,
 
 					}
 
-					//stateNameEnd rate
-
+//stateNameEnd rate
 
 					if (pop())
 						;
@@ -543,8 +517,7 @@ int Status_dom2bin_run(struct sens_SSimpStatus *dom,
 
 				label = 17; /* constLoopEnd1 /Status/SensorConfig/Temperature/ */
 
-				//stateNameEnd Temperature
-
+//stateNameEnd Temperature
 
 				last = pop();
 
@@ -552,7 +525,6 @@ int Status_dom2bin_run(struct sens_SSimpStatus *dom,
 
 			} /* case */
 				//pop Temperature
-
 
 			case 20: //stateComplexEnd(SensorConfig) : 1..1
 			{
@@ -562,17 +534,14 @@ int Status_dom2bin_run(struct sens_SSimpStatus *dom,
 
 				label = 21; // Complex End
 
-
-				//stateNameEnd SensorConfig
-
+//stateNameEnd SensorConfig
 
 				break;
 
 			} /* case */
 				//pop SensorConfig
 
-
-			case 21://stateComplexBegin(AllSensorConfig)
+			case 21: //stateComplexBegin(AllSensorConfig)
 			{
 				label = 22; //assert 22==label+1
 
@@ -588,11 +557,10 @@ int Status_dom2bin_run(struct sens_SSimpStatus *dom,
 
 				//push AllSensorConfig: next 
 
-
 				break;
 			} /* stateEnd */
 
-			case 22://stateComplexBegin(Acceleration)
+			case 22: //stateComplexBegin(Acceleration)
 			{
 				label = 23; //assert 23==label+1
 
@@ -600,13 +568,13 @@ int Status_dom2bin_run(struct sens_SSimpStatus *dom,
 
 				{
 					sens_SSimpRateConfig *cur;
-					if (NULL != (cur
-							= sens_SensorConfigurationType_next_acceleration(
-									(sens_SensorConfigurationType *) top(),
-									(sens_SSimpRateConfig *) last))) { /* depth 2*/
+					if (NULL
+							!= (cur =
+									sens_SensorConfigurationType_next_acceleration(
+											(sens_SensorConfigurationType *) top(),
+											(sens_SSimpRateConfig *) last))) { /* depth 2*/
 
 						//push Acceleration: next 25
-
 
 						push(cur);
 						write_true(writer);
@@ -625,7 +593,6 @@ int Status_dom2bin_run(struct sens_SSimpStatus *dom,
 			{
 				label = 24; //assert 24==label+1
 
-
 				{
 					sens_SSimpRateConfig *parent;
 					sens_Byte *cur;
@@ -649,8 +616,7 @@ int Status_dom2bin_run(struct sens_SSimpStatus *dom,
 
 					}
 
-					//stateNameEnd rate
-
+//stateNameEnd rate
 
 					if (pop())
 						;
@@ -665,8 +631,7 @@ int Status_dom2bin_run(struct sens_SSimpStatus *dom,
 
 				label = 22; /* constLoopEnd1 /Status/AllSensorConfig/Acceleration/ */
 
-				//stateNameEnd Acceleration
-
+//stateNameEnd Acceleration
 
 				last = pop();
 
@@ -675,8 +640,7 @@ int Status_dom2bin_run(struct sens_SSimpStatus *dom,
 			} /* case */
 				//pop Acceleration
 
-
-			case 25://stateComplexBegin(Audio)
+			case 25: //stateComplexBegin(Audio)
 			{
 				label = 26; //assert 26==label+1
 
@@ -684,12 +648,12 @@ int Status_dom2bin_run(struct sens_SSimpStatus *dom,
 
 				{
 					sens_SSimpRateConfig *cur;
-					if (NULL != (cur = sens_SensorConfigurationType_next_audio(
-							(sens_SensorConfigurationType *) top(),
-							(sens_SSimpRateConfig *) last))) { /* depth 2*/
+					if (NULL
+							!= (cur = sens_SensorConfigurationType_next_audio(
+									(sens_SensorConfigurationType *) top(),
+									(sens_SSimpRateConfig *) last))) { /* depth 2*/
 
 						//push Audio: next 28
-
 
 						push(cur);
 						write_true(writer);
@@ -708,7 +672,6 @@ int Status_dom2bin_run(struct sens_SSimpStatus *dom,
 			{
 				label = 27; //assert 27==label+1
 
-
 				{
 					sens_SSimpRateConfig *parent;
 					sens_Byte *cur;
@@ -732,8 +695,7 @@ int Status_dom2bin_run(struct sens_SSimpStatus *dom,
 
 					}
 
-					//stateNameEnd rate
-
+//stateNameEnd rate
 
 					if (pop())
 						;
@@ -748,8 +710,7 @@ int Status_dom2bin_run(struct sens_SSimpStatus *dom,
 
 				label = 25; /* constLoopEnd1 /Status/AllSensorConfig/Audio/ */
 
-				//stateNameEnd Audio
-
+//stateNameEnd Audio
 
 				last = pop();
 
@@ -758,8 +719,7 @@ int Status_dom2bin_run(struct sens_SSimpStatus *dom,
 			} /* case */
 				//pop Audio
 
-
-			case 28://stateComplexBegin(Light)
+			case 28: //stateComplexBegin(Light)
 			{
 				label = 29; //assert 29==label+1
 
@@ -767,12 +727,12 @@ int Status_dom2bin_run(struct sens_SSimpStatus *dom,
 
 				{
 					sens_SSimpRateConfig *cur;
-					if (NULL != (cur = sens_SensorConfigurationType_next_light(
-							(sens_SensorConfigurationType *) top(),
-							(sens_SSimpRateConfig *) last))) { /* depth 2*/
+					if (NULL
+							!= (cur = sens_SensorConfigurationType_next_light(
+									(sens_SensorConfigurationType *) top(),
+									(sens_SSimpRateConfig *) last))) { /* depth 2*/
 
 						//push Light: next 31
-
 
 						push(cur);
 						write_true(writer);
@@ -791,7 +751,6 @@ int Status_dom2bin_run(struct sens_SSimpStatus *dom,
 			{
 				label = 30; //assert 30==label+1
 
-
 				{
 					sens_SSimpRateConfig *parent;
 					sens_Byte *cur;
@@ -815,8 +774,7 @@ int Status_dom2bin_run(struct sens_SSimpStatus *dom,
 
 					}
 
-					//stateNameEnd rate
-
+//stateNameEnd rate
 
 					if (pop())
 						;
@@ -831,8 +789,7 @@ int Status_dom2bin_run(struct sens_SSimpStatus *dom,
 
 				label = 28; /* constLoopEnd1 /Status/AllSensorConfig/Light/ */
 
-				//stateNameEnd Light
-
+//stateNameEnd Light
 
 				last = pop();
 
@@ -841,8 +798,7 @@ int Status_dom2bin_run(struct sens_SSimpStatus *dom,
 			} /* case */
 				//pop Light
 
-
-			case 31://stateComplexBegin(AmbientLight)
+			case 31: //stateComplexBegin(AmbientLight)
 			{
 				label = 32; //assert 32==label+1
 
@@ -850,13 +806,13 @@ int Status_dom2bin_run(struct sens_SSimpStatus *dom,
 
 				{
 					sens_SSimpRateConfig *cur;
-					if (NULL != (cur
-							= sens_SensorConfigurationType_next_ambientLight(
-									(sens_SensorConfigurationType *) top(),
-									(sens_SSimpRateConfig *) last))) { /* depth 2*/
+					if (NULL
+							!= (cur =
+									sens_SensorConfigurationType_next_ambientLight(
+											(sens_SensorConfigurationType *) top(),
+											(sens_SSimpRateConfig *) last))) { /* depth 2*/
 
 						//push AmbientLight: next 34
-
 
 						push(cur);
 						write_true(writer);
@@ -875,7 +831,6 @@ int Status_dom2bin_run(struct sens_SSimpStatus *dom,
 			{
 				label = 33; //assert 33==label+1
 
-
 				{
 					sens_SSimpRateConfig *parent;
 					sens_Byte *cur;
@@ -899,8 +854,7 @@ int Status_dom2bin_run(struct sens_SSimpStatus *dom,
 
 					}
 
-					//stateNameEnd rate
-
+//stateNameEnd rate
 
 					if (pop())
 						;
@@ -915,8 +869,7 @@ int Status_dom2bin_run(struct sens_SSimpStatus *dom,
 
 				label = 31; /* constLoopEnd1 /Status/AllSensorConfig/AmbientLight/ */
 
-				//stateNameEnd AmbientLight
-
+//stateNameEnd AmbientLight
 
 				last = pop();
 
@@ -925,8 +878,7 @@ int Status_dom2bin_run(struct sens_SSimpStatus *dom,
 			} /* case */
 				//pop AmbientLight
 
-
-			case 34://stateComplexBegin(Force)
+			case 34: //stateComplexBegin(Force)
 			{
 				label = 35; //assert 35==label+1
 
@@ -934,12 +886,12 @@ int Status_dom2bin_run(struct sens_SSimpStatus *dom,
 
 				{
 					sens_SSimpRateConfig *cur;
-					if (NULL != (cur = sens_SensorConfigurationType_next_force(
-							(sens_SensorConfigurationType *) top(),
-							(sens_SSimpRateConfig *) last))) { /* depth 2*/
+					if (NULL
+							!= (cur = sens_SensorConfigurationType_next_force(
+									(sens_SensorConfigurationType *) top(),
+									(sens_SSimpRateConfig *) last))) { /* depth 2*/
 
 						//push Force: next 37
-
 
 						push(cur);
 						write_true(writer);
@@ -958,7 +910,6 @@ int Status_dom2bin_run(struct sens_SSimpStatus *dom,
 			{
 				label = 36; //assert 36==label+1
 
-
 				{
 					sens_SSimpRateConfig *parent;
 					sens_Byte *cur;
@@ -982,8 +933,7 @@ int Status_dom2bin_run(struct sens_SSimpStatus *dom,
 
 					}
 
-					//stateNameEnd rate
-
+//stateNameEnd rate
 
 					if (pop())
 						;
@@ -998,8 +948,7 @@ int Status_dom2bin_run(struct sens_SSimpStatus *dom,
 
 				label = 34; /* constLoopEnd1 /Status/AllSensorConfig/Force/ */
 
-				//stateNameEnd Force
-
+//stateNameEnd Force
 
 				last = pop();
 
@@ -1008,8 +957,7 @@ int Status_dom2bin_run(struct sens_SSimpStatus *dom,
 			} /* case */
 				//pop Force
 
-
-			case 37://stateComplexBegin(Temperature)
+			case 37: //stateComplexBegin(Temperature)
 			{
 				label = 38; //assert 38==label+1
 
@@ -1017,13 +965,13 @@ int Status_dom2bin_run(struct sens_SSimpStatus *dom,
 
 				{
 					sens_SSimpRateConfig *cur;
-					if (NULL != (cur
-							= sens_SensorConfigurationType_next_temperature(
-									(sens_SensorConfigurationType *) top(),
-									(sens_SSimpRateConfig *) last))) { /* depth 2*/
+					if (NULL
+							!= (cur =
+									sens_SensorConfigurationType_next_temperature(
+											(sens_SensorConfigurationType *) top(),
+											(sens_SSimpRateConfig *) last))) { /* depth 2*/
 
 						//push Temperature: next 40
-
 
 						push(cur);
 						write_true(writer);
@@ -1042,7 +990,6 @@ int Status_dom2bin_run(struct sens_SSimpStatus *dom,
 			{
 				label = 39; //assert 39==label+1
 
-
 				{
 					sens_SSimpRateConfig *parent;
 					sens_Byte *cur;
@@ -1066,8 +1013,7 @@ int Status_dom2bin_run(struct sens_SSimpStatus *dom,
 
 					}
 
-					//stateNameEnd rate
-
+//stateNameEnd rate
 
 					if (pop())
 						;
@@ -1082,8 +1028,7 @@ int Status_dom2bin_run(struct sens_SSimpStatus *dom,
 
 				label = 37; /* constLoopEnd1 /Status/AllSensorConfig/Temperature/ */
 
-				//stateNameEnd Temperature
-
+//stateNameEnd Temperature
 
 				last = pop();
 
@@ -1091,7 +1036,6 @@ int Status_dom2bin_run(struct sens_SSimpStatus *dom,
 
 			} /* case */
 				//pop Temperature
-
 
 			case 40: //stateComplexEnd(AllSensorConfig) : 1..1
 			{
@@ -1101,20 +1045,16 @@ int Status_dom2bin_run(struct sens_SSimpStatus *dom,
 
 				label = 41; // Complex End
 
-
-				//stateNameEnd AllSensorConfig
-
+//stateNameEnd AllSensorConfig
 
 				break;
 
 			} /* case */
 				//pop AllSensorConfig
 
-
 			case 41: //stateBegin(BatteryVoltage)
 			{
 				label = 42; //assert 42==label+1
-
 
 				{
 					sens_SSimpStatus *parent;
@@ -1139,8 +1079,7 @@ int Status_dom2bin_run(struct sens_SSimpStatus *dom,
 
 					}
 
-					//stateNameEnd BatteryVoltage
-
+//stateNameEnd BatteryVoltage
 
 					if (pop())
 						;
@@ -1153,7 +1092,6 @@ int Status_dom2bin_run(struct sens_SSimpStatus *dom,
 			case 42: //stateBegin(CurrentTime)
 			{
 				label = 43; //assert 43==label+1
-
 
 				{
 					sens_SSimpStatus *parent;
@@ -1184,8 +1122,7 @@ int Status_dom2bin_run(struct sens_SSimpStatus *dom,
 
 					}
 
-					//stateNameEnd CurrentTime
-
+//stateNameEnd CurrentTime
 
 					if (pop())
 						;
@@ -1198,7 +1135,6 @@ int Status_dom2bin_run(struct sens_SSimpStatus *dom,
 			case 43: //stateBegin(UpTime)
 			{
 				label = 44; //assert 44==label+1
-
 
 				{
 					sens_SSimpStatus *parent;
@@ -1229,8 +1165,7 @@ int Status_dom2bin_run(struct sens_SSimpStatus *dom,
 
 					}
 
-					//stateNameEnd UpTime
-
+//stateNameEnd UpTime
 
 					if (pop())
 						;
@@ -1248,18 +1183,14 @@ int Status_dom2bin_run(struct sens_SSimpStatus *dom,
 
 				label = 45; // Complex End
 
-
-				//stateNameEnd Status
-
+//stateNameEnd Status
 
 				break;
 
 			} /* case */
 				//pop Status
 
-
 			default: //StopState
-
 
 				return 0;
 

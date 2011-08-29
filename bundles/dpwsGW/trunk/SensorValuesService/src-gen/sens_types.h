@@ -34,24 +34,25 @@ struct sens_ADXL210Sample {
 	sens_ZType z;
 
 	struct {
-		size_t len;
-		sens_Byte element[1];
+		size_t len;sens_Byte element[1];
 	} index;
 
 };
 
-static sens_Byte *sens_ADXL210Sample_add_index(struct sens_ADXL210Sample *self) __attribute__((__unused__));
-static sens_Byte *sens_ADXL210Sample_add_index(struct sens_ADXL210Sample *self) {
+static sens_Byte *sens_ADXL210Sample_add_index(struct sens_ADXL210Sample *self)
+		__attribute__((__unused__));
+static sens_Byte *sens_ADXL210Sample_add_index(
+		struct sens_ADXL210Sample *self) {
 	if (self->index.len < 1)
 		return &(self->index.element[(self->index.len++)]);
 	else
 		return NULL;
 }
 
-static sens_Byte *sens_ADXL210Sample_next_index(
-		struct sens_ADXL210Sample *self, sens_Byte *last) __attribute__((__unused__));
-static sens_Byte *sens_ADXL210Sample_next_index(
-		struct sens_ADXL210Sample *self, sens_Byte *last) {
+static sens_Byte *sens_ADXL210Sample_next_index(struct sens_ADXL210Sample *self,
+		sens_Byte *last) __attribute__((__unused__));
+static sens_Byte *sens_ADXL210Sample_next_index(struct sens_ADXL210Sample *self,
+		sens_Byte *last) {
 	if (self->index.len == 0)
 		return NULL;
 	if (last == NULL)
@@ -67,13 +68,13 @@ struct sens_SP101Sample {
 	sens_UnsignedByte volume;
 
 	struct {
-		size_t len;
-		sens_Byte element[1];
+		size_t len;sens_Byte element[1];
 	} index;
 
 };
 
-static sens_Byte *sens_SP101Sample_add_index(struct sens_SP101Sample *self) __attribute__((__unused__));
+static sens_Byte *sens_SP101Sample_add_index(struct sens_SP101Sample *self)
+		__attribute__((__unused__));
 static sens_Byte *sens_SP101Sample_add_index(struct sens_SP101Sample *self) {
 	if (self->index.len < 1)
 		return &(self->index.element[(self->index.len++)]);
@@ -102,24 +103,25 @@ struct sens_TSL2550Sample {
 	sens_UnsignedShort infrared;
 
 	struct {
-		size_t len;
-		sens_Byte element[1];
+		size_t len;sens_Byte element[1];
 	} index;
 
 };
 
-static sens_Byte *sens_TSL2550Sample_add_index(struct sens_TSL2550Sample *self) __attribute__((__unused__));
-static sens_Byte *sens_TSL2550Sample_add_index(struct sens_TSL2550Sample *self) {
+static sens_Byte *sens_TSL2550Sample_add_index(struct sens_TSL2550Sample *self)
+		__attribute__((__unused__));
+static sens_Byte *sens_TSL2550Sample_add_index(
+		struct sens_TSL2550Sample *self) {
 	if (self->index.len < 1)
 		return &(self->index.element[(self->index.len++)]);
 	else
 		return NULL;
 }
 
-static sens_Byte *sens_TSL2550Sample_next_index(
-		struct sens_TSL2550Sample *self, sens_Byte *last) __attribute__((__unused__));
-static sens_Byte *sens_TSL2550Sample_next_index(
-		struct sens_TSL2550Sample *self, sens_Byte *last) {
+static sens_Byte *sens_TSL2550Sample_next_index(struct sens_TSL2550Sample *self,
+		sens_Byte *last) __attribute__((__unused__));
+static sens_Byte *sens_TSL2550Sample_next_index(struct sens_TSL2550Sample *self,
+		sens_Byte *last) {
 	if (self->index.len == 0)
 		return NULL;
 	if (last == NULL)
@@ -135,13 +137,13 @@ struct sens_FSR152Sample {
 	sens_UnsignedByte value;
 
 	struct {
-		size_t len;
-		sens_Byte element[1];
+		size_t len;sens_Byte element[1];
 	} index;
 
 };
 
-static sens_Byte *sens_FSR152Sample_add_index(struct sens_FSR152Sample *self) __attribute__((__unused__));
+static sens_Byte *sens_FSR152Sample_add_index(struct sens_FSR152Sample *self)
+		__attribute__((__unused__));
 static sens_Byte *sens_FSR152Sample_add_index(struct sens_FSR152Sample *self) {
 	if (self->index.len < 1)
 		return &(self->index.element[(self->index.len++)]);
@@ -168,13 +170,13 @@ struct sens_TC74Sample {
 	sens_ValueType value;
 
 	struct {
-		size_t len;
-		sens_Byte element[1];
+		size_t len;sens_Byte element[1];
 	} index;
 
 };
 
-static sens_Byte *sens_TC74Sample_add_index(struct sens_TC74Sample *self) __attribute__((__unused__));
+static sens_Byte *sens_TC74Sample_add_index(struct sens_TC74Sample *self)
+		__attribute__((__unused__));
 static sens_Byte *sens_TC74Sample_add_index(struct sens_TC74Sample *self) {
 	if (self->index.len < 1)
 		return &(self->index.element[(self->index.len++)]);
@@ -224,8 +226,7 @@ struct sens_SSimpSample {
 	} temperature;
 
 	struct {
-		size_t len;
-		sens_DateTime element[1];
+		size_t len;sens_DateTime element[1];
 	} timeStamp;
 
 };
@@ -241,7 +242,8 @@ static struct sens_ADXL210Sample *sens_SSimpSample_add_accelleration(
 }
 
 static struct sens_ADXL210Sample *sens_SSimpSample_next_accelleration(
-		struct sens_SSimpSample *self, struct sens_ADXL210Sample *last) __attribute__((__unused__));
+		struct sens_SSimpSample *self, struct sens_ADXL210Sample *last)
+				__attribute__((__unused__));
 static struct sens_ADXL210Sample *sens_SSimpSample_next_accelleration(
 		struct sens_SSimpSample *self, struct sens_ADXL210Sample *last) {
 	if (self->accelleration.len == 0)
@@ -265,7 +267,8 @@ static struct sens_SP101Sample *sens_SSimpSample_add_audio(
 }
 
 static struct sens_SP101Sample *sens_SSimpSample_next_audio(
-		struct sens_SSimpSample *self, struct sens_SP101Sample *last) __attribute__((__unused__));
+		struct sens_SSimpSample *self, struct sens_SP101Sample *last)
+				__attribute__((__unused__));
 static struct sens_SP101Sample *sens_SSimpSample_next_audio(
 		struct sens_SSimpSample *self, struct sens_SP101Sample *last) {
 	if (self->audio.len == 0)
@@ -289,7 +292,8 @@ static struct sens_TSL2550Sample *sens_SSimpSample_add_light(
 }
 
 static struct sens_TSL2550Sample *sens_SSimpSample_next_light(
-		struct sens_SSimpSample *self, struct sens_TSL2550Sample *last) __attribute__((__unused__));
+		struct sens_SSimpSample *self, struct sens_TSL2550Sample *last)
+				__attribute__((__unused__));
 static struct sens_TSL2550Sample *sens_SSimpSample_next_light(
 		struct sens_SSimpSample *self, struct sens_TSL2550Sample *last) {
 	if (self->light.len == 0)
@@ -313,7 +317,8 @@ static struct sens_FSR152Sample *sens_SSimpSample_add_force(
 }
 
 static struct sens_FSR152Sample *sens_SSimpSample_next_force(
-		struct sens_SSimpSample *self, struct sens_FSR152Sample *last) __attribute__((__unused__));
+		struct sens_SSimpSample *self, struct sens_FSR152Sample *last)
+				__attribute__((__unused__));
 static struct sens_FSR152Sample *sens_SSimpSample_next_force(
 		struct sens_SSimpSample *self, struct sens_FSR152Sample *last) {
 	if (self->force.len == 0)
@@ -337,7 +342,8 @@ static struct sens_TC74Sample *sens_SSimpSample_add_temperature(
 }
 
 static struct sens_TC74Sample *sens_SSimpSample_next_temperature(
-		struct sens_SSimpSample *self, struct sens_TC74Sample *last) __attribute__((__unused__));
+		struct sens_SSimpSample *self, struct sens_TC74Sample *last)
+				__attribute__((__unused__));
 static struct sens_TC74Sample *sens_SSimpSample_next_temperature(
 		struct sens_SSimpSample *self, struct sens_TC74Sample *last) {
 	if (self->temperature.len == 0)
@@ -400,9 +406,8 @@ struct sens_SensorConfigurationType {
 
 };
 
-static struct sens_SSimpRateConfig
-		*sens_SensorConfigurationType_add_acceleration(
-				struct sens_SensorConfigurationType *self) __attribute__((__unused__));
+static struct sens_SSimpRateConfig *sens_SensorConfigurationType_add_acceleration(
+		struct sens_SensorConfigurationType *self) __attribute__((__unused__));
 static struct sens_SSimpRateConfig *sens_SensorConfigurationType_add_acceleration(
 		struct sens_SensorConfigurationType *self) {
 	if (self->acceleration.len < 1)
@@ -411,10 +416,9 @@ static struct sens_SSimpRateConfig *sens_SensorConfigurationType_add_acceleratio
 		return NULL;
 }
 
-static struct sens_SSimpRateConfig
-		*sens_SensorConfigurationType_next_acceleration(
-				struct sens_SensorConfigurationType *self,
-				struct sens_SSimpRateConfig *last) __attribute__((__unused__));
+static struct sens_SSimpRateConfig *sens_SensorConfigurationType_next_acceleration(
+		struct sens_SensorConfigurationType *self,
+		struct sens_SSimpRateConfig *last) __attribute__((__unused__));
 static struct sens_SSimpRateConfig *sens_SensorConfigurationType_next_acceleration(
 		struct sens_SensorConfigurationType *self,
 		struct sens_SSimpRateConfig *last) {
@@ -480,9 +484,8 @@ static struct sens_SSimpRateConfig *sens_SensorConfigurationType_next_light(
 		return NULL;
 }
 
-static struct sens_SSimpRateConfig
-		*sens_SensorConfigurationType_add_ambientLight(
-				struct sens_SensorConfigurationType *self) __attribute__((__unused__));
+static struct sens_SSimpRateConfig *sens_SensorConfigurationType_add_ambientLight(
+		struct sens_SensorConfigurationType *self) __attribute__((__unused__));
 static struct sens_SSimpRateConfig *sens_SensorConfigurationType_add_ambientLight(
 		struct sens_SensorConfigurationType *self) {
 	if (self->ambientLight.len < 1)
@@ -491,10 +494,9 @@ static struct sens_SSimpRateConfig *sens_SensorConfigurationType_add_ambientLigh
 		return NULL;
 }
 
-static struct sens_SSimpRateConfig
-		*sens_SensorConfigurationType_next_ambientLight(
-				struct sens_SensorConfigurationType *self,
-				struct sens_SSimpRateConfig *last) __attribute__((__unused__));
+static struct sens_SSimpRateConfig *sens_SensorConfigurationType_next_ambientLight(
+		struct sens_SensorConfigurationType *self,
+		struct sens_SSimpRateConfig *last) __attribute__((__unused__));
 static struct sens_SSimpRateConfig *sens_SensorConfigurationType_next_ambientLight(
 		struct sens_SensorConfigurationType *self,
 		struct sens_SSimpRateConfig *last) {
@@ -534,9 +536,8 @@ static struct sens_SSimpRateConfig *sens_SensorConfigurationType_next_force(
 		return NULL;
 }
 
-static struct sens_SSimpRateConfig
-		*sens_SensorConfigurationType_add_temperature(
-				struct sens_SensorConfigurationType *self) __attribute__((__unused__));
+static struct sens_SSimpRateConfig *sens_SensorConfigurationType_add_temperature(
+		struct sens_SensorConfigurationType *self) __attribute__((__unused__));
 static struct sens_SSimpRateConfig *sens_SensorConfigurationType_add_temperature(
 		struct sens_SensorConfigurationType *self) {
 	if (self->temperature.len < 1)
@@ -545,10 +546,9 @@ static struct sens_SSimpRateConfig *sens_SensorConfigurationType_add_temperature
 		return NULL;
 }
 
-static struct sens_SSimpRateConfig
-		*sens_SensorConfigurationType_next_temperature(
-				struct sens_SensorConfigurationType *self,
-				struct sens_SSimpRateConfig *last) __attribute__((__unused__));
+static struct sens_SSimpRateConfig *sens_SensorConfigurationType_next_temperature(
+		struct sens_SensorConfigurationType *self,
+		struct sens_SSimpRateConfig *last) __attribute__((__unused__));
 static struct sens_SSimpRateConfig *sens_SensorConfigurationType_next_temperature(
 		struct sens_SensorConfigurationType *self,
 		struct sens_SSimpRateConfig *last) {
@@ -584,8 +584,7 @@ struct sens_SSimpControl {
 	} sensorConfig;
 
 	struct {
-		size_t len;
-		sens_DateTime element[1];
+		size_t len;sens_DateTime element[1];
 	} newTime;
 
 };
@@ -600,9 +599,9 @@ static struct sens_SensorConfigurationType *sens_SSimpControl_add_sensorConfig(
 		return NULL;
 }
 
-static struct sens_SensorConfigurationType
-		*sens_SSimpControl_next_sensorConfig(struct sens_SSimpControl *self,
-				struct sens_SensorConfigurationType *last) __attribute__((__unused__));
+static struct sens_SensorConfigurationType *sens_SSimpControl_next_sensorConfig(
+		struct sens_SSimpControl *self,
+		struct sens_SensorConfigurationType *last) __attribute__((__unused__));
 static struct sens_SensorConfigurationType *sens_SSimpControl_next_sensorConfig(
 		struct sens_SSimpControl *self,
 		struct sens_SensorConfigurationType *last) {
@@ -626,23 +625,23 @@ static sens_DateTime *sens_SSimpControl_next_newTime(struct sens_SSimpControl *s
 	if(last!=&(self->newTime.element[self->newTime.len-1])) return last++;
 	else return NULL;}
 
-typedef struct sens_SP101Sample sens_SP101Sample;
-
-typedef struct sens_TC74Sample sens_TC74Sample;
-
-typedef struct sens_SSimpStatus sens_SSimpStatus;
+typedef struct sens_SSimpSample sens_SSimpSample;
 
 typedef struct sens_ADXL210Sample sens_ADXL210Sample;
 
-typedef struct sens_SSimpRateConfig sens_SSimpRateConfig;
+typedef struct sens_SP101Sample sens_SP101Sample;
+
+typedef struct sens_SSimpStatus sens_SSimpStatus;
 
 typedef struct sens_SSimpControl sens_SSimpControl;
 
-typedef struct sens_SSimpSample sens_SSimpSample;
-
-typedef struct sens_FSR152Sample sens_FSR152Sample;
+typedef struct sens_SSimpRateConfig sens_SSimpRateConfig;
 
 typedef struct sens_TSL2550Sample sens_TSL2550Sample;
+
+typedef struct sens_TC74Sample sens_TC74Sample;
+
+typedef struct sens_FSR152Sample sens_FSR152Sample;
 
 typedef struct sens_SensorConfigurationType sens_SensorConfigurationType;
 

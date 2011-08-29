@@ -14,10 +14,9 @@ int StatusControl_bin2dom_run(struct READER_STRUCT *reader,
 	for (;;) {
 		switch (label) {
 
-		// Start State
+// Start State
 
-
-		case 0://stateComplexBegin(StatusControl)
+		case 0: //stateComplexBegin(StatusControl)
 		{
 			label = 1; //assert 1==label+1
 
@@ -25,14 +24,12 @@ int StatusControl_bin2dom_run(struct READER_STRUCT *reader,
 
 			//push(pop()): preinitialized stack
 
-
 			//push StatusControl: next 
-
 
 			break;
 		} /* stateEnd */
 
-		case 1://stateComplexBegin(SensorConfig)
+		case 1: //stateComplexBegin(SensorConfig)
 		{
 			label = 2; //assert 2==label+1
 
@@ -51,7 +48,6 @@ int StatusControl_bin2dom_run(struct READER_STRUCT *reader,
 
 				//push SensorConfig: next 21
 
-
 			} else {
 				label = 21;
 				continue;
@@ -60,7 +56,7 @@ int StatusControl_bin2dom_run(struct READER_STRUCT *reader,
 			break;
 		} /* stateEnd */
 
-		case 2://stateComplexBegin(Acceleration)
+		case 2: //stateComplexBegin(Acceleration)
 		{
 			label = 3; //assert 3==label+1
 
@@ -79,7 +75,6 @@ int StatusControl_bin2dom_run(struct READER_STRUCT *reader,
 
 				//push Acceleration: next 5
 
-
 			} else {
 				label = 5;
 				continue;
@@ -91,7 +86,6 @@ int StatusControl_bin2dom_run(struct READER_STRUCT *reader,
 		case 3: //stateBegin(rate)
 		{
 			label = 4; //assert 4==label+1
-
 
 			{
 
@@ -134,8 +128,7 @@ int StatusControl_bin2dom_run(struct READER_STRUCT *reader,
 		} /* case */
 			//pop Acceleration
 
-
-		case 5://stateComplexBegin(Audio)
+		case 5: //stateComplexBegin(Audio)
 		{
 			label = 6; //assert 6==label+1
 
@@ -154,7 +147,6 @@ int StatusControl_bin2dom_run(struct READER_STRUCT *reader,
 
 				//push Audio: next 8
 
-
 			} else {
 				label = 8;
 				continue;
@@ -166,7 +158,6 @@ int StatusControl_bin2dom_run(struct READER_STRUCT *reader,
 		case 6: //stateBegin(rate)
 		{
 			label = 7; //assert 7==label+1
-
 
 			{
 
@@ -209,8 +200,7 @@ int StatusControl_bin2dom_run(struct READER_STRUCT *reader,
 		} /* case */
 			//pop Audio
 
-
-		case 8://stateComplexBegin(Light)
+		case 8: //stateComplexBegin(Light)
 		{
 			label = 9; //assert 9==label+1
 
@@ -229,7 +219,6 @@ int StatusControl_bin2dom_run(struct READER_STRUCT *reader,
 
 				//push Light: next 11
 
-
 			} else {
 				label = 11;
 				continue;
@@ -241,7 +230,6 @@ int StatusControl_bin2dom_run(struct READER_STRUCT *reader,
 		case 9: //stateBegin(rate)
 		{
 			label = 10; //assert 10==label+1
-
 
 			{
 
@@ -284,8 +272,7 @@ int StatusControl_bin2dom_run(struct READER_STRUCT *reader,
 		} /* case */
 			//pop Light
 
-
-		case 11://stateComplexBegin(AmbientLight)
+		case 11: //stateComplexBegin(AmbientLight)
 		{
 			label = 12; //assert 12==label+1
 
@@ -304,7 +291,6 @@ int StatusControl_bin2dom_run(struct READER_STRUCT *reader,
 
 				//push AmbientLight: next 14
 
-
 			} else {
 				label = 14;
 				continue;
@@ -316,7 +302,6 @@ int StatusControl_bin2dom_run(struct READER_STRUCT *reader,
 		case 12: //stateBegin(rate)
 		{
 			label = 13; //assert 13==label+1
-
 
 			{
 
@@ -359,8 +344,7 @@ int StatusControl_bin2dom_run(struct READER_STRUCT *reader,
 		} /* case */
 			//pop AmbientLight
 
-
-		case 14://stateComplexBegin(Force)
+		case 14: //stateComplexBegin(Force)
 		{
 			label = 15; //assert 15==label+1
 
@@ -379,7 +363,6 @@ int StatusControl_bin2dom_run(struct READER_STRUCT *reader,
 
 				//push Force: next 17
 
-
 			} else {
 				label = 17;
 				continue;
@@ -391,7 +374,6 @@ int StatusControl_bin2dom_run(struct READER_STRUCT *reader,
 		case 15: //stateBegin(rate)
 		{
 			label = 16; //assert 16==label+1
-
 
 			{
 
@@ -434,8 +416,7 @@ int StatusControl_bin2dom_run(struct READER_STRUCT *reader,
 		} /* case */
 			//pop Force
 
-
-		case 17://stateComplexBegin(Temperature)
+		case 17: //stateComplexBegin(Temperature)
 		{
 			label = 18; //assert 18==label+1
 
@@ -454,7 +435,6 @@ int StatusControl_bin2dom_run(struct READER_STRUCT *reader,
 
 				//push Temperature: next 20
 
-
 			} else {
 				label = 20;
 				continue;
@@ -466,7 +446,6 @@ int StatusControl_bin2dom_run(struct READER_STRUCT *reader,
 		case 18: //stateBegin(rate)
 		{
 			label = 19; //assert 19==label+1
-
 
 			{
 
@@ -509,7 +488,6 @@ int StatusControl_bin2dom_run(struct READER_STRUCT *reader,
 		} /* case */
 			//pop Temperature
 
-
 		case 20: //stateComplexEnd(SensorConfig) : 0..1
 		{
 
@@ -523,11 +501,9 @@ int StatusControl_bin2dom_run(struct READER_STRUCT *reader,
 		} /* case */
 			//pop SensorConfig
 
-
 		case 21: //stateBegin(NewTime)
 		{
 			label = 22; //assert 22==label+1
-
 
 			/* loop /StatusControlNewTime label=label */
 			while (read_bit(reader))
@@ -573,7 +549,6 @@ int StatusControl_bin2dom_run(struct READER_STRUCT *reader,
 
 			label = 23; // Complex End
 
-
 			if (pop())
 				;
 
@@ -582,9 +557,7 @@ int StatusControl_bin2dom_run(struct READER_STRUCT *reader,
 		} /* case */
 			//pop StatusControl
 
-
 		default: //StopState
-
 
 			return 0;
 

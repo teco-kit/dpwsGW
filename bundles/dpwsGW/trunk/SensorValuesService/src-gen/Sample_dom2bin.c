@@ -15,10 +15,9 @@ int Sample_dom2bin_run(struct sens_SSimpSample *dom,
 #endif
 			switch (label) {
 
-			// Start State
+// Start State
 
-
-			case 0://stateComplexBegin(Sample)
+			case 0: //stateComplexBegin(Sample)
 			{
 				label = 1; //assert 1==label+1
 
@@ -26,9 +25,7 @@ int Sample_dom2bin_run(struct sens_SSimpSample *dom,
 
 				//assert preinitialized stack 
 
-
 				//push Sample: next 
-
 
 				break;
 			} /* stateEnd */
@@ -36,7 +33,6 @@ int Sample_dom2bin_run(struct sens_SSimpSample *dom,
 			case 1: //stateBegin(TimeStamp)
 			{
 				label = 2; //assert 2==label+1
-
 
 				{
 					/* loop /Sample/TimeStamp */
@@ -70,8 +66,7 @@ int Sample_dom2bin_run(struct sens_SSimpSample *dom,
 
 							}
 
-							//stateNameEnd TimeStamp
-
+//stateNameEnd TimeStamp
 
 							last = cur;
 
@@ -88,7 +83,7 @@ int Sample_dom2bin_run(struct sens_SSimpSample *dom,
 				break;
 			} /* stateEnd */
 
-			case 2://stateComplexBegin(Accelleration)
+			case 2: //stateComplexBegin(Accelleration)
 			{
 				label = 3; //assert 3==label+1
 
@@ -96,12 +91,12 @@ int Sample_dom2bin_run(struct sens_SSimpSample *dom,
 
 				{
 					sens_ADXL210Sample *cur;
-					if (NULL != (cur = sens_SSimpSample_next_accelleration(
-							(sens_SSimpSample *) top(),
-							(sens_ADXL210Sample *) last))) { /* depth 1*/
+					if (NULL
+							!= (cur = sens_SSimpSample_next_accelleration(
+									(sens_SSimpSample *) top(),
+									(sens_ADXL210Sample *) last))) { /* depth 1*/
 
 						//push Accelleration: next 8
-
 
 						push(cur);
 						write_true(writer);
@@ -119,7 +114,6 @@ int Sample_dom2bin_run(struct sens_SSimpSample *dom,
 			case 3: //stateBegin(x)
 			{
 				label = 4; //assert 4==label+1
-
 
 				{
 					sens_ADXL210Sample *parent;
@@ -144,8 +138,7 @@ int Sample_dom2bin_run(struct sens_SSimpSample *dom,
 
 					}
 
-					//stateNameEnd x
-
+//stateNameEnd x
 
 					if (pop())
 						;
@@ -158,7 +151,6 @@ int Sample_dom2bin_run(struct sens_SSimpSample *dom,
 			case 4: //stateBegin(y)
 			{
 				label = 5; //assert 5==label+1
-
 
 				{
 					sens_ADXL210Sample *parent;
@@ -183,8 +175,7 @@ int Sample_dom2bin_run(struct sens_SSimpSample *dom,
 
 					}
 
-					//stateNameEnd y
-
+//stateNameEnd y
 
 					if (pop())
 						;
@@ -197,7 +188,6 @@ int Sample_dom2bin_run(struct sens_SSimpSample *dom,
 			case 5: //stateBegin(z)
 			{
 				label = 6; //assert 6==label+1
-
 
 				{
 					sens_ADXL210Sample *parent;
@@ -222,8 +212,7 @@ int Sample_dom2bin_run(struct sens_SSimpSample *dom,
 
 					}
 
-					//stateNameEnd z
-
+//stateNameEnd z
 
 					if (pop())
 						;
@@ -237,12 +226,13 @@ int Sample_dom2bin_run(struct sens_SSimpSample *dom,
 			{
 				label = 7; //assert 7==label+1
 
-
 				{
 					/* loop /Sample/Accelleration/index */
 					sens_Byte *cur;
-					while (NULL != (cur = sens_ADXL210Sample_next_index(
-							(sens_ADXL210Sample *) top(), (sens_Byte *) last))) {
+					while (NULL
+							!= (cur = sens_ADXL210Sample_next_index(
+									(sens_ADXL210Sample *) top(),
+									(sens_Byte *) last))) {
 						push(cur);
 						write_true(writer);
 
@@ -261,8 +251,7 @@ int Sample_dom2bin_run(struct sens_SSimpSample *dom,
 
 							}
 
-							//stateNameEnd index
-
+//stateNameEnd index
 
 							last = cur;
 
@@ -284,8 +273,7 @@ int Sample_dom2bin_run(struct sens_SSimpSample *dom,
 
 				label = 2; /* constLoopEnd1 /Sample/Accelleration/ */
 
-				//stateNameEnd Accelleration
-
+//stateNameEnd Accelleration
 
 				last = pop();
 
@@ -294,8 +282,7 @@ int Sample_dom2bin_run(struct sens_SSimpSample *dom,
 			} /* case */
 				//pop Accelleration
 
-
-			case 8://stateComplexBegin(Audio)
+			case 8: //stateComplexBegin(Audio)
 			{
 				label = 9; //assert 9==label+1
 
@@ -303,12 +290,12 @@ int Sample_dom2bin_run(struct sens_SSimpSample *dom,
 
 				{
 					sens_SP101Sample *cur;
-					if (NULL != (cur = sens_SSimpSample_next_audio(
-							(sens_SSimpSample *) top(),
-							(sens_SP101Sample *) last))) { /* depth 1*/
+					if (NULL
+							!= (cur = sens_SSimpSample_next_audio(
+									(sens_SSimpSample *) top(),
+									(sens_SP101Sample *) last))) { /* depth 1*/
 
 						//push Audio: next 12
-
 
 						push(cur);
 						write_true(writer);
@@ -326,7 +313,6 @@ int Sample_dom2bin_run(struct sens_SSimpSample *dom,
 			case 9: //stateBegin(volume)
 			{
 				label = 10; //assert 10==label+1
-
 
 				{
 					sens_SP101Sample *parent;
@@ -351,8 +337,7 @@ int Sample_dom2bin_run(struct sens_SSimpSample *dom,
 
 					}
 
-					//stateNameEnd volume
-
+//stateNameEnd volume
 
 					if (pop())
 						;
@@ -366,12 +351,13 @@ int Sample_dom2bin_run(struct sens_SSimpSample *dom,
 			{
 				label = 11; //assert 11==label+1
 
-
 				{
 					/* loop /Sample/Audio/index */
 					sens_Byte *cur;
-					while (NULL != (cur = sens_SP101Sample_next_index(
-							(sens_SP101Sample *) top(), (sens_Byte *) last))) {
+					while (NULL
+							!= (cur = sens_SP101Sample_next_index(
+									(sens_SP101Sample *) top(),
+									(sens_Byte *) last))) {
 						push(cur);
 						write_true(writer);
 
@@ -390,8 +376,7 @@ int Sample_dom2bin_run(struct sens_SSimpSample *dom,
 
 							}
 
-							//stateNameEnd index
-
+//stateNameEnd index
 
 							last = cur;
 
@@ -413,8 +398,7 @@ int Sample_dom2bin_run(struct sens_SSimpSample *dom,
 
 				label = 8; /* constLoopEnd1 /Sample/Audio/ */
 
-				//stateNameEnd Audio
-
+//stateNameEnd Audio
 
 				last = pop();
 
@@ -423,8 +407,7 @@ int Sample_dom2bin_run(struct sens_SSimpSample *dom,
 			} /* case */
 				//pop Audio
 
-
-			case 12://stateComplexBegin(Light)
+			case 12: //stateComplexBegin(Light)
 			{
 				label = 13; //assert 13==label+1
 
@@ -432,12 +415,12 @@ int Sample_dom2bin_run(struct sens_SSimpSample *dom,
 
 				{
 					sens_TSL2550Sample *cur;
-					if (NULL != (cur = sens_SSimpSample_next_light(
-							(sens_SSimpSample *) top(),
-							(sens_TSL2550Sample *) last))) { /* depth 1*/
+					if (NULL
+							!= (cur = sens_SSimpSample_next_light(
+									(sens_SSimpSample *) top(),
+									(sens_TSL2550Sample *) last))) { /* depth 1*/
 
 						//push Light: next 17
-
 
 						push(cur);
 						write_true(writer);
@@ -455,7 +438,6 @@ int Sample_dom2bin_run(struct sens_SSimpSample *dom,
 			case 13: //stateBegin(daylight)
 			{
 				label = 14; //assert 14==label+1
-
 
 				{
 					sens_TSL2550Sample *parent;
@@ -480,8 +462,7 @@ int Sample_dom2bin_run(struct sens_SSimpSample *dom,
 
 					}
 
-					//stateNameEnd daylight
-
+//stateNameEnd daylight
 
 					if (pop())
 						;
@@ -494,7 +475,6 @@ int Sample_dom2bin_run(struct sens_SSimpSample *dom,
 			case 14: //stateBegin(infrared)
 			{
 				label = 15; //assert 15==label+1
-
 
 				{
 					sens_TSL2550Sample *parent;
@@ -519,8 +499,7 @@ int Sample_dom2bin_run(struct sens_SSimpSample *dom,
 
 					}
 
-					//stateNameEnd infrared
-
+//stateNameEnd infrared
 
 					if (pop())
 						;
@@ -534,12 +513,13 @@ int Sample_dom2bin_run(struct sens_SSimpSample *dom,
 			{
 				label = 16; //assert 16==label+1
 
-
 				{
 					/* loop /Sample/Light/index */
 					sens_Byte *cur;
-					while (NULL != (cur = sens_TSL2550Sample_next_index(
-							(sens_TSL2550Sample *) top(), (sens_Byte *) last))) {
+					while (NULL
+							!= (cur = sens_TSL2550Sample_next_index(
+									(sens_TSL2550Sample *) top(),
+									(sens_Byte *) last))) {
 						push(cur);
 						write_true(writer);
 
@@ -558,8 +538,7 @@ int Sample_dom2bin_run(struct sens_SSimpSample *dom,
 
 							}
 
-							//stateNameEnd index
-
+//stateNameEnd index
 
 							last = cur;
 
@@ -581,8 +560,7 @@ int Sample_dom2bin_run(struct sens_SSimpSample *dom,
 
 				label = 12; /* constLoopEnd1 /Sample/Light/ */
 
-				//stateNameEnd Light
-
+//stateNameEnd Light
 
 				last = pop();
 
@@ -591,8 +569,7 @@ int Sample_dom2bin_run(struct sens_SSimpSample *dom,
 			} /* case */
 				//pop Light
 
-
-			case 17://stateComplexBegin(Force)
+			case 17: //stateComplexBegin(Force)
 			{
 				label = 18; //assert 18==label+1
 
@@ -600,12 +577,12 @@ int Sample_dom2bin_run(struct sens_SSimpSample *dom,
 
 				{
 					sens_FSR152Sample *cur;
-					if (NULL != (cur = sens_SSimpSample_next_force(
-							(sens_SSimpSample *) top(),
-							(sens_FSR152Sample *) last))) { /* depth 1*/
+					if (NULL
+							!= (cur = sens_SSimpSample_next_force(
+									(sens_SSimpSample *) top(),
+									(sens_FSR152Sample *) last))) { /* depth 1*/
 
 						//push Force: next 21
-
 
 						push(cur);
 						write_true(writer);
@@ -623,7 +600,6 @@ int Sample_dom2bin_run(struct sens_SSimpSample *dom,
 			case 18: //stateBegin(value)
 			{
 				label = 19; //assert 19==label+1
-
 
 				{
 					sens_FSR152Sample *parent;
@@ -648,8 +624,7 @@ int Sample_dom2bin_run(struct sens_SSimpSample *dom,
 
 					}
 
-					//stateNameEnd value
-
+//stateNameEnd value
 
 					if (pop())
 						;
@@ -663,12 +638,13 @@ int Sample_dom2bin_run(struct sens_SSimpSample *dom,
 			{
 				label = 20; //assert 20==label+1
 
-
 				{
 					/* loop /Sample/Force/index */
 					sens_Byte *cur;
-					while (NULL != (cur = sens_FSR152Sample_next_index(
-							(sens_FSR152Sample *) top(), (sens_Byte *) last))) {
+					while (NULL
+							!= (cur = sens_FSR152Sample_next_index(
+									(sens_FSR152Sample *) top(),
+									(sens_Byte *) last))) {
 						push(cur);
 						write_true(writer);
 
@@ -687,8 +663,7 @@ int Sample_dom2bin_run(struct sens_SSimpSample *dom,
 
 							}
 
-							//stateNameEnd index
-
+//stateNameEnd index
 
 							last = cur;
 
@@ -710,8 +685,7 @@ int Sample_dom2bin_run(struct sens_SSimpSample *dom,
 
 				label = 17; /* constLoopEnd1 /Sample/Force/ */
 
-				//stateNameEnd Force
-
+//stateNameEnd Force
 
 				last = pop();
 
@@ -720,8 +694,7 @@ int Sample_dom2bin_run(struct sens_SSimpSample *dom,
 			} /* case */
 				//pop Force
 
-
-			case 21://stateComplexBegin(Temperature)
+			case 21: //stateComplexBegin(Temperature)
 			{
 				label = 22; //assert 22==label+1
 
@@ -729,12 +702,12 @@ int Sample_dom2bin_run(struct sens_SSimpSample *dom,
 
 				{
 					sens_TC74Sample *cur;
-					if (NULL != (cur = sens_SSimpSample_next_temperature(
-							(sens_SSimpSample *) top(),
-							(sens_TC74Sample *) last))) { /* depth 1*/
+					if (NULL
+							!= (cur = sens_SSimpSample_next_temperature(
+									(sens_SSimpSample *) top(),
+									(sens_TC74Sample *) last))) { /* depth 1*/
 
 						//push Temperature: next 25
-
 
 						push(cur);
 						write_true(writer);
@@ -752,7 +725,6 @@ int Sample_dom2bin_run(struct sens_SSimpSample *dom,
 			case 22: //stateBegin(value)
 			{
 				label = 23; //assert 23==label+1
-
 
 				{
 					sens_TC74Sample *parent;
@@ -777,8 +749,7 @@ int Sample_dom2bin_run(struct sens_SSimpSample *dom,
 
 					}
 
-					//stateNameEnd value
-
+//stateNameEnd value
 
 					if (pop())
 						;
@@ -792,12 +763,13 @@ int Sample_dom2bin_run(struct sens_SSimpSample *dom,
 			{
 				label = 24; //assert 24==label+1
 
-
 				{
 					/* loop /Sample/Temperature/index */
 					sens_Byte *cur;
-					while (NULL != (cur = sens_TC74Sample_next_index(
-							(sens_TC74Sample *) top(), (sens_Byte *) last))) {
+					while (NULL
+							!= (cur = sens_TC74Sample_next_index(
+									(sens_TC74Sample *) top(),
+									(sens_Byte *) last))) {
 						push(cur);
 						write_true(writer);
 
@@ -816,8 +788,7 @@ int Sample_dom2bin_run(struct sens_SSimpSample *dom,
 
 							}
 
-							//stateNameEnd index
-
+//stateNameEnd index
 
 							last = cur;
 
@@ -839,8 +810,7 @@ int Sample_dom2bin_run(struct sens_SSimpSample *dom,
 
 				label = 21; /* constLoopEnd1 /Sample/Temperature/ */
 
-				//stateNameEnd Temperature
-
+//stateNameEnd Temperature
 
 				last = pop();
 
@@ -848,7 +818,6 @@ int Sample_dom2bin_run(struct sens_SSimpSample *dom,
 
 			} /* case */
 				//pop Temperature
-
 
 			case 25: //stateComplexEnd(Sample) : 1..1
 			{
@@ -858,18 +827,14 @@ int Sample_dom2bin_run(struct sens_SSimpSample *dom,
 
 				label = 26; // Complex End
 
-
-				//stateNameEnd Sample
-
+//stateNameEnd Sample
 
 				break;
 
 			} /* case */
 				//pop Sample
 
-
 			default: //StopState
-
 
 				return 0;
 

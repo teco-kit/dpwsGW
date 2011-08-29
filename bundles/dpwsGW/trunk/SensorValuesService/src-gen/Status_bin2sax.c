@@ -38,10 +38,9 @@ static int gsoap_automata(struct READER_STRUCT *reader, struct soap *soap,
 	while (1) {
 		switch (label) {
 
-		// Start State
+// Start State
 
-
-		case 0://stateComplexBegin(Status)
+		case 0: //stateComplexBegin(Status)
 		{
 			label = 1; //assert 1==label+1
 
@@ -51,11 +50,10 @@ static int gsoap_automata(struct READER_STRUCT *reader, struct soap *soap,
 
 			//push Status: next 
 
-
 			break;
 		} /* stateEnd */
 
-		case 1://stateComplexBegin(SensorConfig)
+		case 1: //stateComplexBegin(SensorConfig)
 		{
 			label = 2; //assert 2==label+1
 
@@ -65,11 +63,10 @@ static int gsoap_automata(struct READER_STRUCT *reader, struct soap *soap,
 
 			//push SensorConfig: next 
 
-
 			break;
 		} /* stateEnd */
 
-		case 2://stateComplexBegin(Acceleration)
+		case 2: //stateComplexBegin(Acceleration)
 		{
 			label = 3; //assert 3==label+1
 
@@ -80,7 +77,6 @@ static int gsoap_automata(struct READER_STRUCT *reader, struct soap *soap,
 				soap_element_begin_out(soap, "sens:Acceleration", 0, "");
 
 				//push Acceleration: next 5
-
 
 			} else {
 				label = 5;
@@ -94,17 +90,15 @@ static int gsoap_automata(struct READER_STRUCT *reader, struct soap *soap,
 		{
 			label = 4; //assert 4==label+1
 
-
 			{
 
 				{
 					uint8_t c;
 					ret = read_bits(reader, (u_char *) &c, 8);
 					if (ret >= 0) //todo check for exact
-					{
-						ret
-								= asprintf(&str, "%d", (int8_t)(((c) * 1)
-										+ (-128))); //TODO: check overflows
+							{
+						ret = asprintf(&str, "%d",
+								(int8_t)(((c) * 1) + (-128))); //TODO: check overflows
 					} else {
 						ret = -1;
 					}
@@ -143,8 +137,7 @@ static int gsoap_automata(struct READER_STRUCT *reader, struct soap *soap,
 		} /* case */
 			//pop Acceleration
 
-
-		case 5://stateComplexBegin(Audio)
+		case 5: //stateComplexBegin(Audio)
 		{
 			label = 6; //assert 6==label+1
 
@@ -155,7 +148,6 @@ static int gsoap_automata(struct READER_STRUCT *reader, struct soap *soap,
 				soap_element_begin_out(soap, "sens:Audio", 0, "");
 
 				//push Audio: next 8
-
 
 			} else {
 				label = 8;
@@ -169,17 +161,15 @@ static int gsoap_automata(struct READER_STRUCT *reader, struct soap *soap,
 		{
 			label = 7; //assert 7==label+1
 
-
 			{
 
 				{
 					uint8_t c;
 					ret = read_bits(reader, (u_char *) &c, 8);
 					if (ret >= 0) //todo check for exact
-					{
-						ret
-								= asprintf(&str, "%d", (int8_t)(((c) * 1)
-										+ (-128))); //TODO: check overflows
+							{
+						ret = asprintf(&str, "%d",
+								(int8_t)(((c) * 1) + (-128))); //TODO: check overflows
 					} else {
 						ret = -1;
 					}
@@ -218,8 +208,7 @@ static int gsoap_automata(struct READER_STRUCT *reader, struct soap *soap,
 		} /* case */
 			//pop Audio
 
-
-		case 8://stateComplexBegin(Light)
+		case 8: //stateComplexBegin(Light)
 		{
 			label = 9; //assert 9==label+1
 
@@ -230,7 +219,6 @@ static int gsoap_automata(struct READER_STRUCT *reader, struct soap *soap,
 				soap_element_begin_out(soap, "sens:Light", 0, "");
 
 				//push Light: next 11
-
 
 			} else {
 				label = 11;
@@ -244,17 +232,15 @@ static int gsoap_automata(struct READER_STRUCT *reader, struct soap *soap,
 		{
 			label = 10; //assert 10==label+1
 
-
 			{
 
 				{
 					uint8_t c;
 					ret = read_bits(reader, (u_char *) &c, 8);
 					if (ret >= 0) //todo check for exact
-					{
-						ret
-								= asprintf(&str, "%d", (int8_t)(((c) * 1)
-										+ (-128))); //TODO: check overflows
+							{
+						ret = asprintf(&str, "%d",
+								(int8_t)(((c) * 1) + (-128))); //TODO: check overflows
 					} else {
 						ret = -1;
 					}
@@ -293,8 +279,7 @@ static int gsoap_automata(struct READER_STRUCT *reader, struct soap *soap,
 		} /* case */
 			//pop Light
 
-
-		case 11://stateComplexBegin(AmbientLight)
+		case 11: //stateComplexBegin(AmbientLight)
 		{
 			label = 12; //assert 12==label+1
 
@@ -305,7 +290,6 @@ static int gsoap_automata(struct READER_STRUCT *reader, struct soap *soap,
 				soap_element_begin_out(soap, "sens:AmbientLight", 0, "");
 
 				//push AmbientLight: next 14
-
 
 			} else {
 				label = 14;
@@ -319,17 +303,15 @@ static int gsoap_automata(struct READER_STRUCT *reader, struct soap *soap,
 		{
 			label = 13; //assert 13==label+1
 
-
 			{
 
 				{
 					uint8_t c;
 					ret = read_bits(reader, (u_char *) &c, 8);
 					if (ret >= 0) //todo check for exact
-					{
-						ret
-								= asprintf(&str, "%d", (int8_t)(((c) * 1)
-										+ (-128))); //TODO: check overflows
+							{
+						ret = asprintf(&str, "%d",
+								(int8_t)(((c) * 1) + (-128))); //TODO: check overflows
 					} else {
 						ret = -1;
 					}
@@ -368,8 +350,7 @@ static int gsoap_automata(struct READER_STRUCT *reader, struct soap *soap,
 		} /* case */
 			//pop AmbientLight
 
-
-		case 14://stateComplexBegin(Force)
+		case 14: //stateComplexBegin(Force)
 		{
 			label = 15; //assert 15==label+1
 
@@ -380,7 +361,6 @@ static int gsoap_automata(struct READER_STRUCT *reader, struct soap *soap,
 				soap_element_begin_out(soap, "sens:Force", 0, "");
 
 				//push Force: next 17
-
 
 			} else {
 				label = 17;
@@ -394,17 +374,15 @@ static int gsoap_automata(struct READER_STRUCT *reader, struct soap *soap,
 		{
 			label = 16; //assert 16==label+1
 
-
 			{
 
 				{
 					uint8_t c;
 					ret = read_bits(reader, (u_char *) &c, 8);
 					if (ret >= 0) //todo check for exact
-					{
-						ret
-								= asprintf(&str, "%d", (int8_t)(((c) * 1)
-										+ (-128))); //TODO: check overflows
+							{
+						ret = asprintf(&str, "%d",
+								(int8_t)(((c) * 1) + (-128))); //TODO: check overflows
 					} else {
 						ret = -1;
 					}
@@ -443,8 +421,7 @@ static int gsoap_automata(struct READER_STRUCT *reader, struct soap *soap,
 		} /* case */
 			//pop Force
 
-
-		case 17://stateComplexBegin(Temperature)
+		case 17: //stateComplexBegin(Temperature)
 		{
 			label = 18; //assert 18==label+1
 
@@ -455,7 +432,6 @@ static int gsoap_automata(struct READER_STRUCT *reader, struct soap *soap,
 				soap_element_begin_out(soap, "sens:Temperature", 0, "");
 
 				//push Temperature: next 20
-
 
 			} else {
 				label = 20;
@@ -469,17 +445,15 @@ static int gsoap_automata(struct READER_STRUCT *reader, struct soap *soap,
 		{
 			label = 19; //assert 19==label+1
 
-
 			{
 
 				{
 					uint8_t c;
 					ret = read_bits(reader, (u_char *) &c, 8);
 					if (ret >= 0) //todo check for exact
-					{
-						ret
-								= asprintf(&str, "%d", (int8_t)(((c) * 1)
-										+ (-128))); //TODO: check overflows
+							{
+						ret = asprintf(&str, "%d",
+								(int8_t)(((c) * 1) + (-128))); //TODO: check overflows
 					} else {
 						ret = -1;
 					}
@@ -518,12 +492,10 @@ static int gsoap_automata(struct READER_STRUCT *reader, struct soap *soap,
 		} /* case */
 			//pop Temperature
 
-
 		case 20: //stateComplexEnd(SensorConfig) : 1..1
 		{
 
 			label = 21; // Complex End
-
 
 			soap_element_end_out(soap, "sens:SensorConfig");
 
@@ -532,8 +504,7 @@ static int gsoap_automata(struct READER_STRUCT *reader, struct soap *soap,
 		} /* case */
 			//pop SensorConfig
 
-
-		case 21://stateComplexBegin(AllSensorConfig)
+		case 21: //stateComplexBegin(AllSensorConfig)
 		{
 			label = 22; //assert 22==label+1
 
@@ -543,11 +514,10 @@ static int gsoap_automata(struct READER_STRUCT *reader, struct soap *soap,
 
 			//push AllSensorConfig: next 
 
-
 			break;
 		} /* stateEnd */
 
-		case 22://stateComplexBegin(Acceleration)
+		case 22: //stateComplexBegin(Acceleration)
 		{
 			label = 23; //assert 23==label+1
 
@@ -558,7 +528,6 @@ static int gsoap_automata(struct READER_STRUCT *reader, struct soap *soap,
 				soap_element_begin_out(soap, "sens:Acceleration", 0, "");
 
 				//push Acceleration: next 25
-
 
 			} else {
 				label = 25;
@@ -572,17 +541,15 @@ static int gsoap_automata(struct READER_STRUCT *reader, struct soap *soap,
 		{
 			label = 24; //assert 24==label+1
 
-
 			{
 
 				{
 					uint8_t c;
 					ret = read_bits(reader, (u_char *) &c, 8);
 					if (ret >= 0) //todo check for exact
-					{
-						ret
-								= asprintf(&str, "%d", (int8_t)(((c) * 1)
-										+ (-128))); //TODO: check overflows
+							{
+						ret = asprintf(&str, "%d",
+								(int8_t)(((c) * 1) + (-128))); //TODO: check overflows
 					} else {
 						ret = -1;
 					}
@@ -621,8 +588,7 @@ static int gsoap_automata(struct READER_STRUCT *reader, struct soap *soap,
 		} /* case */
 			//pop Acceleration
 
-
-		case 25://stateComplexBegin(Audio)
+		case 25: //stateComplexBegin(Audio)
 		{
 			label = 26; //assert 26==label+1
 
@@ -633,7 +599,6 @@ static int gsoap_automata(struct READER_STRUCT *reader, struct soap *soap,
 				soap_element_begin_out(soap, "sens:Audio", 0, "");
 
 				//push Audio: next 28
-
 
 			} else {
 				label = 28;
@@ -647,17 +612,15 @@ static int gsoap_automata(struct READER_STRUCT *reader, struct soap *soap,
 		{
 			label = 27; //assert 27==label+1
 
-
 			{
 
 				{
 					uint8_t c;
 					ret = read_bits(reader, (u_char *) &c, 8);
 					if (ret >= 0) //todo check for exact
-					{
-						ret
-								= asprintf(&str, "%d", (int8_t)(((c) * 1)
-										+ (-128))); //TODO: check overflows
+							{
+						ret = asprintf(&str, "%d",
+								(int8_t)(((c) * 1) + (-128))); //TODO: check overflows
 					} else {
 						ret = -1;
 					}
@@ -696,8 +659,7 @@ static int gsoap_automata(struct READER_STRUCT *reader, struct soap *soap,
 		} /* case */
 			//pop Audio
 
-
-		case 28://stateComplexBegin(Light)
+		case 28: //stateComplexBegin(Light)
 		{
 			label = 29; //assert 29==label+1
 
@@ -708,7 +670,6 @@ static int gsoap_automata(struct READER_STRUCT *reader, struct soap *soap,
 				soap_element_begin_out(soap, "sens:Light", 0, "");
 
 				//push Light: next 31
-
 
 			} else {
 				label = 31;
@@ -722,17 +683,15 @@ static int gsoap_automata(struct READER_STRUCT *reader, struct soap *soap,
 		{
 			label = 30; //assert 30==label+1
 
-
 			{
 
 				{
 					uint8_t c;
 					ret = read_bits(reader, (u_char *) &c, 8);
 					if (ret >= 0) //todo check for exact
-					{
-						ret
-								= asprintf(&str, "%d", (int8_t)(((c) * 1)
-										+ (-128))); //TODO: check overflows
+							{
+						ret = asprintf(&str, "%d",
+								(int8_t)(((c) * 1) + (-128))); //TODO: check overflows
 					} else {
 						ret = -1;
 					}
@@ -771,8 +730,7 @@ static int gsoap_automata(struct READER_STRUCT *reader, struct soap *soap,
 		} /* case */
 			//pop Light
 
-
-		case 31://stateComplexBegin(AmbientLight)
+		case 31: //stateComplexBegin(AmbientLight)
 		{
 			label = 32; //assert 32==label+1
 
@@ -783,7 +741,6 @@ static int gsoap_automata(struct READER_STRUCT *reader, struct soap *soap,
 				soap_element_begin_out(soap, "sens:AmbientLight", 0, "");
 
 				//push AmbientLight: next 34
-
 
 			} else {
 				label = 34;
@@ -797,17 +754,15 @@ static int gsoap_automata(struct READER_STRUCT *reader, struct soap *soap,
 		{
 			label = 33; //assert 33==label+1
 
-
 			{
 
 				{
 					uint8_t c;
 					ret = read_bits(reader, (u_char *) &c, 8);
 					if (ret >= 0) //todo check for exact
-					{
-						ret
-								= asprintf(&str, "%d", (int8_t)(((c) * 1)
-										+ (-128))); //TODO: check overflows
+							{
+						ret = asprintf(&str, "%d",
+								(int8_t)(((c) * 1) + (-128))); //TODO: check overflows
 					} else {
 						ret = -1;
 					}
@@ -846,8 +801,7 @@ static int gsoap_automata(struct READER_STRUCT *reader, struct soap *soap,
 		} /* case */
 			//pop AmbientLight
 
-
-		case 34://stateComplexBegin(Force)
+		case 34: //stateComplexBegin(Force)
 		{
 			label = 35; //assert 35==label+1
 
@@ -858,7 +812,6 @@ static int gsoap_automata(struct READER_STRUCT *reader, struct soap *soap,
 				soap_element_begin_out(soap, "sens:Force", 0, "");
 
 				//push Force: next 37
-
 
 			} else {
 				label = 37;
@@ -872,17 +825,15 @@ static int gsoap_automata(struct READER_STRUCT *reader, struct soap *soap,
 		{
 			label = 36; //assert 36==label+1
 
-
 			{
 
 				{
 					uint8_t c;
 					ret = read_bits(reader, (u_char *) &c, 8);
 					if (ret >= 0) //todo check for exact
-					{
-						ret
-								= asprintf(&str, "%d", (int8_t)(((c) * 1)
-										+ (-128))); //TODO: check overflows
+							{
+						ret = asprintf(&str, "%d",
+								(int8_t)(((c) * 1) + (-128))); //TODO: check overflows
 					} else {
 						ret = -1;
 					}
@@ -921,8 +872,7 @@ static int gsoap_automata(struct READER_STRUCT *reader, struct soap *soap,
 		} /* case */
 			//pop Force
 
-
-		case 37://stateComplexBegin(Temperature)
+		case 37: //stateComplexBegin(Temperature)
 		{
 			label = 38; //assert 38==label+1
 
@@ -933,7 +883,6 @@ static int gsoap_automata(struct READER_STRUCT *reader, struct soap *soap,
 				soap_element_begin_out(soap, "sens:Temperature", 0, "");
 
 				//push Temperature: next 40
-
 
 			} else {
 				label = 40;
@@ -947,17 +896,15 @@ static int gsoap_automata(struct READER_STRUCT *reader, struct soap *soap,
 		{
 			label = 39; //assert 39==label+1
 
-
 			{
 
 				{
 					uint8_t c;
 					ret = read_bits(reader, (u_char *) &c, 8);
 					if (ret >= 0) //todo check for exact
-					{
-						ret
-								= asprintf(&str, "%d", (int8_t)(((c) * 1)
-										+ (-128))); //TODO: check overflows
+							{
+						ret = asprintf(&str, "%d",
+								(int8_t)(((c) * 1) + (-128))); //TODO: check overflows
 					} else {
 						ret = -1;
 					}
@@ -996,12 +943,10 @@ static int gsoap_automata(struct READER_STRUCT *reader, struct soap *soap,
 		} /* case */
 			//pop Temperature
 
-
 		case 40: //stateComplexEnd(AllSensorConfig) : 1..1
 		{
 
 			label = 41; // Complex End
-
 
 			soap_element_end_out(soap, "sens:AllSensorConfig");
 
@@ -1010,11 +955,9 @@ static int gsoap_automata(struct READER_STRUCT *reader, struct soap *soap,
 		} /* case */
 			//pop AllSensorConfig
 
-
 		case 41: //stateBegin(BatteryVoltage)
 		{
 			label = 42; //assert 42==label+1
-
 
 			{
 
@@ -1022,8 +965,9 @@ static int gsoap_automata(struct READER_STRUCT *reader, struct soap *soap,
 					uint16_t c;
 					ret = read_bits(reader, (u_char *) &c, 16);
 					if (ret >= 0) //todo check for exact
-					{
-						ret = asprintf(&str, "%u", (((c) * 1) + (0))); //TODO: check overflows
+							{
+						ret = asprintf(&str, "%u", (((c) * 1) + (0))
+						); //TODO: check overflows
 					} else {
 						ret = -1;
 					}
@@ -1054,7 +998,6 @@ static int gsoap_automata(struct READER_STRUCT *reader, struct soap *soap,
 		{
 			label = 43; //assert 43==label+1
 
-
 			{
 
 				{
@@ -1077,8 +1020,13 @@ static int gsoap_automata(struct READER_STRUCT *reader, struct soap *soap,
 							localtime_r(&t.tv_sec, &res));
 
 					if (ret > 0) {
-						ret = asprintf(&str, "%s.%06uZ", out, (uint32_t)(
-								(((uint64_t) t.tv_usec) * 1000000) >> 16));
+						ret = asprintf(
+								&str,
+								"%s.%06uZ",
+								out,
+								(uint32_t)(
+										(((uint64_t) t.tv_usec) * 1000000)
+												>> 16));
 					} else {
 						ret = -1;
 					}
@@ -1107,7 +1055,6 @@ static int gsoap_automata(struct READER_STRUCT *reader, struct soap *soap,
 		{
 			label = 44; //assert 44==label+1
 
-
 			{
 
 				{
@@ -1130,8 +1077,13 @@ static int gsoap_automata(struct READER_STRUCT *reader, struct soap *soap,
 							localtime_r(&t.tv_sec, &res));
 
 					if (ret > 0) {
-						ret = asprintf(&str, "%s.%06uZ", out, (uint32_t)(
-								(((uint64_t) t.tv_usec) * 1000000) >> 16));
+						ret = asprintf(
+								&str,
+								"%s.%06uZ",
+								out,
+								(uint32_t)(
+										(((uint64_t) t.tv_usec) * 1000000)
+												>> 16));
 					} else {
 						ret = -1;
 					}
@@ -1161,7 +1113,6 @@ static int gsoap_automata(struct READER_STRUCT *reader, struct soap *soap,
 
 			label = 45; // Complex End
 
-
 			soap_element_end_out(soap, "sens:Status");
 
 			break;
@@ -1169,9 +1120,7 @@ static int gsoap_automata(struct READER_STRUCT *reader, struct soap *soap,
 		} /* case */
 			//pop Status
 
-
 		default: //StopState
-
 
 			return 0;
 
