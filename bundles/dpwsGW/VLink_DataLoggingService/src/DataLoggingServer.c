@@ -36,63 +36,34 @@ static int soap_serve_StartLogging(struct soap *soap) //TODO: pass device contex
 
 		soap->omode |= SOAP_IO_CHUNK;
 
-		if (!To || (0 == strcmp(To, wsa_anonymousURI))) {
-			To = wsa_anonymousURI;
-		} else {
-
-		}
-
-		if (To != wsa_anonymousURI) // no strcmp needed -> s.a.
-		{
-			struct soap *reply_soap = soap_copy(soap);
-			if (reply_soap) {
-				soap_copy_stream(reply_soap, soap);
-				soap_clr_omode(reply_soap, SOAP_ENC_MIME | SOAP_ENC_DIME
-						| SOAP_ENC_MTOM);
-				soap->socket = SOAP_INVALID_SOCKET; /* prevents close */
-				if (soap_connect(soap, To, Action)) /*Todo: can this be delayed ??*/
-					return soap->error;
-				soap_send_empty_response(reply_soap, SOAP_OK); /* HTTP ACCEPTED */
-				soap_closesock(reply_soap);
-				soap_end(reply_soap);
-				soap_free(reply_soap);
-				/*
-				 data->fresponse = soap->fresponse;
-				 soap->fresponse = soap_wsa_response;
-				 response will be a POST */
-			} else
-				return soap->error;
-		} else {
-			if (soap_response(soap, SOAP_OK) != SOAP_OK)
-				return soap->error;
-		}
-
-		wsa_header_gen_response(soap, NULL, To, Action, MessageId,
-				sizeof(struct SOAP_ENV__Header));
+		wsa_response(soap, NULL, To, Action, MessageId,
+						sizeof(struct SOAP_ENV__Header));
 	}
 
-	if (soap_envelope_begin_out(soap) || soap_putheader(soap)
+	{
+			char * buf;
+			ssize_t len = rcv_buf(device, service_id, op_id, soap, &buf);
+
+			if (ret == DLERR_NotReady) {
+				soap->error = soap_receiver_fault(soap, "Node not ready. Please stop the node first.", NULL);
+				return soap->error;
+			} else if (ret == DLERR_NotCleared) {
+				soap->error = soap_receiver_fault(soap, "Node has not been cleared. Please erase previous session first.", NULL);
+				return soap->error;
+			} else if (ret == DLERR_GW_Busy) {
+				soap->error = soap_receiver_fault(soap, "Gateway is busy. Please stop all other nodes first.", NULL);
+				return soap->error;
+			}
+
+
+		}
+
+	if (soap_response(soap, SOAP_OK) || soap_envelope_begin_out(soap) || soap_putheader(soap)
 			|| soap_body_begin_out(soap)) {
 		return soap->error;
 	}
 
-	{
-		char * buf;
-		ssize_t len = rcv_buf(device, service_id, op_id, soap, &buf);
 
-		if (ret == DLERR_NotReady) {
-			soap->error = soap_receiver_fault(soap, "Node not ready. Please stop the node first.", NULL);
-			return soap->error;
-		} else if (ret == DLERR_NotCleared) {
-			soap->error = soap_receiver_fault(soap, "Node has not been cleared. Please erase previous session first.", NULL);
-			return soap->error;
-		} else if (ret == DLERR_GW_Busy) {
-			soap->error = soap_receiver_fault(soap, "Gateway is busy. Please stop all other nodes first.", NULL);
-			return soap->error;
-		}
-
-
-	}
 
 	if (soap_body_end_out(soap) || soap_envelope_end_out(soap)
 			|| soap_end_send(soap)) {
@@ -119,63 +90,34 @@ static int soap_serve_StartDownload(struct soap *soap)
 
 		soap->omode |= SOAP_IO_CHUNK;
 
-		if (!To || (0 == strcmp(To, wsa_anonymousURI))) {
-			To = wsa_anonymousURI;
-		} else {
-
-		}
-
-		if (To != wsa_anonymousURI) // no strcmp needed -> s.a.
-		{
-			struct soap *reply_soap = soap_copy(soap);
-			if (reply_soap) {
-				soap_copy_stream(reply_soap, soap);
-				soap_clr_omode(reply_soap, SOAP_ENC_MIME | SOAP_ENC_DIME
-						| SOAP_ENC_MTOM);
-				soap->socket = SOAP_INVALID_SOCKET; /* prevents close */
-				if (soap_connect(soap, To, Action)) /*Todo: can this be delayed ??*/
-					return soap->error;
-				soap_send_empty_response(reply_soap, SOAP_OK); /* HTTP ACCEPTED */
-				soap_closesock(reply_soap);
-				soap_end(reply_soap);
-				soap_free(reply_soap);
-				/*
-				 data->fresponse = soap->fresponse;
-				 soap->fresponse = soap_wsa_response;
-				 response will be a POST */
-			} else
-				return soap->error;
-		} else {
-			if (soap_response(soap, SOAP_OK) != SOAP_OK)
-				return soap->error;
-		}
-
-		wsa_header_gen_response(soap, NULL, To, Action, MessageId,
-				sizeof(struct SOAP_ENV__Header));
+		wsa_response(soap, NULL, To, Action, MessageId,
+						sizeof(struct SOAP_ENV__Header));
 	}
 
-	if (soap_envelope_begin_out(soap) || soap_putheader(soap)
+	{
+			char * buf;
+			ssize_t len = rcv_buf(device, service_id, op_id, soap, &buf);
+
+			if (ret == DLERR_NotReady) {
+				soap->error = soap_receiver_fault(soap, "Node not ready. Please stop the node first.", NULL);
+				return soap->error;
+			} else if (ret == DLERR_NoSessions) {
+				soap->error = soap_receiver_fault(soap, "Node does not contain any sessions. Please start a logging session first.", NULL);
+				return soap->error;
+			} else if (ret == DLERR_GW_Busy) {
+				soap->error = soap_receiver_fault(soap, "Gateway is busy. Please stop all other nodes first.", NULL);
+				return soap->error;
+			}
+
+
+		}
+
+	if (soap_response(soap, SOAP_OK) || soap_envelope_begin_out(soap) || soap_putheader(soap)
 			|| soap_body_begin_out(soap)) {
 		return soap->error;
 	}
 
-	{
-		char * buf;
-		ssize_t len = rcv_buf(device, service_id, op_id, soap, &buf);
 
-		if (ret == DLERR_NotReady) {
-			soap->error = soap_receiver_fault(soap, "Node not ready. Please stop the node first.", NULL);
-			return soap->error;
-		} else if (ret == DLERR_NoSessions) {
-			soap->error = soap_receiver_fault(soap, "Node does not contain any sessions. Please start a logging session first.", NULL);
-			return soap->error;
-		} else if (ret == DLERR_GW_Busy) {
-			soap->error = soap_receiver_fault(soap, "Gateway is busy. Please stop all other nodes first.", NULL);
-			return soap->error;
-		}
-
-
-	}
 
 	if (soap_body_end_out(soap) || soap_envelope_end_out(soap)
 			|| soap_end_send(soap)) {
@@ -202,60 +144,34 @@ static int soap_serve_Erase(struct soap *soap)
 
 		soap->omode |= SOAP_IO_CHUNK;
 
-		if (!To || (0 == strcmp(To, wsa_anonymousURI))) {
-			To = wsa_anonymousURI;
-		} else {
-
-		}
-
-		if (To != wsa_anonymousURI) // no strcmp needed -> s.a.
-		{
-			struct soap *reply_soap = soap_copy(soap);
-			if (reply_soap) {
-				soap_copy_stream(reply_soap, soap);
-				soap_clr_omode(reply_soap, SOAP_ENC_MIME | SOAP_ENC_DIME
-						| SOAP_ENC_MTOM);
-				soap->socket = SOAP_INVALID_SOCKET; /* prevents close */
-				if (soap_connect(soap, To, Action)) /*Todo: can this be delayed ??*/
-					return soap->error;
-				soap_send_empty_response(reply_soap, SOAP_OK); /* HTTP ACCEPTED */
-				soap_closesock(reply_soap);
-				soap_end(reply_soap);
-				soap_free(reply_soap);
-				/*
-				 data->fresponse = soap->fresponse;
-				 soap->fresponse = soap_wsa_response;
-				 response will be a POST */
-			} else
-				return soap->error;
-		} else {
-			if (soap_response(soap, SOAP_OK) != SOAP_OK)
-				return soap->error;
-		}
+		wsa_response(soap, NULL, To, Action, MessageId,
+						sizeof(struct SOAP_ENV__Header));
 
 		wsa_header_gen_response(soap, NULL, To, Action, MessageId,
 				sizeof(struct SOAP_ENV__Header));
 	}
 
-	if (soap_envelope_begin_out(soap) || soap_putheader(soap)
+	{
+			char * buf;
+			ssize_t len = rcv_buf(device, service_id, op_id, soap, &buf);
+
+			if (ret == DLERR_NotReady) {
+				soap->error = soap_receiver_fault(soap, "Node not ready. Please stop the node first.", NULL);
+				return soap->error;
+			} else if (ret == DLERR_GW_Busy) {
+				soap->error = soap_receiver_fault(soap, "Gateway is busy. Please stop all other nodes first.", NULL);
+				return soap->error;
+			}
+
+
+		}
+
+	if (soap_response(soap, SOAP_OK) ||soap_envelope_begin_out(soap) || soap_putheader(soap)
 			|| soap_body_begin_out(soap)) {
 		return soap->error;
 	}
 
-	{
-		char * buf;
-		ssize_t len = rcv_buf(device, service_id, op_id, soap, &buf);
 
-		if (ret == DLERR_NotReady) {
-			soap->error = soap_receiver_fault(soap, "Node not ready. Please stop the node first.", NULL);
-			return soap->error;
-		} else if (ret == DLERR_GW_Busy) {
-			soap->error = soap_receiver_fault(soap, "Gateway is busy. Please stop all other nodes first.", NULL);
-			return soap->error;
-		}
-
-
-	}
 
 	if (soap_body_end_out(soap) || soap_envelope_end_out(soap)
 			|| soap_end_send(soap)) {
@@ -288,62 +204,37 @@ static int soap_serve_GetSessionCount(struct soap *soap)
 
 		}
 
-		if (To != wsa_anonymousURI) // no strcmp needed -> s.a.
-		{
-			struct soap *reply_soap = soap_copy(soap);
-			if (reply_soap) {
-				soap_copy_stream(reply_soap, soap);
-				soap_clr_omode(reply_soap, SOAP_ENC_MIME | SOAP_ENC_DIME
-						| SOAP_ENC_MTOM);
-				soap->socket = SOAP_INVALID_SOCKET; /* prevents close */
-				if (soap_connect(soap, To, Action)) /*Todo: can this be delayed ??*/
-					return soap->error;
-				soap_send_empty_response(reply_soap, SOAP_OK); /* HTTP ACCEPTED */
-				soap_closesock(reply_soap);
-				soap_end(reply_soap);
-				soap_free(reply_soap);
-				/*
-				 data->fresponse = soap->fresponse;
-				 soap->fresponse = soap_wsa_response;
-				 response will be a POST */
-			} else
-				return soap->error;
-		} else {
-			if (soap_response(soap, SOAP_OK) != SOAP_OK)
-				return soap->error;
-		}
-
-		wsa_header_gen_response(soap, NULL, To, Action, MessageId,
-				sizeof(struct SOAP_ENV__Header));
+		wsa_response(soap, NULL, To, Action, MessageId,
+						sizeof(struct SOAP_ENV__Header));
 	}
 
-	if (soap_envelope_begin_out(soap) || soap_putheader(soap)
+
+			session_info info;
+			session_info * info_ptr = &info;
+			ssize_t len = rcv_buf(device, service_id, op_id, soap, (char**)&info_ptr);
+
+			if (ret == DLERR_NotReady) {
+				soap->error = soap_receiver_fault(soap, "Node not ready. Please stop the node first.", NULL);
+				return soap->error;
+			} else if (ret == DLERR_GW_Busy) {
+				soap->error = soap_receiver_fault(soap, "Gateway is busy. Please stop all other nodes first.", NULL);
+				return soap->error;
+			}
+
+			if (len < 0) {
+				soap->error = soap_receiver_fault(soap, "No reply from Node", NULL);
+				return soap->error;
+			}
+
+
+
+	if (soap_response(soap, SOAP_OK) ||soap_envelope_begin_out(soap) || soap_putheader(soap)
 			|| soap_body_begin_out(soap)) {
 		return soap->error;
 	}
 
-	{
-		session_info info;
-		session_info * info_ptr = &info;
-		ssize_t len = rcv_buf(device, service_id, op_id, soap, (char**)&info_ptr);
-
-		if (ret == DLERR_NotReady) {
-			soap->error = soap_receiver_fault(soap, "Node not ready. Please stop the node first.", NULL);
-			return soap->error;
-		} else if (ret == DLERR_GW_Busy) {
-			soap->error = soap_receiver_fault(soap, "Gateway is busy. Please stop all other nodes first.", NULL);
-			return soap->error;
-		}
-
-		if (len < 0) {
-			soap->error = soap_receiver_fault(soap, "No reply from Node", NULL);
-			return soap->error;
-		}
-
 		writeSessionCount(soap,info_ptr);
 
-
-	}
 
 	if (soap_body_end_out(soap) || soap_envelope_end_out(soap)
 			|| soap_end_send(soap)) {
