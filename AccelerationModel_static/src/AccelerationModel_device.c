@@ -390,6 +390,7 @@ int MODEL(set_wsdl(struct dpws_s *device)) {
 			"									<enumeration value=\"1/3600\"/>"
 			"								</restriction>\n"
 			"							</simpleType>\n"
+			"						<element maxOccurs=\"1\" minOccurs=\"1\" name=\"duration\" type=\"nonNegativeInteger\"/>\n"
 			"						</element>\n"
 			"					</sequence>\n"
 			"				</complexType>\n"
