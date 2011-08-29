@@ -31,38 +31,28 @@ static int soap_serve_GetSensorValues(struct soap *soap) //TODO: pass device con
 
 		wsa_response(soap, NULL, To, Action, MessageId,
 				sizeof(struct SOAP_ENV__Header));
+
 	}
-				
-
-	return (soap->error = soap_receiver_fault(soap, "This is a test fault", NULL));
-
-
 
 	{
 		char * buf;
 		ssize_t len = rcv_buf(device, service_id, op_id, soap, &buf);
 
-        
 		if (len < 0) {
 			soap->error = soap_receiver_fault(soap, "No reply from Node", NULL);
 			return soap->error;
+		} else {
+			if (soap_response(soap, SOAP_OK) || soap_envelope_begin_out(soap)
+					|| soap_putheader(soap) || soap_body_begin_out(soap)) {
+				return soap->error;
+			}
 		}
-		else
-		{
-			   	if (soap_response(soap, SOAP_OK) != SOAP_OK)
-			   		return soap->error;
-				if (soap_envelope_begin_out(soap) || soap_putheader(soap)
-						|| soap_body_begin_out(soap)) {
-					return soap->error;
-				}
-		}
-		
-
 		struct READER_STRUCT* reader = read_bits_bufreader_stack_new(buf, len);
 
 		{
 			Sample_bin2sax_run(reader, soap);
 		}
+
 	}
 
 	if (soap_body_end_out(soap) || soap_envelope_end_out(soap)
@@ -111,11 +101,6 @@ static int soap_serve_Config(struct soap *soap) //TODO: pass device context
 
 	}
 
-	if (soap_envelope_begin_out(soap) || soap_putheader(soap)
-			|| soap_body_begin_out(soap)) {
-		return soap->error;
-	}
-
 	{
 		char * buf;
 		ssize_t len = rcv_buf(device, service_id, op_id, soap, &buf);
@@ -123,6 +108,11 @@ static int soap_serve_Config(struct soap *soap) //TODO: pass device context
 		if (len < 0) {
 			soap->error = soap_receiver_fault(soap, "No reply from Node", NULL);
 			return soap->error;
+		} else {
+			if (soap_response(soap, SOAP_OK) || soap_envelope_begin_out(soap)
+					|| soap_putheader(soap) || soap_body_begin_out(soap)) {
+				return soap->error;
+			}
 		}
 		struct READER_STRUCT* reader = read_bits_bufreader_stack_new(buf, len);
 
