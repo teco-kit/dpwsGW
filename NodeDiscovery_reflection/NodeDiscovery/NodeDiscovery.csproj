@@ -83,6 +83,21 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Reference.svcmap</DependentUpon>
     </Compile>
+    <Compile Include="Service References\VLinkDataLogging\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
+    <Compile Include="Service References\VLinkDeviceInfoService\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
+    <Compile Include="Service References\VLinkStreaming\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
     <Compile Include="Service References\WSEventing\Reference.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -94,12 +109,15 @@
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Acceleration.wsdl" />
     <None Include="Addressing.xsd">
       <SubType>Designer</SubType>
     </None>
     <None Include="app.config">
       <SubType>Designer</SubType>
     </None>
+    <None Include="DataLogging.wsdl" />
+    <None Include="DeviceInfo.wsdl" />
     <None Include="DevicesProfile.xsd">
       <SubType>Designer</SubType>
     </None>
@@ -129,6 +147,15 @@
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
     <None Include="Service References\SensorValuesFH\SensorValues.wsdl" />
+    <None Include="Service References\VLinkDataLogging\DataLoggingService.wsdl" />
+    <None Include="Service References\VLinkDataLogging\NodeDiscovery.VLinkDataLogging.SessionInfo.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\VLinkDeviceInfoService\DeviceInfoService.wsdl" />
+    <None Include="Service References\VLinkDeviceInfoService\NodeDiscovery.VLinkDeviceInfoService.StatusMessage.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\VLinkStreaming\StreamingService.wsdl" />
     <None Include="Service References\WSEventing\default.xsd">
       <SubType>Designer</SubType>
     </None>
@@ -148,6 +175,9 @@
     <None Include="Service References\WSEventing\xml.xsd">
       <SubType>Designer</SubType>
     </None>
+    <None Include="VLink_DataLogging.wsdl" />
+    <None Include="VLink_DeviceInfo.wsdl" />
+    <None Include="VLink_Streaming.wsdl" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Service References\Gateway\configuration91.svcinfo" />
@@ -169,6 +199,9 @@
     <WCFMetadataStorage Include="Service References\DeviceInfoService\" />
     <WCFMetadataStorage Include="Service References\Gateway\" />
     <WCFMetadataStorage Include="Service References\SensorValuesFH\" />
+    <WCFMetadataStorage Include="Service References\VLinkDataLogging\" />
+    <WCFMetadataStorage Include="Service References\VLinkDeviceInfoService\" />
+    <WCFMetadataStorage Include="Service References\VLinkStreaming\" />
     <WCFMetadataStorage Include="Service References\WSEventing\" />
   </ItemGroup>
   <ItemGroup>
@@ -215,6 +248,42 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Service References\SensorValuesFH\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\VLinkDeviceInfoService\configuration91.svcinfo" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\VLinkDeviceInfoService\configuration.svcinfo" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\VLinkDeviceInfoService\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\VLinkDataLogging\configuration91.svcinfo" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\VLinkDataLogging\configuration.svcinfo" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\VLinkDataLogging\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\VLinkStreaming\configuration91.svcinfo" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\VLinkStreaming\configuration.svcinfo" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\VLinkStreaming\Reference.svcmap">
       <Generator>WCF Proxy Generator</Generator>
       <LastGenOutput>Reference.cs</LastGenOutput>
     </None>

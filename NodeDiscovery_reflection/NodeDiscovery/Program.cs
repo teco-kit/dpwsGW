@@ -175,7 +175,8 @@ Contact N. L. Fantana (nicolaie.fantana@de.abb.com)
         {
             // Add SSimp Device to known devices
             deviceTypes.Add(new System.Xml.XmlQualifiedName("SSimpDeviceType", "http://www.teco.edu/SensorValues"), typeof(edu.teco.DPWS.SSimp.SSimpDevice));
-            deviceTypes.Add(new System.Xml.XmlQualifiedName("AccelerationDeviceType", "http://www.teco.edu/AccelerationModel"), typeof(edu.teco.DPWS.MStr.MStrDevice));
+            deviceTypes.Add(new System.Xml.XmlQualifiedName("AccelerationDeviceType", "http://www.teco.edu/AccelerationModel"), typeof(edu.teco.DPWS.MStr.GLink.MStrDevice));
+            deviceTypes.Add(new System.Xml.XmlQualifiedName("VLinkDeviceType", "http://www.teco.edu/VLinkModel"), typeof(edu.teco.DPWS.MStr.VLink.MStrDevice));
             deviceTypes.Add(new System.Xml.XmlQualifiedName("WirelessSensorNode", "http://www.iis.fraunhofer.de/kom/abt/wsn/"), typeof(edu.teco.DPWS.SSimpFH.WirelessSensorNode));
         }
 
