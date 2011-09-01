@@ -18,6 +18,9 @@ HEXFILE=$(TARGET)_$(SUFFIX).hex
 
 CFLAGS+=I+=../../SensorValuesService/src-gen/ I+=../../edu.teco.dpws.generator/shared/include/ I+=../../edu.teco.dpws.generator/shared/src/ I+=../../edu.teco.decenc/bitsio/ #+Y=3
 
+bin/$(HEXFILE): $(HEXFILE)
+	cp $< $@
+
 all: build
 
 build:$(HEXFILE)
@@ -27,7 +30,7 @@ include $(PBS)/Mk/ccsc.mk
 
 
 %_$(SUFFIX).c:%.c
-	@printf '$(foreach D,$(SUFFIX_DEFINES),#define $(D) $(value $(D))\n)#IGNORE_WARNINGS %s\n#include "%s"\n' "$(IGNORE_WARNINGS)" $< >$(@)
+	@printf '$(foreach D,$(SUFFIX_DEFINES),#define $(D) $(value $(D))\n)#IGNORE_WARNINGS %s\n#include "../%s"\n' "$(IGNORE_WARNINGS)" $< >$(@)
 
 .PRECIOUS: %_$(SUFFIX).c
 
