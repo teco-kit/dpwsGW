@@ -1,8 +1,0 @@
-service: acs_service
-wsdl: AirConditioner.wsdl
-xml: acs_service.xml
-version: 0.1
-start: start.lua
-stop: stop.lua
-resolve: resolve.lua
-isAlive: isAlive.lua
