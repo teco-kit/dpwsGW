@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsm:Metadata xmlns:wsm="http://schemas.xmlsoap.org/ws/2004/09/mex" 
+            xmlns:hostingService="http://www.uni-rostock.de/schemas/hostingService" 
+            xmlns:wdp="http://schemas.xmlsoap.org/ws/2006/02/devprof" 
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+            xmlns:wsd="http://schemas.xmlsoap.org/ws/2005/04/discovery" 
+            xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing" 
+            xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <wsm:MetadataSection Dialect="http://schemas.xmlsoap.org/ws/2006/02/devprof/Relationship">
+    <wdp:Relationship Type="http://schemas.xmlsoap.org/ws/2006/02/devprof/host">
+      <wdp:Host>
+        <wdp:Types>hostingService:hostingService</wdp:Types>
+        <wdp:ServiceId>DPWS-HostingService</wdp:ServiceId>
+        <wsa:EndpointReference>
+          <wsa:Address>http://host:0/</wsa:Address>
+        </wsa:EndpointReference>
+      </wdp:Host>
+    </wdp:Relationship>
+  </wsm:MetadataSection>
+  <wsm:MetadataSection Dialect="http://schemas.xmlsoap.org/ws/2006/02/devprof/ThisModel">
+    <wdp:ThisModel>
+      <wdp:Manufacturer xml:lang="de">Universität Rostock</wdp:Manufacturer>
+      <wdp:Manufacturer xml:lang="en">University of Rostock</wdp:Manufacturer>
+      <wdp:ManufacturerUrl>http://www.uni-rostock.de</wdp:ManufacturerUrl>
+      <wdp:ModelName xml:lang="de">Hosting Service</wdp:ModelName>
+      <wdp:ModelName xml:lang="en">Hosting Service</wdp:ModelName>
+      <wdp:ModelNumber>1.0</wdp:ModelNumber>
+      <wdp:ModelUrl>http://www.uni-rostock.de</wdp:ModelUrl>
+    </wdp:ThisModel>
+  </wsm:MetadataSection>
+  <wsm:MetadataSection Dialect="http://schemas.xmlsoap.org/ws/2006/02/devprof/ThisDevice">
+    <wdp:ThisDevice>
+      <wdp:FriendlyName xml:lang="de">Universal Hosting Service</wdp:FriendlyName>
+      <wdp:FriendlyName xml:lang="en">Universal Hosting Service</wdp:FriendlyName>
+      <wdp:FirmwareVersion>Version 0.1</wdp:FirmwareVersion>
+      <wdp:SerialNumber>234d5e4f-c23f-4d91-84ba-1f159284b37a</wdp:SerialNumber>
+    </wdp:ThisDevice>
+  </wsm:MetadataSection>
+</wsm:Metadata>
