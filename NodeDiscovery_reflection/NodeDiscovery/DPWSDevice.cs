@@ -787,7 +787,7 @@ namespace edu.teco.DPWS
                     return "StreamingService";
                 }
 
-                [DPWSSubscription("Subscribe to the service", "http://www.teco.edu/VLink/StreamingService/AccelerationServiceEventOut")]
+                [DPWSSubscription("Subscribe to the service", "http://www.teco.edu/VLink/StreamingService/StreamingServiceEventOut")]
                 public void Subscribe(Object client)
                 {
                     NodeDiscovery.VLinkStreaming.StreamingServiceClient asclient = (NodeDiscovery.VLinkStreaming.StreamingServiceClient)client;
@@ -948,7 +948,7 @@ namespace edu.teco.DPWS
 
                 }
 
-                [DPWSSubscription("Subscribe to the service", "http://www.teco.edu/DataLoggingService/DataLoggingServiceEventOut")]
+                [DPWSSubscription("Subscribe to the service", "http://www.teco.edu/VLink/DataLoggingService/DataLoggingServiceEventOut")]
                 public void Subscribe(Object client)
                 {
                     NodeDiscovery.VLinkDataLogging.DataLoggingServiceClient dlclient = (NodeDiscovery.VLinkDataLogging.DataLoggingServiceClient)client;
