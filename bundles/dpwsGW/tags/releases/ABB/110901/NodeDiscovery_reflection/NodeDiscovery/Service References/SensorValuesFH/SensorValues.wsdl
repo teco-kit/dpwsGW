@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:tns="http://www.iis.fraunhofer.de/kom/abt/wsn/SensorValues" xmlns:wsa="http://www.w3.org/2006/05/addressing/wsdl" name="SensorValues" targetNamespace="http://www.iis.fraunhofer.de/kom/abt/wsn/SensorValues" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <xs:schema elementFormDefault="qualified" targetNamespace="http://www.iis.fraunhofer.de/kom/abt/wsn/SensorValues" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+      <xs:element name="Series" type="tns:Series" />
+      <xs:complexType name="Fragment">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="count" type="xs:byte" />
+          <xs:element minOccurs="0" name="delta_t" type="xs:duration" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="Series">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="timeStamp" type="xs:dateTime" />
+          <xs:element maxOccurs="unbounded" name="sample" type="tns:Sample" />
+          <xs:element minOccurs="0" name="fragment" type="tns:Fragment" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="Config" type="tns:Configuration" />
+      <xs:complexType name="Configuration" />
+      <xs:complexType name="SHT7x_Sample">
+        <xs:sequence>
+          <xs:element name="value" type="xs:float" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="Sample">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="Temperature" type="tns:SHT7x_Sample" />
+          <xs:element minOccurs="0" name="delta_t" type="xs:duration" />
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="SensorConfigurationType">
+        <xs:complexContent mixed="false">
+          <xs:extension base="tns:Configuration">
+            <xs:sequence>
+              <xs:any />
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+    </xs:schema>
+  </wsdl:types>
+  <wsdl:message name="GetSensorValuesMessageIn" />
+  <wsdl:message name="GetSensorValuesMessageOut">
+    <wsdl:part name="out" element="tns:Series" />
+  </wsdl:message>
+  <wsdl:message name="Empty" />
+  <wsdl:message name="ConfigRequest">
+    <wsdl:part name="in" element="tns:Config" />
+  </wsdl:message>
+  <wsdl:message name="ConfigResponse">
+    <wsdl:part name="out" element="tns:Config" />
+  </wsdl:message>
+  <wsdl:portType name="SensorValues">
+    <wsdl:operation name="GetSensorValues">
+      <wsdl:input wsa:Action="http://www.iis.fraunhofer.de/kom/abt/wsn/SensorValues/GetSensorValuesIn" message="tns:GetSensorValuesMessageIn" />
+      <wsdl:output wsa:Action="http://www.iis.fraunhofer.de/kom/abt/wsn/SensorValues/GetSensorValuesOut" message="tns:GetSensorValuesMessageOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetConfig">
+      <wsdl:input wsa:Action="http://www.iis.fraunhofer.de/kom/abt/wsn/SensorValues/GetConfigRequest" message="tns:Empty" />
+      <wsdl:output wsa:Action="http://www.iis.fraunhofer.de/kom/abt/wsn/SensorValues/GetConfigResponse" message="tns:ConfigResponse" />
+    </wsdl:operation>
+    <wsdl:operation name="SetConfig">
+      <wsdl:input wsa:Action="http://www.iis.fraunhofer.de/kom/abt/wsn/SensorValues/SetConfigRequest" message="tns:ConfigRequest" />
+      <wsdl:output wsa:Action="http://www.iis.fraunhofer.de/kom/abt/wsn/SensorValues/SetConfigResponse" message="tns:ConfigResponse" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="SensorValuesSOAP" type="tns:SensorValues">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="GetSensorValues">
+      <soap:operation soapAction="" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetConfig">
+      <soap:operation soapAction="" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SetConfig">
+      <soap:operation soapAction="" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="SensorValues">
+    <wsdl:port name="SensorValues" binding="tns:SensorValuesSOAP" />
+  </wsdl:service>
+</wsdl:definitions>
