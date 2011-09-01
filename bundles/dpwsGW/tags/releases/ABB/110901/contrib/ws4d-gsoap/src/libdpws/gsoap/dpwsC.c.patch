@@ -1,0 +1,72 @@
+--- gen/dpwsC.c.orig	2009-11-03 18:48:28.849001400 +0100
++++ gen/dpwsC.c	2009-11-05 13:42:35.570634600 +0100
+@@ -4807,15 +4807,15 @@
+ 		soap_set_attr(soap, "-anyAttribute", a->__anyAttribute);
+ 	if (soap_element_begin_out(soap, tag, soap_embedded_id(soap, id, a, SOAP_TYPE_wse__NotifyTo), type))
+ 		return soap->error;
+-	if (soap_out_string(soap, "wse:Address", -1, &a->Address, ""))
++	if (soap_out_string(soap, "wsa:Address", -1, &a->Address, ""))
+ 		return soap->error;
+-	if (soap_out_PointerTowsa__ReferencePropertiesType(soap, "wse:ReferenceProperties", -1, &a->ReferenceProperties, ""))
++	if (soap_out_PointerTowsa__ReferencePropertiesType(soap, "wsa:ReferenceProperties", -1, &a->ReferenceProperties, ""))
+ 		return soap->error;
+-	if (soap_out_PointerTowsa__ReferenceParametersType(soap, "wse:ReferenceParameters", -1, &a->ReferenceParameters, ""))
++	if (soap_out_PointerTowsa__ReferenceParametersType(soap, "wsa:ReferenceParameters", -1, &a->ReferenceParameters, ""))
+ 		return soap->error;
+-	if (soap_out__QName(soap, "wse:PortType", -1, (char*const*)&soap_tmp_PortType, ""))
++	if (soap_out__QName(soap, "wsa:PortType", -1, (char*const*)&soap_tmp_PortType, ""))
+ 		return soap->error;
+-	if (soap_out_PointerTowsa__ServiceNameType(soap, "wse:ServiceName", -1, &a->ServiceName, ""))
++	if (soap_out_PointerTowsa__ServiceNameType(soap, "wsa:ServiceName", -1, &a->ServiceName, ""))
+ 		return soap->error;
+ 	if (a->__any)
+ 	{	int i;
+@@ -4854,27 +4854,27 @@
+ 		for (;;)
+ 		{	soap->error = SOAP_TAG_MISMATCH;
+ 			if (soap_flag_Address && (soap->error == SOAP_TAG_MISMATCH || soap->error == SOAP_NO_TAG))
+-				if (soap_in_string(soap, "wse:Address", &a->Address, "xsd:string"))
++				if (soap_in_string(soap, "wsa:Address", &a->Address, "xsd:string"))
+ 				{	soap_flag_Address--;
+ 					continue;
+ 				}
+ 			if (soap_flag_ReferenceProperties && soap->error == SOAP_TAG_MISMATCH)
+-				if (soap_in_PointerTowsa__ReferencePropertiesType(soap, "wse:ReferenceProperties", &a->ReferenceProperties, "wsa:ReferencePropertiesType"))
++				if (soap_in_PointerTowsa__ReferencePropertiesType(soap, "wsa:ReferenceProperties", &a->ReferenceProperties, "wsa:ReferencePropertiesType"))
+ 				{	soap_flag_ReferenceProperties--;
+ 					continue;
+ 				}
+ 			if (soap_flag_ReferenceParameters && soap->error == SOAP_TAG_MISMATCH)
+-				if (soap_in_PointerTowsa__ReferenceParametersType(soap, "wse:ReferenceParameters", &a->ReferenceParameters, "wsa:ReferenceParametersType"))
++				if (soap_in_PointerTowsa__ReferenceParametersType(soap, "wsa:ReferenceParameters", &a->ReferenceParameters, "wsa:ReferenceParametersType"))
+ 				{	soap_flag_ReferenceParameters--;
+ 					continue;
+ 				}
+ 			if (soap_flag_PortType && soap->error == SOAP_TAG_MISMATCH)
+-				if (soap_in_PointerTo_QName(soap, "wse:PortType", &a->PortType, ""))
++				if (soap_in_PointerTo_QName(soap, "wsa:PortType", &a->PortType, ""))
+ 				{	soap_flag_PortType--;
+ 					continue;
+ 				}
+ 			if (soap_flag_ServiceName && soap->error == SOAP_TAG_MISMATCH)
+-				if (soap_in_PointerTowsa__ServiceNameType(soap, "wse:ServiceName", &a->ServiceName, "wsa:ServiceNameType"))
++				if (soap_in_PointerTowsa__ServiceNameType(soap, "wsa:ServiceName", &a->ServiceName, "wsa:ServiceNameType"))
+ 				{	soap_flag_ServiceName--;
+ 					continue;
+ 				}
+@@ -8987,6 +8987,15 @@
+ 				{	soap_flag___any = 0;
+ 					continue;
+ 				}
++#define REF_PARAM_HACK 1
++#ifdef REF_PARAM_HACK
++				else if(a->__any=soap_in_xsd__anyType(soap, NULL, NULL, "xsd:anyType"))
++				{
++						a->__type=SOAP_TYPE_xsd__anyType;
++						soap_flag___any = 0;
++						continue;
++				}
++#endif
+ 			if (soap->error == SOAP_TAG_MISMATCH)
+ 				soap->error = soap_ignore_element(soap);
+ 			if (soap->error == SOAP_NO_TAG)
