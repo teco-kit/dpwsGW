@@ -4,15 +4,15 @@ TOPDIR=$(dir $(firstword $(MAKEFILE_LIST)))
 
 # until we allow dynamic loading
 ifeq ($(findstring microstrain,$(PLATFORM)),microstrain)
-DEVICES+=AccelerationModel_static
+DEVICES=AccelerationModel_static
 endif
 
 ifeq ($(findstring ip,$(PLATFORM)),ip)
-DEVICES+=SSimpDevice
+DEVICES=SSimpDevice
 endif
 
 ifeq ($(findstring pPart,$(PLATFORM)),pPart)
-DEVICES+=SSimpDevice
+DEVICES=SSimpDevice
 endif
 ####
 

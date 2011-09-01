@@ -27,6 +27,8 @@ static char *listening_port = "0";
 
 
 
+static int mute=0;
+static int simerror=0;
 static int eventing_state = EVENTING_OFF;
 static int operation_state = OPERATION_OFF;
 static int sockfd, eventing_listener,operation_listener;
@@ -218,7 +220,7 @@ int node_discovery_listen(int hello_sock, struct addrinfo *hello_info) {
 
 		if (select(fd_max + 1, &read_fds, NULL, NULL, &tv) == -1) {
 			perror("select");
-			exit(4);
+		//	exit(4);
 		}
 
 		if (eventing_listener != -1 && FD_ISSET(eventing_listener, &read_fds)) {
@@ -263,7 +265,11 @@ int node_discovery_listen(int hello_sock, struct addrinfo *hello_info) {
 		} else if (new_op_fd != -1 && FD_ISSET(new_op_fd, &read_fds)) {
 			u_char buf[50];
 			//TODO: build "real" operation r
-			if (!handle_request(new_op_fd)){
+			if ( simerror)
+			{
+				printf("Dummynode: ignoring operation\n");
+			}
+			else if (!handle_request(new_op_fd)){
 				printf("Dummynode: we got some operation\n");
 			} else {
 				printf("Dummynode: operation failed\n");
@@ -274,7 +280,11 @@ int node_discovery_listen(int hello_sock, struct addrinfo *hello_info) {
 				printf("Dummynode: Timed out without discovery acknowledgement.\n");
 			    //we are not yet discovered, send further hello messages
 			} else {
-				if (send_event(new_ev_fd,0,OP_SensorValues_SensorValuesEvent)) {
+				if(mute)
+				{
+					  printf("%c\b", 'O');
+				}	
+				else if ( send_event(new_ev_fd,0,OP_SensorValues_SensorValuesEvent)) {
 					printf("Dummynode: sending event msg failed, connection to gateway lost\n");
 					return 1;
 				}
@@ -305,6 +315,21 @@ void service_exit() {
 	exit(0);
 }
 
+void _mute()
+{
+	fputs("\nmute ",stderr);
+	mute=!mute;
+	fputs(mute?"on":"off",stderr);
+}
+
+void _simerror()
+{
+	fputs("\nborked ",stderr);
+	simerror=!simerror;
+	fputs(simerror?"on":"off",stderr);
+}
+
+
 int main(int argc, char *argv[]) {
     char *bcast_addr="127.0.0.1";
     char _addr[32];
@@ -315,6 +340,11 @@ int main(int argc, char *argv[]) {
 
 
 	signal(SIGINT, service_exit);
+        signal(SIGHUP,_mute);
+	siginterrupt(SIGHUP,0);
+        signal(SIGUSR1,_simerror);
+	siginterrupt(SIGUSR1,0);
+
 
 	if (argc == 2) {
 
