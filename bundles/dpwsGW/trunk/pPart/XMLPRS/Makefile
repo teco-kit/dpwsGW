@@ -19,6 +19,7 @@ HEXFILE=$(TARGET)_$(SUFFIX).hex
 CFLAGS+=I+=../../SensorValuesService/src-gen/ I+=../../edu.teco.dpws.generator/shared/include/ I+=../../edu.teco.dpws.generator/shared/src/ I+=../../edu.teco.decenc/bitsio/ #+Y=3
 
 bin/$(HEXFILE): $(HEXFILE)
+	mkdir -p $(dir $@)
 	cp $< $@
 
 all: build
