@@ -1,0 +1,308 @@
+CONFIGURATION AND INSTALLATIION INSTRUCTIONS FOR WS4D-gSOAP
+===========================================================
+
+The WS4D-gSOAP Toolkit can be built on UNIX, PC (Windows XP), and Mac
+OSX systems. WS4D-gSOAP uses CMake to generate its build system. To
+build WS4D-gSOAP one must first install CMake version 2.4 or
+higher. For Cross-Compilation CMake version 2.6 or higher is required!
+(See CROSSCOMPILE for more information) 
+
+CMake can be downloaded from http://www.cmake.org/HTML/Download.html
+. The instructions below cover the basics of running CMake for
+WS4D-gSOAP under the assumption that CMake is already installed. See
+the CMake web page for details on intalling and running CMake.
+
+Compiling WS4D-gSOAP requires a complete WS4D-gSOAP source tree. Now
+is the time to extract the source and data archives if not done
+already. These instructions assume there is a directory "ws4d-gsoap"
+containing the source code.
+
+Using the the WS4D-gSOAP Toolkit in your application requires a
+complete WS4D-gSOAP installation tree. After building WS4D-gSOAP it
+MUST be installed!
+
+Configure WS4D-gSOAP with CMake
+-------------------------------
+
+CMake must be run to generate a build system for WS4D-gSOAP. The build
+system may be placed either in the WS4D-gSOAP source tree (an
+in-source build) or in a separate directory tree (an out-of-source
+build). We strongly encourage use of out-of-source builds because they
+make it easy to have multiple builds with different configurations
+sharing the same source tree. Once a single in-source build has been
+created it is the only build tree that can be associated with that
+source tree. A source tree may not be used both for an in-source build
+and an out-of-source build, but any number of out-of-source builds may
+share a source tree that does not have an in-source build. Having
+multiple out-of-source builds is particularly useful for installing
+WS4D-gSOAP on multiple architectures using a single source tree on a
+shared disk.
+
+CMake provides both a command-line tool and interactive
+interfaces. Advanced users may wish to use the command-line tool but
+here we document the CMake interactive interface for each platform:
+
+
+* Windows:
+  
+  Run the CMakeSetup dialog to get started. It must be executed from
+  an environment configured to run the compiler to be used. In the
+  case of the Visual Studio IDE no special environment is needed and
+  CMakeSetup can be started from its icon. In the case of a Visual
+  Studio NMake or MinGW build the CMakeSetup dialog should be executed
+  from a command prompt with the appropriate environment set.
+
+  The dialog prompts for the location of the source and binary
+  trees. There may also be prompt for the build system generator to be
+  used ("Build For:"). Once these are set then CMake is ready for a
+  first pass at configuring the WS4D-gSOAP build system. Use the
+  "Configure" button to initiate this process. If there was no earlier
+  prompt for the build system generator a separate dialog will appear
+  during the first configuration step to prompt for generator
+  selection. After a while the dialog will present a set of
+  configuration options. See below for details on the meaning of each
+  of these options. After setting the options as desired press
+  "Configure" again to make another pass at configuring
+  WS4D-gSOAP. New options may appear when earlier options are
+  adjusted. Keep adjusting options and pressing "Configure" until the
+  desired configuration is reached. Finally press the "Generate"
+  button to actually generate the build system.
+
+
+* UNIX /  Cygwin / Mac OSX:
+
+  CMake should be run from the command line on these platforms. The
+  current working directory should be set to the desired binary tree
+  location in which the build system should be generated. One
+  command-line argument is used to specify the location of the source
+  tree. CMake will usually choose the system C and C++ compilers
+  automatically but it can be told to use specific compilers through
+  the "CC" and "CXX" environment variables.
+
+  A typical in-source configuration for WS4D-gSOAP might look like this:
+
+    $ ls -d ws4d-gsoap
+    ws4d-gsoap/
+    $ mkdir ws4d-gsoap-install
+    $ cd ws4d-gsoap
+    $ ccmake .
+ 
+  A typical out-of-source configuration for WS4D-gSOAP might look like
+  this:
+
+    $ ls -d ws4d-gsoap
+    ws4d-gsoap/ 
+    $ mkdir ws4d-gsoap-build
+    $ mkdir ws4d-gsoap-install
+    $ cd ws4d-gsoap-build
+    $ ccmake ../ws4d-gsoap
+
+  In the above examples the call to ccmake may be replaced by
+
+    $ env CC=/your/c/compiler CXX=/your/C++/compiler ccmake /path/to/ws4d-gsoap
+
+  in order to tell CMake to use specific C and C++ compilers. Setting
+  the environment in this way will only change the compilers the first
+  time CMake is run for a specific build tree. Do not attempt to
+  change the compiler of an existing build tree. Instead one should
+  create a separate build tree for each desired compiler.
+
+  The ccmake tool is a curses-based dialog that may be used to
+  interactively configure WS4D-gSOAP. When it appears press 'c' on the
+  keyboard to run the initial configuration of the WS4D-gSOAP build
+  system. Eventually a set of configuration options will appear. These
+  may be edited using the arrow-keys and the ENTER key for
+  navigation. See below for details on the meaning of each of these
+  options.
+
+  Once the options have been set as desired press 'c' again to
+  reconfigure. New options may appear when earlier options are
+  adjusted. Keep adjusting options and pressing 'c' until the desired
+  configuration is reached. Finally press 'g' to actually generate the
+  build system. Now that the build system has been generated just run
+  make or gmake to build WS4D-gSOAP.
+
+  NOTE: The ccmake curses dialog is the most commonly used interactive
+  interface for CMake on UNIX-like platforms, so these instructions
+  assume it is available. Some system administrators may not have
+  installed curses in which case ccmake will not be available. On
+  these platforms one may use the command "cmake -i" in place of
+  ccmake and follow the on-screen instructions to configure
+  WS4D-gSOAP. A last resort is to use the command-line interface to
+  cmake, but that is beyond the scope of this document. See CMake
+  documentation for further details.
+
+
+Required Configuration Options in CMake
+---------------------------------------
+
+The build process of WS4D-gSOAP relies on several third party
+tools. To find these tools the following options must be specified to
+sucessfully build the dpws libraries and tools coming with
+WS4D-gSOAP. These options must be configured through an interactive
+CMake interface as described above.
+
+
+* GSOAP_PATH
+
+  WS4D-gSOAP is based on the gSOAP C/C++ Web Services Toolkit
+  developed by Robert van Engelen. You can download gSOAP at 
+  http://gsoap2.sourceforge.net/. At the moment there is a probleme 
+  with the generated data binding code. So we need to patch this code. 
+  As this patches only support specific versions of gSOAP see 
+  SUPPORTED_GSOAP_VERSIONS for more information.
+
+
+* XSLTPROC_BINARY
+	
+  The code generation part of WS4D-gSOAP uses XSLT. xsltproc is a tool
+  contained in the libxslt package form Daniel Veillard. You can
+  download libxslt from ftp://xmlsoft.org/libxslt/.
+
+
+* GNU_PATCH_BINARY
+
+  The GNU patch utility is used to patch the data binding code
+  generated by gSOAP. You can download GNU patch from
+  http://www.gnu.org/software/patch/.
+
+
+* GNU_SED_BINARY
+
+  The GNU sed utility is used to process the gSOAP-Files generated
+  from the XML-Schemas used in DPWS. You can download GNU sed from
+  http://www.gnu.org/software/sed/.
+
+
+* CMAKE_INSTALL_PREFIX
+
+  When WS4D-gSOAP is installed all files are placed in a directory
+  structure rooted at the directory specified by CMAKE_INSTALL_PREFIX.
+
+
+Optional Configuration Options in CMake
+---------------------------------------
+
+WS4D-gSOAP is a large toolkit providing a wide variety of
+functionality. Several configuration options are available to
+customize the WS4D-gSOAP build system. These options are configured
+through an interactive CMake interface as described above. 
+
+The interactive CMake interface provides brief documentation for every
+option. Some options have more meaning than can be described in one
+sentence, so additional documentation is provided here:
+
+
+* CMAKE_BUILD_TYPE
+
+
+* PDF_DOCU
+
+
+* COMPILER_WARNINGS
+
+
+* WITH_HOSTING_SERVICE
+
+
+Build WS4D-gSOAP with CMake
+---------------------------
+
+  Compiling WS4D-gSOAP from a source distribution requires first that
+  it is configured and a build tree was generated. See the
+  configuration section above for details. Now that the build system
+  has been generated the corresponding native tools can be used to
+  build WS4D-gSOAP.
+
+
+* UNIX /  Cygwin / Mac OSX:
+
+  If WS4D-gSOAP was built using a CMake Makefile generator then this
+  is done by running "make" from the top of the build tree. 
+
+  A typical in-source build for WS4D-gSOAP might look like this:
+
+    $ ls -d ws4d-gsoap
+    ws4d-gsoap/
+    $ cd ws4d-gsoap
+    $ make
+ 
+  A typical out-of-source build for WS4D-gSOAP might look like this:
+
+    $ ls -d ws4d-gsoap
+    ws4d-gsoap/ 
+    $ cd ws4d-gsoap-build
+    $ make
+
+
+* Windows:
+
+  In the case of the Visual Studio IDE simply run it and load the
+  WS4D-gSOAP workspace or solution file from the binary tree specified
+  in the CMakeSetup dialog. Select and build the ALL_BUILD target. In
+  the case of a Visual Studio NMake, or MinGW build use the
+  corresponding make tool (nmake, and make, respectively) from the
+  command line.
+
+
+Installation
+------------
+
+Installing WS4D-gSOAP from a source distribution requires first that
+it be compiled in a build tree. See the compilation section above for
+details. Once WS4D-gSOAP has been compiled in a build tree one may
+build the install target to actually put WS4D-gSOAP in an installation
+tree. If WS4D-gSOAP was built using a CMake Makefile generator then
+this is done by running "make install" from the top of the build
+tree. If WS4D-gSOAP was built using a CMake project file generator
+(such as Visual Studio), then building the INSTALL project from inside
+the IDE will install WS4D-gSOAP. The installation process will install
+all files in a directory structure rooted at the directory specified
+by CMAKE_INSTALL_PREFIX.
+
+Compiling your own Project
+--------------------------
+
+There is a sample project included in the WS4D-gSOAP installation. You
+can use this sample project as guideline for your own projects. The
+sample project is called airconditioner example and further described
+in the aircondtioner tutorial that is part of the generated
+Documentation. You can find the project files in your installation
+directory under share/doc/ws4d-gsoap/example.
+
+The airconditioner project also uses CMake. The configuration of the
+airconditioner project is similar to the configuration of the
+WS4D-gSOAP Toolkit.
+
+A typical out-of-source configuration for the airconditioner project
+might look like this:
+
+  $ mkdir airconditioner-build
+  $ cd airconditioner-build
+  $ cmake [path to WS4D-gSOAP installation]/share/doc/ws4d-gsoap/example
+
+The project has a built in default configuration to use the WS4D-gSOAP
+installation it is part of and the gSOAP installation that was used to
+compile WS4D-gSOAP. You can also specifiy other installations of gSOAP
+and WS4D-gSOAP with the GSOAP_PATH and DPWS_PATH variables. These
+varaibles can either be specified as environment variables or as
+arguments to cmake.
+
+  $ cmake 
+    -DGSOAP_PATH:PATH=[absolute path to gsoap installation]
+    -DDPWS_PATH:PATH=[absolute path to WS4D-gSOAP installation]
+    [path to WS4D-gSOAP installation]/share/doc/ws4d-gsoap/example
+
+You should always use the same gSOAP installation that was also used
+to compile WS4D-gSOAP!!! WS4D-gSOAP relies on code generated by gSOAP
+and won't work if you use another gSOAP version than the version you
+used to compile WS4D-gSOAP!!!
+
+A typical out-of-source build for the airconditioner project might
+look like this:
+
+    $ cd airconditioner-build
+    $ make
+
+You can find the executables of the project under
+airconditioner-build/bin.
