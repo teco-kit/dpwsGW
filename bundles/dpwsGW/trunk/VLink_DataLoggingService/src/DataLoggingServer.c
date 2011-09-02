@@ -147,8 +147,6 @@ static int soap_serve_Erase(struct soap *soap)
 		wsa_response(soap, NULL, To, Action, MessageId,
 						sizeof(struct SOAP_ENV__Header));
 
-		wsa_header_gen_response(soap, NULL, To, Action, MessageId,
-				sizeof(struct SOAP_ENV__Header));
 	}
 
 	{
