@@ -1,14 +1,10 @@
 RELEASE_SUFFIX=
 RELEASE_BASE?=https://svn.teco.edu/svn/bundles/dpwsGW/tags/releases/ABB/$(shell date +%y%m%d)$(RELEASE_SUFFIX)
 
-BIN_DIRS=$(shell svn status|awk '/^\\?.*bin$$/{print $$2}')
-BINS=$(shell find $(BIN_DIRS))
+BIN_DIRS:=$(shell svn status|awk '/^\\?.*bin$$/{print $$2}')
+BINS:=$(shell find $(BIN_DIRS))
 
-echo:
-	echo $(BINS)
-
-
-bin-$(HOSTTYPE): $(shell find $(BIN_DIRS))
+bin-$(HOSTTYPE): $(BINS)
 	rm -rf $@
 	mkdir -p $@
 	for d in $(BIN_DIRS);do\
@@ -22,5 +18,6 @@ release:
 
 unrelease:
 	svn delete $(RELEASE_BASE) -m"undo release"
+
 unrelease-bin:
-	svn delete $(RELEASE_BASE)/bin -m"undo release"
+	svn delete $(RELEASE_BASE)/ -m"undo release"
