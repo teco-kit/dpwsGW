@@ -540,8 +540,15 @@ void registerNode(unsigned short id)
 	}
 
 	asprintf(&serial_num,"%s-%d",model,id);
-	dpws_device_build_and_register(model,&dev,sizeof(msdevice), gateway_get_interface(),version, serial_num, friendly);
-	printf("New %s node %d found\n",friendly,id);
+#ifdef MICROSTRAIN_GLINK
+	if(dev.modelnumber==2314)
+#elif MICROSTRAIN_VLINK
+	if(dev.modelnumber==2513)
+#endif
+	{
+		dpws_device_build_and_register(model,&dev,sizeof(msdevice), gateway_get_interface(),version, serial_num, friendly);
+		printf("New %s node %d found\n",friendly,id);
+	}
 	if(version!=NULL)
 	{
 		free(version);
@@ -821,7 +828,7 @@ void processLDC(msmessage * msg)
 	{
 		if ((msg->buffer[4] >> i) & 1) {
 			msdev->lastvalue[i] = ((msg->buffer[9+2*i] << 8) + msg->buffer[10+2*i])>>1;
-			//printf("Read raw value: %f\n",msdev->lastvalue[i]);
+			printf("Read raw value: %f Channel %d\n",msdev->lastvalue[i],i);
 			// Apply channel action
 			switch(msdev->channelaction[i])
 			{
@@ -898,8 +905,8 @@ int processLogging(msmessage * msg)
 			if(gw_cur_device->session.page==2 && start == 0)
 			{
 				printf("Skipping first header\n");
-				start = i+11;
-				i+=11;
+				start = i+12;
+				i+=12;
 			} else {
 				printf("Found end\n");
 				end = i;
@@ -908,7 +915,7 @@ int processLogging(msmessage * msg)
 			}
 		}
 	}
-
+	printf("Start %d end %d",start,end);
 	// Get channels
 	logging_page page;
 	page.channelmask = gw_cur_device->session.channelmask;
@@ -939,10 +946,12 @@ int processLogging(msmessage * msg)
 			break;
 		}
 	}
+	printf("Channelmask %d, Channels %d, first channel %d\n",page.channelmask,page.channels,channel);
+	printf("Wrap %d\n",gw_cur_device->session.wrap);
 	logging_sample cursample;
 	memset(cursample.values,0,sizeof(float)*8);
-	unsigned char msb;
-	unsigned char lsb;
+	unsigned char msb=0;
+	unsigned char lsb=0;
 	int nexttype = 0;
 	if(gw_cur_device->session.wrap!=0)
 	{
@@ -1006,9 +1015,9 @@ int processLogging(msmessage * msg)
 	{
 		if(nexttype==0)
 		{
+
 			nexttype++;
 			msb = msg->buffer[i];
-
 			// Keep track of wrapped values
 			gw_cur_device->session.wrappedval[gw_cur_device->session.wrap]=msg->buffer[i];
 			gw_cur_device->session.wrap++;
@@ -1020,6 +1029,7 @@ int processLogging(msmessage * msg)
 			gw_cur_device->session.wrap++;
 			// Set value using channel action
 			cursample.values[channel] = (msb << 8) + lsb;
+			printf("Channel %d MSB %d LSB %d %d Value %f\n",channel,msb,lsb,(((int)msb) << 8) + lsb,cursample.values[channel]);
 			switch(gw_cur_device->channelaction[channel])
 			{
 			case 0x01:
@@ -1044,6 +1054,7 @@ int processLogging(msmessage * msg)
 				cursample.values[channel] =  cursample.values[channel] * gw_cur_device->gain[channel] + gw_cur_device->offset[channel] ;
 			} break;
 			}
+			printf("Transformed Value %f\n",cursample.values[channel]);
 
 			// Get next channel
 			int nextchannel = channel+1;
@@ -1499,7 +1510,12 @@ void initDownload(unsigned short node)
 		if(msg.buffer[i]==255 && msg.buffer[i+1]==255)
 		{
 			printf("Found session header\n");
-			printf("Rate Index: %d\n",(msg.buffer[i+10] <<8) + msg.buffer[i+11]);
+			int j=0;
+			for(j=0;j<12;j++)
+			{
+				printf("Byte %d %d\n",j,msg.buffer[i+j]);
+			}
+
 			// Save session data
 			msdev->session.page = 2;
 			msdev->session.index = (msg.buffer[i+6] <<8) + msg.buffer[i+7];
