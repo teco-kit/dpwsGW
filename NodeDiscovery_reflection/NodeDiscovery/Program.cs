@@ -279,8 +279,8 @@ Contact N. L. Fantana (nicolaie.fantana@de.abb.com)
                 {
                     // No services was found. Check if the user wants to run again.
                     Console.Write("No known devices found... Repeat (Y-yes, N-no)?");
-                    ConsoleKeyInfo ky = Console.ReadKey();
-                    if (ky.Key == ConsoleKey.Y)
+                    String ky = Console.ReadLine();
+                    if (ky.ToLower().Equals("y"))
                         runAgainFind = true;
                 }
             }

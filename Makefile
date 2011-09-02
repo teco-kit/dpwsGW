@@ -4,6 +4,7 @@ RELEASE_BASE?=https://svn.teco.edu/svn/bundles/dpwsGW/tags/releases/ABB/$(shell 
 BIN_DIRS:=$(shell svn status|awk '/^\\?.*bin$$/{print $$2}')
 BINS:=$(shell find $(BIN_DIRS))
 
+bin: bin-$(HOSTTYPE)
 bin-$(HOSTTYPE): $(BINS)
 	rm -rf $@
 	mkdir -p $@
