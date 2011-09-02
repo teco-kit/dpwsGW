@@ -1,6 +1,0 @@
-#ifndef LCM_CONFIG_H
-#define LCM_CONFIG_H
-
-#define LCMHOSTEDSERVICE_WSDL "@LCMHOSTEDSERVICE_WSDL@"
-
-#endif /* LCM_CONFIG_H */
