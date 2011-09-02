@@ -38,6 +38,7 @@ namespace NodeDiscovery
 @"ABB  DECRC - SERVICE and usability LAB
 Advanced Identification and Labeling for Service
 DECRC 2011
+KIT, TecO 2011
 DPWS Discovery Project,
 Contact N. L. Fantana (nicolaie.fantana@de.abb.com)
 
