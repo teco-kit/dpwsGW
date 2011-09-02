@@ -1,9 +1,0 @@
-#Sun Oct 24 09:12:31 PDT 2010
-eclipse.preferences.version=1
-environment/buildEnvironmentInclude/cdt.managedbuild.config.gnu.cygwin.so.debug.1239717722/CPATH/delimiter=\:
-environment/buildEnvironmentInclude/cdt.managedbuild.config.gnu.cygwin.so.debug.1239717722/CPATH/operation=remove
-environment/buildEnvironmentInclude/cdt.managedbuild.config.gnu.cygwin.so.debug.1239717722/C_INCLUDE_PATH/delimiter=\:
-environment/buildEnvironmentInclude/cdt.managedbuild.config.gnu.cygwin.so.debug.1239717722/C_INCLUDE_PATH/operation=remove
-environment/buildEnvironmentInclude/cdt.managedbuild.config.gnu.cygwin.so.debug.1239717722/append=true
-environment/buildEnvironmentInclude/cdt.managedbuild.config.gnu.cygwin.so.debug.1239717722/appendContributed=true
-environment/buildEnvironmentInclude/cdt.managedbuild.config.gnu.cygwin.so.debug.1491328897=<?xml version\="1.0" encoding\="UTF-8" standalone\="no"?>\r\n<environment append\="true" appendContributed\="true">\r\n<variable name\="CPATH" operation\="remove"/>\r\n<variable name\="C_INCLUDE_PATH" operation\="remove"/>\r\n</environment>\r\n
