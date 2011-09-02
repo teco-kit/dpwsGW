@@ -249,7 +249,13 @@ namespace edu.teco.DPWS
 
             /// Invoke 
             object[] args = new object[] {client};
-            method.Invoke(this, args);
+            try
+            {
+                method.Invoke(this, args);
+            } catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+            }
 
             /// Close connection
             clientCloseMethod.Invoke(client, null);
@@ -294,7 +300,14 @@ namespace edu.teco.DPWS
             Console.WriteLine("Got subscription: {0}", subscriptionId);
 
             object[] args = new object[] { client };
-            method.Invoke(this, args);
+            try
+            {
+                method.Invoke(this, args);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+            }
             Console.WriteLine("Press <ENTER> to unsubscribe.");
             Console.ReadLine();
 
