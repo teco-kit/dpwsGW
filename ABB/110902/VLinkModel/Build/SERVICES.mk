@@ -1,0 +1,2 @@
+SERVICES+=VLink_StreamingService VLink_DataLoggingService VLink_DeviceInfoService
+SRCDIR=src
