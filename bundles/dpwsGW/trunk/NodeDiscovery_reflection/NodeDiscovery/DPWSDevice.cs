@@ -406,7 +406,7 @@ namespace edu.teco.DPWS
                     ShowValues(response);
                     Console.WriteLine("Read Again?");
 
-                } while (Console.ReadKey().Key == ConsoleKey.Y);
+                } while (Console.ReadLine().ToLower().Equals("y"));
             }
 
             [DPWSInvokeMethod("Configure the service")]
@@ -419,14 +419,14 @@ namespace edu.teco.DPWS
 
 
                 Console.WriteLine("\nSet time (y/N)");
-                if (Console.ReadKey().Key == ConsoleKey.Y)
+                if  (Console.ReadLine().ToLower().Equals("y"))
                 {
                     control.NewTime = DateTime.Now;
                     control.NewTimeSpecified = true;
                 };
                 Console.WriteLine("\nSet Sensors (y/N)");
 
-                if (Console.ReadKey().Key == ConsoleKey.Y)
+                if  (Console.ReadLine().ToLower().Equals("y"))
                 {
                     control.SensorConfig = new NodeDiscovery.Gateway.SensorConfigurationType();
                     Console.WriteLine("\nAcclRate");
@@ -1066,7 +1066,7 @@ namespace edu.teco.DPWS
                     ShowValues(response);
                     Console.WriteLine("Read Again?");
 
-                } while (Console.ReadKey().Key == ConsoleKey.Y);
+                } while (Console.ReadLine().ToLower().Equals("y")); 
             }
             
             /// <summary>

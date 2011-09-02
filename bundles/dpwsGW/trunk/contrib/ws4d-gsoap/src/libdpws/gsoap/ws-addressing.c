@@ -45,7 +45,10 @@ struct wsa_plugin_data
   int ids_buffer_size;
   int (*fheader) (struct soap *);
   int (*fresponse)(struct soap*, int, size_t);
+  int (*fpoll)(struct soap*);
   void (*fseterror) (struct soap *, const char **, const char **);
+  char * To;
+  char * Action;
   ws4d_alloc_list alist;
 #ifdef WITH_MUTEXES
     WS4D_MUTEX (lock);
@@ -739,20 +742,39 @@ wsa_header_gen_request (struct soap *soap, const char *MessageId,
 }
 
 static int
+wsa_poll_override(struct soap *soap)
+{
+	return SOAP_OK;
+}
+
+static int
 wsa_response_override(struct soap *soap, int status, size_t count)
-{ 
+{  
+ char * To=wsa_get_plugindata (soap)->To; 
+ char * Action=wsa_get_plugindata (soap)->Action; 
+
   DBGFUN("wsa_response_override");
 
   count=count;
-  soap->fresponse =wsa_get_plugindata (soap)->fresponse; //restore old (necessary??)
+  soap->fresponse =wsa_get_plugindata (soap)->fresponse;
+  soap->fpoll =wsa_get_plugindata (soap)->fpoll;
+#if 1
+#if 0 
   return SOAP_OK;
-
- // soap->fpost(soap, soap_strdup(soap, soap->endpoint), soap->host, soap->port, soap->path, NULL, count);
+#else 
+		  soap_connect(soap, To, Action);
+		  soap_flush(soap);
+		  return soap->error;
+#endif
+#else
+  return soap->fpost(soap, soap_strdup(soap, soap->endpoint), soap->host, soap->port, soap->path, NULL, count); //soap connect issues post
+#endif
 }
 
 /**
  *
  */
+
 int
 wsa_response (struct soap *soap, const char *MessageId,
                          const char *To, const char *Action,
@@ -772,18 +794,28 @@ wsa_response (struct soap *soap, const char *MessageId,
 	  struct soap *reply_soap = soap_copy(soap);
 	  if (reply_soap) {
 		  soap_copy_stream(reply_soap, soap);
+		  soap->socket = SOAP_INVALID_SOCKET; /* prevents polling */
+
 		  soap_clr_omode(reply_soap, SOAP_ENC_MIME | SOAP_ENC_DIME
 				  | SOAP_ENC_MTOM);
-		  soap->socket = SOAP_INVALID_SOCKET; /* prevents close */
-		  if (soap_connect(soap, To, Action)) /*Todo: can this be delayed ??*/
-			  return soap->error;
-		  soap_send_empty_response(reply_soap, soap->error); /* HTTP ACCEPTED */
+
+		 // reply_soap->error=SOAP_OK;
+		  //soap->error=SOAP_OK;
+
+		  soap_send_empty_response(reply_soap, SOAP_OK); /* HTTP ACCEPTED */
+
 		  soap_closesock(reply_soap);
 		  soap_end(reply_soap);
 		  soap_free(reply_soap);
 
 		  wsa_get_plugindata (soap)->fresponse = soap->fresponse; //save old (necessary??)
+		  wsa_get_plugindata (soap)->fpoll = soap->fpoll; //save old (necessary??)
+
+		  wsa_get_plugindata (soap)->To = soap_strdup(soap,To); //save old (necessary??)
+		  wsa_get_plugindata (soap)->Action = soap_strdup(soap,Action); //save old (necessary??)
+
 		  soap->fresponse = wsa_response_override;
+		  soap->fpoll = wsa_poll_override;
 	  } else
 		  return soap->error;
   } else {
