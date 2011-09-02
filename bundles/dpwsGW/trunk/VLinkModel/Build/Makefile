@@ -1,5 +1,5 @@
-MODEL=VLinkModel_static
-SERVICES=VLink_StreamingService VLink_DataLoggingService VLink_DeviceInfoService
+MODEL=VLinkModel
+include SERVICES.mk
 
 SRCDIR=src
 SHARED=../../edu.teco.dpws.generator/shared/

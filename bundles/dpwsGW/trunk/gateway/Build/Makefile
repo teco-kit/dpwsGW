@@ -1,21 +1,7 @@
-PLATFORM?=ip pPart microstrain #TODO uPart
+PLATFORM?=ip pPart microstrain_glink microstrain_vlink 
 TOPDIR=$(dir $(firstword $(MAKEFILE_LIST)))
 
-
-# until we allow dynamic loading
-ifeq ($(findstring microstrain,$(PLATFORM)),microstrain)
-DEVICES=AccelerationModel_static
-endif
-
-ifeq ($(findstring ip,$(PLATFORM)),ip)
-DEVICES=SSimpDevice
-endif
-
-ifeq ($(findstring pPart,$(PLATFORM)),pPart)
-DEVICES=SSimpDevice
-endif
-####
-
+include $(foreach platform,$(PLATFORM),$(TOPDIR)$(platform).mk)
 include $(foreach dev,$(DEVICES),$(TOPDIR)../../$(dev)/Build/SERVICES.mk)
 
 SHAREDDIR?=$(TOPDIR)../../edu.teco.dpws.generator/shared/
@@ -37,19 +23,21 @@ endif
 	cp $(foreach platform,$(PLATFORM),$(platform)/$(platform)_gateway) $(TOPDIR)../bin
 	cp $(TOPDIR)../default.ini $(TOPDIR)../bin/gateway.ini
 
-include $(foreach platform,$(PLATFORM),$(TOPDIR)$(platform)/platform/$(platform)/pre)
+include $(foreach platform,$(PLATFORM),$(TOPDIR)$(platform)/platform/$(firstword $(subst _, ,$(platform)))/pre)
 
 else
+
 
 SRCPATH=$(TOPDIR)../src/
 VPATH=$(SRCPATH) $(TOPDIR)../../contrib/minini/dev
 
-SRC_FILES=$(wildcard $(SRCPATH)/*.c) $(wildcard $(SRCPATH)/platform/$(PLATFORM)/*.c)
+SRC_FILES=$(wildcard $(SRCPATH)/*.c) $(wildcard $(SRCPATH)/platform/$(firstword $(subst _, ,$(PLATFORM)))/*.c)
+
 OBJ_FILES=$(filter-out main.o,$(subst $(SRCPATH)/,,$(SRC_FILES:.c=.o))) minIni.o
 
 
 CFLAGS=-O0 -g3
-CPPFLAGS=-I $(SHAREDDIR)include  $(addsuffix /$(SRCDIR),$(addprefix -I$(TOPDIR)../../,$(SERVICES)) $(addsuffix /$(SRCDIR),$(addprefix -I$(TOPDIR)../../,$(DEVICES))))\
+CPPFLAGS=-I $(SHAREDDIR)include -I$(TOPDIR)../shared/include   $(addsuffix /$(SRCDIR),$(addprefix -I$(TOPDIR)../../,$(SERVICES)) $(addsuffix /$(SRCDIR),$(addprefix -I$(TOPDIR)../../,$(DEVICES))))\
 -DWITH_MUTEXES -D_GNU_SOURCE -DDPWS_DEVICE -DWITH_NONAMESPACES -DDEBUG -DABORT_ON_ASSERT -D$(shell echo $(PLATFORM)|tr '[a-z]' '[A-Z]')
 LDFLAGS=-L/usr/local/lib -L $(SHAREDDIR)build $(addsuffix /Build,$(addprefix -L$(TOPDIR)../../,$(SERVICES))) $(addsuffix /Build,$(addprefix -L$(TOPDIR)../../,$(DEVICES))) -L $(WS4DDIR) 
 
@@ -70,6 +58,6 @@ endif
 clean:
 	$(RM) -rf $(foreach platform,$(PLATFORM),$(TOPDIR)$(platform)/)
 
-$(foreach platform,$(PLATFORM),$(TOPDIR)$(platform)/platform/$(platform)/pre):
+$(foreach platform,$(PLATFORM),$(TOPDIR)$(platform)/platform/$(firstword $(subst _, ,$(platform)))/pre):
 	mkdir -p `dirname $@`
 	touch $@
