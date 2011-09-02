@@ -1,5 +1,5 @@
 MODEL=AccelerationModel_static
-SERVICES=AccelerationService DataLoggingService DeviceInfoService
+include SERVICES.mk
 
 SRCDIR=src
 SHARED=../../edu.teco.dpws.generator/shared/

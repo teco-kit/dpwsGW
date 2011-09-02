@@ -12,9 +12,13 @@ bin-$(HOSTTYPE): $(BINS)
 		cp -R $$d $@/$${x/\//_};\
 	done
 
-release:
+release: release-base release-bin
+
+release-base:
 	svn cp . $(RELEASE_BASE) -m"make release"
-	svn -m "adding binaries for release" --config-option config:miscellany:global-ignores="" import  bin $(RELEASE_BASE)/bin;\
+
+release-bin: release-base
+	svn -m "adding binaries for release" --config-option config:miscellany:global-ignores="" import  bin-$(HOSTTYPE) $(RELEASE_BASE)/bin-$(HOSTTYPE);\
 
 unrelease:
 	svn delete $(RELEASE_BASE) -m"undo release"
