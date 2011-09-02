@@ -580,8 +580,10 @@ void updateNodeInfo(msdevice * node)
 	} else if(inMessageQueue(MS_FAILURE))
 	{
 		getMessageFromQueue(MS_FAILURE,&msg);
-		// Set to G-Link model number
-		node->modelnumber = 2314;
+		// Set to V-Link model number
+		printf("Failed to received model number: %d, assumed 2513\n",(msg.buffer[0] << 8) + msg.buffer[1]);
+		node->modelnumber = 2513;
+
 	}
 
 	// Get channel mask
@@ -604,7 +606,7 @@ void updateNodeInfo(msdevice * node)
 	} else if(inMessageQueue(MS_FAILURE))
 	{
 		getMessageFromQueue(MS_FAILURE,&msg);
-		node->channelmask = 8;
+		node->channelmask = 255;
 	}
 
 	// Get LDC rate
