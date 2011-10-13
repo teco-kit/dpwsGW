@@ -541,7 +541,7 @@ void registerNode(unsigned short id)
 
 	asprintf(&serial_num,"%s-%d",model,id);
 #ifdef MICROSTRAIN_GLINK
-	if(dev.modelnumber==2314)
+	if((dev.modelnumber==2314)||(dev.modelnumber==2313))
 #elif MICROSTRAIN_VLINK
 	if(dev.modelnumber==2513)
 #endif
@@ -581,7 +581,7 @@ void updateNodeInfo(msdevice * node)
 	{
 		getMessageFromQueue(MS_FAILURE,&msg);
 		// Set to V-Link model number
-		printf("Failed to received model number: %d, assumed 2513\n",(msg.buffer[0] << 8) + msg.buffer[1]);
+		printf("Failed to receive model number: %d, assumed 2513\n",(msg.buffer[0] << 8) + msg.buffer[1]);
 		node->modelnumber = 2513;
 
 	}
